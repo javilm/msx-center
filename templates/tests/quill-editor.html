@@ -1,0 +1,70 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - Quill editor test{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1>MSX Center</h1>
+		<p>This is a test of the inline article / comment editor</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-md-offset-3">
+		<button class="btn btn-primary" type="submit" id="submitButton">Save comment</button>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">This DIV is editable - Select text to add styles, or upload images in an empty paragraph</h3>
+			</div>
+			<div class="panel-body" id="quillEditor">
+				You should be able to edit this text and <strong>highlight parts</strong> of it to <em>add styles, links</em>, etc.
+			</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript">
+
+	var toolbarOptions = [
+	  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+	  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+	  [{ 'color': [] },],          // dropdown with defaults from theme
+	  ['image', 'blockquote', 'code-block'],
+
+	  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+	  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+
+	];
+
+	// Initialize MediumEditor
+	var quill = new Quill('#quillEditor' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+
+	// Attach event to button
+	$("#submitButton").click(function () {
+		console.log("Button pressed");
+		
+		$.ajax({
+			method: "POST",
+			url: "http://dev.msx-center.com/upload",
+			processData: true,
+			data: {
+				thread_id: 1,
+				content: editor.serialize()["element-0"].value
+			}
+		})
+		.done(function(msg) {
+			alert("Data saved");
+		});
+	});
+</script>
+{% endblock %}

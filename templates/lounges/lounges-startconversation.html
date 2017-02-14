@@ -9,10 +9,7 @@
 {% endif %}
 
 {% block extracss %}
-<link rel="stylesheet" href="/static/css/medium-editor.css">
-<link rel="stylesheet" href="/static/css/themes/default.css" id="medium-editor-theme">
-<link rel="stylesheet" href="/static/css/medium-editor-insert-plugin.min.css">
-<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
 {% endblock %}
 
 {% block content %}
@@ -103,7 +100,7 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label">Your message</label>
-				<textarea class="form-control editable medium-editor-textarea" {{form_status}}></textarea>
+				<div class="form-control" id="quillEditor" {{form_status}}></div>
 			</div>
 			<div class="form-group">
 				<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post new conversation</button>
@@ -114,23 +111,31 @@
 </div>
 {% endblock %}
 {% block extrajs %}
-<script type="text/javascript" src="/static/js/medium-editor.min.js"></script>
-<script type="text/javascript" src="/static/js/handlebars-v4.0.5.js"></script>
-<script type="text/javascript" src="/static/js/jquery-sortable-min.js"></script>
-<script type="text/javascript" src="/static/js/jquery.ui.widget.js"></script>
-<script type="text/javascript" src="/static/js/jquery.iframe-transport.js"></script>
-<script type="text/javascript" src="/static/js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="/static/js/medium-editor-insert-plugin.min.js"></script>
-<script type="text/javascript" src="/static/js/editor.js"></script>
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript">
+
+// Initialize MediumEditor
+var toolbarOptions = [
+	[{ 'header': [1, 2, 3, false] }],
+	[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+	['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+	[{ 'color': [] },],          // dropdown with defaults from theme
+	['image', 'blockquote', 'code-block'],
+	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+	[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+
+];
+var quill = new Quill('#quillEditor' , {
+	modules : {
+		toolbar: toolbarOptions
+	},
+	theme: 'snow'
+});
 
 	// Initialize popovers
 	$(function () {
 		$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'focus'})
 	})
-
-    // Initialize MediumEditor
-    var editor = new MediumEditor('.editable');
 
     // Attach event to button
     $("#submitButton").click(function () {

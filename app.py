@@ -906,29 +906,29 @@ def page_lounge_post(lounge_id):
 @app.route('/editor', methods=['GET', 'POST'])
 def page_editortest():
 	if request.method == 'GET':
-		return render_template('tests/medium-editor.html')
+		return render_template('tests/quill-editor.html')
 	elif request.method == 'POST':
-		app.logger.info("/medium-editor: Accessed the /medium-editor URL with the %s method" % request.method)
+		app.logger.info("/editor: Accessed the /editor URL with the %s method" % request.method)
 
 		# Log request.form
 		dict = request.form
-		app.logger.info("/medium-editor: request.form dictionary: %s" % dict)
-		app.logger.info("/medium-editor: The POST arguments dictionary has %s items." % len(dict))
+		app.logger.info("/editor: request.form dictionary: %s" % dict)
+		app.logger.info("/editor: The POST arguments dictionary has %s items." % len(dict))
 		if len(dict):
 			for key in dict.keys():
-				app.logger.info("/medium-editor: POST[%s]: %s" % (key, dict[key]))
+				app.logger.info("/editor: POST[%s]: %s" % (key, dict[key]))
 
 		# Log request.args
 		dict = request.args
-		app.logger.info("/medium-editor: request.args dictionary: %s" % dict)
-		app.logger.info("/medium-editor: The POST arguments dictionary has %s items." % len(dict))
+		app.logger.info("/editor: request.args dictionary: %s" % dict)
+		app.logger.info("/editor: The POST arguments dictionary has %s items." % len(dict))
 		if len(dict):
 			for key in dict.keys():
-				app.logger.info("/medium-editor: POST[%s]: %s" % (key, dict[key]))
+				app.logger.info("/editor: POST[%s]: %s" % (key, dict[key]))
 		
-		return "/medium-editor: You POSTed something to the page"
+		return "/editor: You POSTed something to the page"
 	else:
-		app.logger.info("/medium-editor: Accessed the /medium-editor URL with the unsupported %s method" % request.method)
+		app.logger.info("/editor: Accessed the /medium-editor URL with the unsupported %s method" % request.method)
 		return "You accessed this page using the %s method" % request.method
 		
 @app.route('/upload', methods=['GET', 'POST'])
