@@ -1,0 +1,13 @@
+{% extends "layout/template-withoutnavbar.html" %}
+{% block title %}MSX Center - Thank you!{% endblock %}
+{% block headertitle %}Thank you!{% endblock %}
+{% block content %}
+<p>We just sent an activation email to your email address (<a href="mailto:{{ email_address }}">{{ email_address }}</a>). It should arrive in a few moments.</p>
+<p>The message looks like this;</p>
+<pre>
+<strong>From:   </strong> <a href="mailto:no-reply@msx-center.com">MSX Center</a>
+<strong>Subject:</strong> Your MSX Center account activation
+</pre>
+<p>If you can't find this message in your inbox please check the spam folder in your email application.</p>
+<p>The activation link is valid for one hour.</p>
+{% endblock %}

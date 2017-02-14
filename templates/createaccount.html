@@ -1,0 +1,53 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - Create account{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h2>Join MSX Center</h2></div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 col-md-offset-2">
+                <h4>Create your account</h4>
+                <form method="POST" action="{{ url_for('page_createaccount') }}">
+					{% if invalid_realname %}
+						<div class="form-group has-error">
+							<p class="text-danger">{{ error_realname }}</p>
+					{% else %}
+						<div class="form-group">
+					{% endif %}
+                        <label class="control-label" for="signup-realname">Your real name</label>
+						<input class="form-control" type="text" placeholder="Your real name" name="signup_realname" value="{{ signuprealname }}">
+                        <p class="help-block">Real names only to avoid abuse</p>
+                    </div>
+					{% if invalid_email %}
+						<div class="form-group has-error">
+							<p class="text-danger">{{  error_email }}</p>
+					{% else %}
+						<div class="form-group">
+					{% endif %}
+                        <label class="control-label" for="signup-email">Your email address</label>
+						<input class="form-control" type="email" placeholder="user@example.com" name="signup_email" value="{{ signupemail }}">
+                        <p class="help-block">We'll send you the activation link here. </p>
+                    </div>
+                    <div id="signup-conditions">
+                        <hr>
+                        <p>By clicking the "Create account" button below you are agreeing to our <a href="terms">terms of service</a>.</p>
+                        <hr>
+                    </div>
+                    <button class="btn btn-default btn-success" type="submit">Create account</button>
+                </form>
+            </div>
+            <div class="col-md-3" id="signup-info">
+                <div class="panel panel-default panel-info" id="register-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Do I need to register?</h3></div>
+                    <div class="panel-body">
+                        <p>Not unless you want to purchase products from our online shop or post messages in the forums that are restricted to users with real names. </p>
+                        <p>You will still be able to access all the download areas and all the forums, and post in the anonymous boards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

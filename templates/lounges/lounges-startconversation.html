@@ -1,0 +1,155 @@
+{% extends "layout/template-base.html" %}
+
+{% block title %}MSX Center - Conversation lounges{% endblock %}
+
+{% if errors %}
+{% set form_status = 'disabled' %}
+{% else: %}
+{% set form_status = '' %}
+{% endif %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/medium-editor.css">
+<link rel="stylesheet" href="/static/css/themes/default.css" id="medium-editor-theme">
+<link rel="stylesheet" href="/static/css/medium-editor-insert-plugin.min.css">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-lg-offset-2 col-md-8 col-md-offset-2">
+		<div>
+			<h1>Start new conversation</h1>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+		<div class="panel panel-{{ lounge.color_class }}">
+			<div class="panel-heading">
+				<h3 class="panel-title">Posting on the <strong>{{ lounge.name_en }}</strong> lounge</h3></div>
+		</div>
+		<form>
+			<div class="form-group lead">
+				<label class="control-label">Conversation topics</label>
+				<p>{{ lounge.desc_en }}</p>
+			</div>
+			<div class="form-group hidden-xs">
+				<label class="control-label">Permissions </label>
+				<div class="btn-group btn-group-justified" role="group">
+					<a class="btn {% if lounge.allows_anonymous_posts %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-anonymoususers" role="button" tabindex="0" href="#" data-toggle="popover" title="Anonymous users" data-content="Anonymous users are visitors who haven't signed in to MSX Center.">Anonymous </a>
+					<a class="btn {% if lounge.allows_new_members %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-newmembers" role="button" tabindex="1" href="#" data-toggle="popover" title="New members" data-content="New members are those who have been active for less than a week, or have posted less than 10 messages.">New members</a>
+					<a class="btn {% if lounge.allows_unverified %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-unverifiedmembers" role="button" tabindex="2" href="#" data-toggle="popover" title="Unverified users" data-content="Unverified members are those whose identify we haven't confirmed yet. Verified members are those who we have confirmed they are who they say they are.">Unverified members</a>
+					<a class="btn {% if lounge.allows_nicknames %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-nicknames" role="button" tabindex="4" href="#" data-toggle="popover" title="Nicknames" data-content="Some lounges accept posting using nicknames, some don't.">Nicknames </a></div>
+			</div>
+
+			{% if errors.blocked -%}
+				<div class="alert alert-danger">
+					<p><strong>ACCOUNT BLOCKED</strong></p>
+					<p>Sorry, you are not allowed to post because your account is blocked. If you feel this is a mistake, please visit the <a class="alert-link" href="http://XXX">support page</a> for instructions.</p>
+				</div>
+			{%- elif errors.anonymous -%}
+				<div class="alert alert-warning">
+					<p><strong>Anonymous posting now allowed</strong></p>
+					<p>Sorry, this lounge doesn't allow anonymous posts. Please <a class="alert-link" href="{{ url_for('page_signin') }}">sign in</a> in order to post.</p>
+				</div>
+			{%- elif errors.new -%}
+				<div class="alert alert-warning">
+					<p><strong>You can't post in this lounge</strong></p>
+					<p>Sorry, you can't post here yet because your account is too new. We do this in order to avoid spam and other undesired behavior.</p>
+					<p>To become able to post in this lounge you have to meet the two requirements below:</p>
+					<p>
+						<ul>
+							<li>Your account must be older than one week.</li>
+							<li>You must have posted at least 5 messages in other lounges.</li>
+						</ul>
+					</p>
+				</div>
+			{%- elif errors.unverified -%}
+				<div class="alert alert-warning">
+					<p><strong>You can't post in this lounge</strong></p>
+					<p>Sorry, before you can post in this lounge we need to verify your identity. We require this in order to avoid spam and scams.</p>
+					<p>To learn how to verify your identity please visit the <a class="alert-link" href="http://XXX">Verify identity</a> section in your user menu.</p>
+				</div>
+			{%- elif errors.not_staff -%}
+				<div class="alert alert-danger">
+					<p><strong>You can't post in this lounge</strong></p>
+					<p>Sorry, you can't post lounge because it is only for MSX Center staff. In fact, you shouldn't be able to even see this lounge at all.</p>
+					<p>Are you playing funny games? ;-)</p>
+				</div>
+			{%- elif errors.bad_reputation -%}
+				<div class="alert alert-danger">
+					<p><strong>You can't post in this lounge</strong></p>
+					<p>Sorry, you can't post lounge because your reputation is too low. If you feel this is a mistake, please let us know in the Support lounge.</p>
+					<p>Are you playing funny games? ;-)</p>
+				</div>
+			{%- endif -%}
+
+			{% if lounge.allows_nicknames %}
+			<div class="form-group">
+				<label class="control-label">Post as</label>
+				<select class="form-control" {{form_status}}>
+					<option value="13">My real name: Javi Lavandeira</option>
+					<option value="14">My nickname: JaviLM</option>
+					{% if lounge.allows_anonymous %}
+						<option value="14">Anonymous (your identity will not be shown)</option>
+					{% endif %}
+				</select>
+			</div>
+			{% endif %}
+			<div class="form-group">
+				<label class="control-label">Conversation title</label>
+				<input class="form-control" type="text" {{form_status}}>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Your message</label>
+				<textarea class="form-control editable medium-editor-textarea" {{form_status}}></textarea>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post new conversation</button>
+			</div>
+
+		</form>
+	</div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/medium-editor.min.js"></script>
+<script type="text/javascript" src="/static/js/handlebars-v4.0.5.js"></script>
+<script type="text/javascript" src="/static/js/jquery-sortable-min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/static/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="/static/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="/static/js/medium-editor-insert-plugin.min.js"></script>
+<script type="text/javascript" src="/static/js/editor.js"></script>
+<script type="text/javascript">
+
+	// Initialize popovers
+	$(function () {
+		$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'focus'})
+	})
+
+    // Initialize MediumEditor
+    var editor = new MediumEditor('.editable');
+
+    // Attach event to button
+    $("#submitButton").click(function () {
+        console.log("Button pressed");
+        
+        $.ajax({
+            method: "POST",
+            url: "http://dev.msx-center.com/upload",
+            processData: true,
+            data: {
+                thread_id: 1,
+                content: editor.serialize()["element-0"].value
+            }
+        })
+        .done(function(msg) {
+            alert("Data saved");
+        });
+    });
+
+
+</script>
+{% endblock %}

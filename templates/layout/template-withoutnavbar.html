@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	{% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/css/Navigation-Clean1.css">
+    <link rel="stylesheet" href="/static/css/Navigation-with-Button1.css">
+    <link rel="stylesheet" href="/static/css/Navigation-with-Search1.css">
+    <link rel="stylesheet" href="/static/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+	{% endblock %}
+</head>
+
+<body>
+    <div class="container">
+		<div class="row" id="signin-logo">
+			<a href="/"><img src="/static/img/msx_center_logo.png" width="200"></a>
+		</div>
+		<div class="row" id="signin-form">
+			<div class="col-md-6 col-md-offset-3">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<h1 id="thankyou-heading">{% block headertitle %}{% endblock %}</h1>
+						{% block content %}{% endblock %}
+					</div>
+				</div>
+				<footer>
+					<p id="signin-terms"><a href="terms.html">Terms of use</a> | <a href="contact.html">Contact us</a></p>
+					<p class="text-center">Copyright © 2017 MSX Center. "MSX" is a registered trademark of the MSX Licensing Corporation. </p>
+				</footer>
+			</div>
+		</div>
+    </div>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+	{% block javascript %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+{% extends "layout/template-withoutnavbar.html" %}
+{% block title %}MSX Center - Activate your account{% endblock %}
+{% block headertitle %}Account activation{% endblock %}
+{% block content %}
+{% if invalid_key %}
+	<div class="alert alert-danger" role="alert">
+		<strong>Your activation key is invalid</strong>
+		<ul>
+			<li>If you entered it manually try double-checking and entering it again.</li>
+			<li>If you came here by clicking a link in your email, the key may have expired. In that case, just <a class="alert-link" href="{{ url_for('page_createaccount') }}">register again</a>.</li>
+		</ul>
+	</div>
+{% endif %}
+<p class="lead text-center">Enter your activation key below:</p>
+<div id="activationform">
+	<form method="GET" action="{{ url_for('page_activate') }}">
+		{% if invalid_key %}
+			<div class="form-group has-error">
+		{% else %}
+			<div class="form-group">
+		{% endif %}
+			<input class="form-control input-lg" type="text" name="key" required="" value="{{ key }}" maxlength="8" minlength="8" id="key">
+		</div>
+		<div class="form-group">
+			<button class="btn btn-success" type="submit">Activate my account</button>
+		</div>
+	</form>
+</div>
+{% endblock %}

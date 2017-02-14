@@ -1,0 +1,63 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - MediumEditor test{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1>MSX Center</h1>
+		<p>This is a test of the inline article / comment editor</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-md-offset-3">
+		<button class="btn btn-primary" type="submit" id="submitButton">Save comment</button>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">This DIV is editable - Select text to add styles, or upload images in an empty paragraph</h3>
+			</div>
+			<div class="panel-body editable">
+				You should be able to edit this text and highlight parts of it to add styles, links, etc.
+			</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/medium-editor.css">
+<link rel="stylesheet" href="/static/css/themes/default.css" id="medium-editor-theme">
+<link rel="stylesheet" href="/static/css/medium-editor-insert-plugin.min.css">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/medium-editor.min.js"></script>
+<script type="text/javascript" src="/static/js/handlebars-v4.0.5.js"></script>
+<script type="text/javascript" src="/static/js/jquery-sortable-min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/static/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="/static/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="/static/js/medium-editor-insert-plugin.min.js"></script>
+<script type="text/javascript" src="/static/js/editor.js"></script>
+<script type="text/javascript">
+	// Initialize MediumEditor
+	var editor = new MediumEditor('.editable');
+
+	// Attach event to button
+	$("#submitButton").click(function () {
+		console.log("Button pressed");
+		
+		$.ajax({
+			method: "POST",
+			url: "http://dev.msx-center.com/upload",
+			processData: true,
+			data: {
+				thread_id: 1,
+				content: editor.serialize()["element-0"].value
+			}
+		})
+		.done(function(msg) {
+			alert("Data saved");
+		});
+	});
+</script>
+{% endblock %}

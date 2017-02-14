@@ -1,0 +1,30 @@
+{% extends "layout/template-withoutnavbar.html" %}
+{% block title %}MSX Center - Sign in{% endblock %}
+{% block headertitle %}Sign in to MSX Center{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+	{% if messages %}
+		<div class="alert alert-danger" role="alert">
+			<strong>Error: </strong>
+			{% for message in messages %}
+				{{ message }}
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endwith %}
+<div class="panel-body">
+	<form method="POST" action="{{ url_for('page_signin') }}">
+		<div class="form-group">
+			<label class="control-label" for="signin-email">Email address</label>
+			<input class="form-control" type="email" placeholder="user@example.com" name="signin-email">
+		</div>
+		<div class="form-group">
+			<label class="control-label" for="signin-password">Password </label>
+			<input class="form-control" type="password" name="signin-password">
+			<p id="forgot-password"><a href="{{ url_for('page_resetpassword') }}">Forgot your password?</a></p>
+		</div>
+		<button class="btn btn-default btn-success btn-block" type="submit">Sign in</button>
+	</form>
+</div>
+<div id="signin-createaccount" class="panel-body"><span>New here? <a href="{{ url_for('page_createaccount') }}">Create your account</a>!</span></div>
+{% endblock %}
