@@ -114,40 +114,42 @@
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript">
 
-// Initialize MediumEditor
-var toolbarOptions = [
-	[{ 'header': [1, 2, 3, false] }],
-	[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-	['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-	[{ 'color': [] },],          // dropdown with defaults from theme
-	['image', 'blockquote', 'code-block'],
-	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-	[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+	// Initialize MediumEditor
+	var toolbarOptions = [
+		[{ 'header': [1, 2, 3, false] }],
+		[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+		['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+		[{ 'color': [] },],          // dropdown with defaults from theme
+		['image', 'blockquote', 'code-block'],
+		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
 
-];
-var quill = new Quill('#quillEditor' , {
-	modules : {
-		toolbar: toolbarOptions
-	},
-	theme: 'snow'
-});
+	];
+	var quill = new Quill('#quillEditor' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
 
 	// Initialize popovers
 	$(function () {
 		$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'focus'})
-	})
+	});
 
     // Attach event to button
-    $("#submitButton").click(function () {
+    $("#submitButton").click(function (e) {
+		e.preventDefault();
+
         console.log("Button pressed");
-        
+
         $.ajax({
             method: "POST",
             url: "http://dev.msx-center.com/upload",
             processData: true,
             data: {
                 thread_id: 1,
-                content: editor.serialize()["element-0"].value
+                content: quill.root.innerHTML
             }
         })
         .done(function(msg) {

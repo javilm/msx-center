@@ -59,7 +59,7 @@
 			processData: true,
 			data: {
 				thread_id: 1,
-				content: editor.serialize()["element-0"].value
+				content: quill.getContents()
 			}
 		})
 		.done(function(msg) {
