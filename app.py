@@ -1,4 +1,4 @@
-import os, string, hashlib, random, re
+import os, string, hashlib, random, re, enum, socket
 from datetime import datetime
 from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session
 from flask_mail import Mail, Message
@@ -268,19 +268,19 @@ class ConversationLounge(db.Model):
 
 		# Lounge name in several languages
 		self.name_en = name_en
-		self.name_ja = name_ja or name_en
-		self.name_es = name_es or name_en
-		self.name_nl = name_nl or name_en
-		self.name_pt = name_pt or name_en
-		self.name_kr = name_kr or name_en
+		self.name_ja = name_ja
+		self.name_es = name_es
+		self.name_nl = name_nl
+		self.name_pt = name_pt
+		self.name_kr = name_kr
 
 		# Lounge description in several languages
 		self.desc_en = desc_en
-		self.desc_ja = desc_ja or name_en
-		self.desc_es = desc_es or name_en
-		self.desc_nl = desc_nl or name_en
-		self.desc_pt = desc_pt or name_en
-		self.desc_kr = desc_kr or name_en
+		self.desc_ja = desc_ja
+		self.desc_es = desc_es
+		self.desc_nl = desc_nl
+		self.desc_pt = desc_pt
+		self.desc_kr = desc_kr
 
 		# Flags and metadata
 		self.allows_anonymous = False
@@ -290,10 +290,17 @@ class ConversationLounge(db.Model):
 		self.allows_bad_reputation = False
 		self.staff_only = True
 		self.is_visible = True
-		self.is_readonlh = False
+		self.is_readonly = False
 		self.num_threads = 99
 		self.priority = 10
 		self.color_class = 'success'
+
+	def add_thread(self, thread):
+		thread.lounge_id = self.id
+		db.session.add(thread)
+		db.session.commit()
+		self.num_threads = db.session.query(ConversationThread).filter_by(lounge_id=self.id).count()	# Recount to make it accurate
+
 class ConversationThread(db.Model):
 	__tablename__ = 'threads'
 
@@ -309,15 +316,76 @@ class ConversationThread(db.Model):
 	is_popular = db.Column(db.Boolean)
 	is_trending = db.Column(db.Boolean)
 	is_sticky = db.Column(db.Boolean)
-	# The three fields below can be pulled from the backref to the lounge
-	#allows_anonymous = db.Column(db.Boolean)
-	#allows_nicknames = db.Column(db.Boolean)
-	#allows_unverified = db.Column(db.Boolean)
 	num_views = db.Column(db.Integer)
 	num_messages = db.Column(db.Integer)
 	first_post_date = db.Column(db.DateTime)
 	last_post_date = db.Column(db.DateTime)
 
+	def __init__(self, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
+		self.lounge_id = None
+		self.title_en = title_en
+		self.title_ja = title_ja
+		self.title_nl = title_nl
+		self.title_es = title_es
+		self.title_pt = title_pt
+		self.title_kr = title_kr
+		self.is_popular = False
+		self.is_trending = False
+		self.is_sticky = False
+		self.num_views = 0
+		self.num_messages = 0
+		self.first_post_date = datetime.utcnow()
+		self.last_post_date = self.first_post_date
+
+class ConversationMessage(db.Model):
+	__tablename__ = 'messages'
+
+	class PostAsType(enum.Enum):
+		ANON = 'Anonymous'
+		REALNAME = 'Real name'
+		NICKNAME = 'Nickname'
+
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	user = db.relationship('User', backref=db.backref('messages', lazy='dynamic'))
+	body_en = db.Column(db.String())
+	body_ja = db.Column(db.String())
+	body_nl = db.Column(db.String())
+	body_es = db.Column(db.String())
+	body_pt = db.Column(db.String())
+	body_kr = db.Column(db.String())
+	score = db.Column(db.Integer)				# Message score. Calculated from the likes and dislikes
+	post_as = db.Column(db.Enum(PostAsType))
+	date_posted = db.Column(db.DateTime)
+	is_reported = db.Column(db.Boolean)			# Reported for moderation
+	is_hidden = db.Column(db.Boolean)			# Hidden by administration for any motive
+	is_moderated = db.Column(db.Boolean)		# Hidden because it was moderated
+	is_deleted = db.Column(db.Boolean)			# Deleted by the user (data remains in the database)
+	is_staff_favorite = db.Column(db.Boolean)	# Favorited by the staff. Highlighted.
+	remote_ip = db.Column(db.String())
+	remote_host = db.Column(db.String())
+
+	def __init__(self, user, thread, body_en, post_as, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+		if user is None:
+			self.user_id = None
+		else:
+			self.user_id = user.id
+		self.body_en = body_en
+		self.body_ja = body_ja
+		self.body_nl = body_nl
+		self.body_es = body_es
+		self.body_pt = body_pt
+		self.body_kr = body_kr
+		self.score = 0
+		self.post_as = post_as
+		self.date_posted = datetime.utcnow()
+		self.is_reported = False
+		self.is_hidden = False
+		self.is_moderated = False
+		self.is_deleted = False
+		self.is_staff_favorite = False
+		self.remote_ip = remote_ip or request.remote_addr
+		self.remote_host = get_host_by_ip(self.remote_ip)
 
 #######################
 ## APPLICATION SETUP ##
@@ -329,6 +397,7 @@ def create_database_tables():
 	db.create_all()
 
 	# Delete ConversationLounges if there are any
+	ConversationThread.query.delete()
 	ConversationLounge.query.delete()
 
 	# Add initial conversation lounges
@@ -422,6 +491,14 @@ def redirect_to_next():
 	else:
 		url = url_for('page_main')
 	return redirect(url)
+
+def get_host_by_ip(ip):
+	try:
+		data = socket.gethostbyaddr(ip)
+		host = repr(data[0])
+		return host
+	except Exception:
+		return None
 
 ########################
 ## APPLICATION ROUTES ##
@@ -871,12 +948,12 @@ def page_lounge_post(lounge_id):
 		# Get the signed in User (if there's one), or None
 		user = User.get_signed_in_user()
 
-
 		# Validate the user's permissions (the user may be denied posting based on more than one criteria, but
 		# the template will only display the first that matches)
 		user_errors = {}
 		if user is None:
-			user_errors['anonymous'] = True
+			if not lounge.allows_anonymous:
+				user_errors['anonymous'] = True
 		elif user.is_blocked:
 			user_errors['blocked'] = True
 		elif user.is_new and not lounge.allows_new:
@@ -897,39 +974,45 @@ def page_lounge_post(lounge_id):
 		return render_template('lounges/lounges-startconversation.html', **template_options)
 	else:
 		# Accessed the URL using the POST method
-		return "There is nothing here yet"
+
+		# Get all the request parameters in an ImmutableMultiDict
+		dict = request.form
+		app.logger.info("/lounge/%s/new: request.form dictionary: %s" % (lounge_id, dict))
+		if len(dict):
+			# Parameters: title, post_as, message
+			# lounge_id comes from the URI
+			# Possible errors:
+			#	- lounge does not exist
+			#	- failed validation (empty title, anon user in non-anon lounge, etc)
+			#	- empty message
+			thread = ConversationThread(title_en=dict['title'])
+			lounge = ConversationLounge.query.filter_by(id=lounge_id).first()
+			lounge.add_thread(thread)
+			return "Your message has been posted. This is a temporary message."
+		else:
+			# This is an error, nothing was submitted. Often the case when bots attack the site.
+			pass
+
+		# extract images
+		#root = LH.fromstring(dict['message'])
+		#for el in root.iter('img'):
+		#	img = Image(el.attrib['src'])
+		#	db.session.add(img)
+		#	db.session.commit()
+		#	img.save('/www/javi_lavandeira/dev.msx-center.com/ftproot/htdocs/static/image%s.%s' % (img.id, img.ext()))
+		#	el.attrib['src'] = 'http://dev.msx-center.com/static/image%s.%s' % (img.id, img.ext())
+		#	app.logger.info("/lounge/%s/new: Saved image element: %s" % (lounge_id, el))
+
+		#app.logger.info("Result: %s" % LH.tostring(root))
+
 
 #########################################################
 ## XXX Routes below are tests/development/examples XXX ##
 #########################################################
 
-@app.route('/editor', methods=['GET', 'POST'])
+@app.route('/editor', methods=['GET'])
 def page_editortest():
-	if request.method == 'GET':
-		return render_template('tests/quill-editor.html')
-	elif request.method == 'POST':
-		app.logger.info("/editor: Accessed the /editor URL with the %s method" % request.method)
-
-		# Log request.form
-		dict = request.form
-		app.logger.info("/editor: request.form dictionary: %s" % dict)
-		app.logger.info("/editor: The POST arguments dictionary has %s items." % len(dict))
-		if len(dict):
-			for key in dict.keys():
-				app.logger.info("/editor: POST[%s]: %s" % (key, dict[key]))
-
-		# Log request.args
-		dict = request.args
-		app.logger.info("/editor: request.args dictionary: %s" % dict)
-		app.logger.info("/editor: The POST arguments dictionary has %s items." % len(dict))
-		if len(dict):
-			for key in dict.keys():
-				app.logger.info("/editor: POST[%s]: %s" % (key, dict[key]))
-		
-		return "/editor: You POSTed something to the page"
-	else:
-		app.logger.info("/editor: Accessed the /medium-editor URL with the unsupported %s method" % request.method)
-		return "You accessed this page using the %s method" % request.method
+	return render_template('tests/quill-editor.html')
 		
 @app.route('/upload', methods=['GET', 'POST'])
 def page_upload():

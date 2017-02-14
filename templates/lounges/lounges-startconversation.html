@@ -34,8 +34,8 @@
 			<div class="form-group hidden-xs">
 				<label class="control-label">Permissions </label>
 				<div class="btn-group btn-group-justified" role="group">
-					<a class="btn {% if lounge.allows_anonymous_posts %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-anonymoususers" role="button" tabindex="0" href="#" data-toggle="popover" title="Anonymous users" data-content="Anonymous users are visitors who haven't signed in to MSX Center.">Anonymous </a>
-					<a class="btn {% if lounge.allows_new_members %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-newmembers" role="button" tabindex="1" href="#" data-toggle="popover" title="New members" data-content="New members are those who have been active for less than a week, or have posted less than 10 messages.">New members</a>
+					<a class="btn {% if lounge.allows_anonymous %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-anonymoususers" role="button" tabindex="0" href="#" data-toggle="popover" title="Anonymous users" data-content="Anonymous users are visitors who haven't signed in to MSX Center.">Anonymous </a>
+					<a class="btn {% if lounge.allows_new %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-newmembers" role="button" tabindex="1" href="#" data-toggle="popover" title="New members" data-content="New members are those who have been active for less than a week, or have posted less than 10 messages.">New members</a>
 					<a class="btn {% if lounge.allows_unverified %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-unverifiedmembers" role="button" tabindex="2" href="#" data-toggle="popover" title="Unverified users" data-content="Unverified members are those whose identify we haven't confirmed yet. Verified members are those who we have confirmed they are who they say they are.">Unverified members</a>
 					<a class="btn {% if lounge.allows_nicknames %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-nicknames" role="button" tabindex="4" href="#" data-toggle="popover" title="Nicknames" data-content="Some lounges accept posting using nicknames, some don't.">Nicknames </a></div>
 			</div>
@@ -80,37 +80,40 @@
 					<p>Sorry, you can't post lounge because your reputation is too low. If you feel this is a mistake, please let us know in the Support lounge.</p>
 					<p>Are you playing funny games? ;-)</p>
 				</div>
-			{%- endif -%}
+			{%- else -%}
 
-			{% if lounge.allows_nicknames %}
-			<div class="form-group">
-				<label class="control-label">Post as</label>
-				<select class="form-control" {{form_status}}>
-					<option value="13">My real name: Javi Lavandeira</option>
-					<option value="14">My nickname: JaviLM</option>
-					{% if lounge.allows_anonymous %}
-						<option value="14">Anonymous (your identity will not be shown)</option>
-					{% endif %}
-				</select>
-			</div>
-			{% endif %}
-			<div class="form-group">
-				<label class="control-label">Conversation title</label>
-				<input class="form-control" type="text" {{form_status}}>
-			</div>
-			<div class="form-group">
-				<label class="control-label">Your message</label>
-				<div class="form-control" id="quillEditor" {{form_status}}></div>
-			</div>
-			<div class="form-group">
-				<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post new conversation</button>
-			</div>
+				{% if user and lounge.allows_nicknames %}
+				<div class="form-group">
+					<label class="control-label">Post as</label>
+					<select id="field_post_as" name="post_as" class="form-control" {{form_status}}>
+						<option value="1">My real name: Javi Lavandeira</option>
+						<option value="2">My nickname: JaviLM</option>
+						{% if lounge.allows_anonymous %}
+							<option value="3">Anonymous (your identity will not be shown)</option>
+						{% endif %}
+					</select>
+				</div>
+				{% endif %}
+				<div class="form-group">
+					<label class="control-label">Conversation title</label>
+					<input id="field_conversation_title" name="message_title" class="form-control" type="text" {{form_status}}>
+				</div>
+				<div class="form-group">
+					<label class="control-label">Your message</label>
+					<p class="help-text">Enter your message below. Use the toolbar to style the text, add code and images. The message area will expand as needed.</p>
+					<div class="form-control" id="quillEditor" {{form_status}}></div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post new conversation</button>
+				</div>
+			{%- endif %}
 
 		</form>
 	</div>
 </div>
 {% endblock %}
 {% block extrajs %}
+{% if not errors %}
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript">
 
@@ -132,31 +135,36 @@
 		theme: 'snow'
 	});
 
-	// Initialize popovers
-	$(function () {
-		$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'focus'})
-	});
-
     // Attach event to button
     $("#submitButton").click(function (e) {
 		e.preventDefault();
-
         console.log("Button pressed");
 
         $.ajax({
             method: "POST",
-            url: "http://dev.msx-center.com/upload",
+            url: "{{ url_for('page_lounge_post', lounge_id=lounge.id) }}",
             processData: true,
             data: {
-                thread_id: 1,
-                content: quill.root.innerHTML
+                lounge_id: {{ lounge.id }},
+				post_as: $('#field_post_as').val(),
+				title: $('#field_conversation_title').val(),
+                message: quill.root.innerHTML
             }
         })
         .done(function(msg) {
-            alert("Data saved");
+            alert(msg);
         });
+		quill.enable(false);
+		$("#submitButton").prop("disabled", true);
+		$("#quillEditor").prop("disabled", true);
+		$("#field_conversation_title").prop("disabled", true);
     });
-
-
+</script>
+{% endif %}
+<script type="text/javascript">
+	// Initialize popovers
+	$(function () {
+		$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'hover'})
+	});
 </script>
 {% endblock %}
