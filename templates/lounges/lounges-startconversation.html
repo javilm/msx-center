@@ -93,6 +93,8 @@
 						{% endif %}
 					</select>
 				</div>
+				{% else %}
+					<input id="field_post_as" type="hidden" name="post_as" value="none">
 				{% endif %}
 				<div class="form-group">
 					<label class="control-label">Conversation title</label>
@@ -154,10 +156,10 @@
         .done(function(msg) {
             alert(msg);
         });
-		quill.enable(false);
-		$("#submitButton").prop("disabled", true);
-		$("#quillEditor").prop("disabled", true);
-		$("#field_conversation_title").prop("disabled", true);
+		//quill.enable(false);
+		//$("#submitButton").prop("disabled", true);
+		//$("#quillEditor").prop("disabled", true);
+		//$("#field_conversation_title").prop("disabled", true);
     });
 </script>
 {% endif %}

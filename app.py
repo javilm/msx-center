@@ -1,10 +1,12 @@
-import os, string, hashlib, random, re, enum, socket
+import os, string, hashlib, random, re, enum, socket, json
 from datetime import datetime
-from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session
+from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
-from validate_email import validate_email
+from io import BytesIO
 from lxml import etree
+from PIL import Image
+from validate_email import validate_email
 import lxml.html as LH
 
 from server import run_server
@@ -210,15 +212,17 @@ class VerificationKey(db.Model):
 		return "<VerificationKey(user='%s', key='%s', creation_date='%s')>" % (
 			self.user.real_name, self.key, self.creation_date)
 
-class Image(db.Model):
+class SiteImage(db.Model):
 	"""Stores all images in the site."""
 	__tablename__ = 'images'
 
 	id = db.Column(db.Integer, primary_key=True)
 	md5_hash = db.Column(db.String(32), unique=True)
 	mime_type = db.Column(db.String())
-	original_data = db.Column(db.LargeBinary)
+	original_data = db.Column(db.LargeBinary)	# Stores the original image (to be resized/watermarked in the future)
+	processed_data = db.Column(db.LargeBinary)	# The resized/watermarked image
 	upload_date = db.Column(db.DateTime)
+	needs_processing = db.Column(db.Boolean)
 
 	def __init__(self, datauri):
 		"""Extracts the Image data from the data-uri 'data:image/png;base64,iVBORw0KGgo...' and
@@ -227,14 +231,31 @@ class Image(db.Model):
 		self.original_data = datauri.split(',')[1].decode('base64')
 		self.upload_date = datetime.utcnow()
 		self.md5_hash = hashlib.md5(self.original_data).hexdigest()
+		self.process()
 
-	def ext(self):
+	def _ext(self):
 		return self.mime_type.split('/')[1]
 
-	def save(self, filename):
-		fh = open(filename, "wb")
-		fh.write(self.original_data)
-		fh.close()
+	def save_to_file(self, filename):
+		if self.needs_processing:
+			self.process()
+
+		with open(filename, "wb") as fh:
+			fh.write(self.processed_data)
+
+	def process(self):
+		# Read image in memory
+		original = Image.open(BytesIO(self.original_data))
+		# If image doesn't fit in 1980x1080 (HD) then scale it
+		if original.size[0] > 1980 or original.size[1] > 1080:	# Width
+			original.thumbnail((1980, 1080), resample=Image.LANCZOS)
+		
+		# Store the resulting image in processed_data
+		processed = BytesIO()
+		original.save(processed, string.upper(self._ext()))
+		self.processed_data = processed.getvalue()
+		self.needs_processing = False
+		del original, processed
 
 class ConversationLounge(db.Model):
 	__tablename__ = 'lounges'
@@ -297,9 +318,10 @@ class ConversationLounge(db.Model):
 
 	def add_thread(self, thread):
 		thread.lounge_id = self.id
+		db.session.add(self)
 		db.session.add(thread)
-		db.session.commit()
 		self.num_threads = db.session.query(ConversationThread).filter_by(lounge_id=self.id).count()	# Recount to make it accurate
+		db.session.commit()
 
 class ConversationThread(db.Model):
 	__tablename__ = 'threads'
@@ -337,6 +359,14 @@ class ConversationThread(db.Model):
 		self.first_post_date = datetime.utcnow()
 		self.last_post_date = self.first_post_date
 
+	def add_message(self, message):
+		message.thread_id = self.id
+		db.session.add(self)
+		db.session.add(message)
+		self.num_messages = db.session.query(ConversationMessage).filter_by(thread_id=self.id).count()	# Recount to make it accurate
+		self.last_post_date = datetime.utcnow()
+		db.session.commit()
+
 class ConversationMessage(db.Model):
 	__tablename__ = 'messages'
 
@@ -346,6 +376,8 @@ class ConversationMessage(db.Model):
 		NICKNAME = 'Nickname'
 
 	id = db.Column(db.Integer, primary_key=True)
+	thread_id = db.Column(db.Integer, db.ForeignKey('threads.id'))
+	thread = db.relationship('ConversationThread', backref=db.backref('messages', lazy='dynamic'))
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	user = db.relationship('User', backref=db.backref('messages', lazy='dynamic'))
 	body_en = db.Column(db.String())
@@ -365,11 +397,12 @@ class ConversationMessage(db.Model):
 	remote_ip = db.Column(db.String())
 	remote_host = db.Column(db.String())
 
-	def __init__(self, user, thread, body_en, post_as, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+	def __init__(self, user, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
 		if user is None:
 			self.user_id = None
 		else:
 			self.user_id = user.id
+		self.thread_id = None
 		self.body_en = body_en
 		self.body_ja = body_ja
 		self.body_nl = body_nl
@@ -377,7 +410,7 @@ class ConversationMessage(db.Model):
 		self.body_pt = body_pt
 		self.body_kr = body_kr
 		self.score = 0
-		self.post_as = post_as
+		self.post_as = post_as	# ANON, REALNAME or NICKNAME
 		self.date_posted = datetime.utcnow()
 		self.is_reported = False
 		self.is_hidden = False
@@ -386,6 +419,19 @@ class ConversationMessage(db.Model):
 		self.is_staff_favorite = False
 		self.remote_ip = remote_ip or request.remote_addr
 		self.remote_host = get_host_by_ip(self.remote_ip)
+
+		self.extract_images()
+
+	def extract_images(self):
+		root = LH.fromstring(self.body_en)
+
+		for element in root.iter('img'):
+			img = SiteImage(element.attrib['src'])
+			db.session.add(img)
+			db.session.commit()
+			element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
+
+		self.body_en = LH.tostring(root)
 
 #######################
 ## APPLICATION SETUP ##
@@ -397,6 +443,7 @@ def create_database_tables():
 	db.create_all()
 
 	# Delete ConversationLounges if there are any
+	ConversationMessage.query.delete()
 	ConversationThread.query.delete()
 	ConversationLounge.query.delete()
 
@@ -935,6 +982,10 @@ def page_lounges_list():
 @app.route('/lounge/<int:lounge_id>/new', methods=['GET', 'POST'])
 def page_lounge_post(lounge_id):
 	session['next'] = url_for('page_lounge_post', lounge_id=lounge_id)
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
 	if request.method == 'GET':
 		# Accessed the URL using the GET method
 
@@ -944,9 +995,6 @@ def page_lounge_post(lounge_id):
 		# Return a 404 error if the lounge doesn't exist
 		if lounge is None:
 			abort(404)
-
-		# Get the signed in User (if there's one), or None
-		user = User.get_signed_in_user()
 
 		# Validate the user's permissions (the user may be denied posting based on more than one criteria, but
 		# the template will only display the first that matches)
@@ -962,7 +1010,7 @@ def page_lounge_post(lounge_id):
 			user_errors['unverified'] = True
 		elif not user.is_staff and lounge.staff_only:
 			user_errors['not_staff'] = True
-		elif user.reputation < 0 and not loung.allows_bad_reputation:
+		elif user.reputation < 0 and not lounge.allows_bad_reputation:
 			user_errors['bad_reputation'] = True
 
 		template_options = {
@@ -973,7 +1021,7 @@ def page_lounge_post(lounge_id):
 
 		return render_template('lounges/lounges-startconversation.html', **template_options)
 	else:
-		# Accessed the URL using the POST method
+		# Accessed the URL using the POST method, usually via AJAX
 
 		# Get all the request parameters in an ImmutableMultiDict
 		dict = request.form
@@ -985,62 +1033,59 @@ def page_lounge_post(lounge_id):
 			#	- lounge does not exist
 			#	- failed validation (empty title, anon user in non-anon lounge, etc)
 			#	- empty message
-			thread = ConversationThread(title_en=dict['title'])
 			lounge = ConversationLounge.query.filter_by(id=lounge_id).first()
-			lounge.add_thread(thread)
-			return "Your message has been posted. This is a temporary message."
+
+			# Validate the user's permissions to post
+			user_errors = {}
+			if user is None:
+				# Anonymous user is only allowed to post if the lounge allows anonymous posts, very easy to check
+				if lounge.allows_anonymous:
+					post_as = 'ANON'
+				else:
+					user_errors['anonymous'] = True
+			# At this point the user is not anonymous, so we have to check the user's status (blocked, rep, etc) and 
+			# the lounge's access permissions to see whether he's allowed to post
+			elif user.is_blocked:
+				user_errors['blocked'] = True
+			elif user.is_new and not lounge.allows_new:
+				user_errors['new'] = True
+			elif not user.is_verified and not lounge.allows_unverified:
+				user_errors['unverified'] = True
+			elif not user.is_staff and lounge.staff_only:
+				user_errors['not_staff'] = True
+			elif user.reputation < 0 and not lounge.allows_bad_reputation:
+				user_errors['bad_reputation'] = True
+			# At this point the user is allowed to post. If the user requests to post as anonymous or using a nickname
+			# then check whether the lounge allows it.
+			elif dict['post_as'] == '3' and lounge.allows_anonymous:
+				post_as = 'ANON'
+			elif dict['post_as'] == '2' and lounge.allows_nicknames:
+				post_as = 'NICKNAME'
+			else:
+				post_as = 'REALNAME'
+
+			if not user_errors:
+				thread = ConversationThread(title_en=dict['title'])
+				lounge.add_thread(thread)
+				app.logger.info("/lounge/%s/new: About to create messaage" % lounge_id)
+				message = ConversationMessage(user, post_as, dict['message'])
+				app.logger.info("/lounge/%s/new: About to add messaage to thread %s" % (lounge_id, thread.id))
+				thread.add_message(message)
+				return "Your message has been posted. This is a temporary message."
+			else:
+				return json.dumps(user_errors, sort_keys=True, indent=4)
 		else:
 			# This is an error, nothing was submitted. Often the case when bots attack the site.
-			pass
+			return "The input dictionary was empty"
 
-		# extract images
-		#root = LH.fromstring(dict['message'])
-		#for el in root.iter('img'):
-		#	img = Image(el.attrib['src'])
-		#	db.session.add(img)
-		#	db.session.commit()
-		#	img.save('/www/javi_lavandeira/dev.msx-center.com/ftproot/htdocs/static/image%s.%s' % (img.id, img.ext()))
-		#	el.attrib['src'] = 'http://dev.msx-center.com/static/image%s.%s' % (img.id, img.ext())
-		#	app.logger.info("/lounge/%s/new: Saved image element: %s" % (lounge_id, el))
-
-		#app.logger.info("Result: %s" % LH.tostring(root))
-
-
-#########################################################
-## XXX Routes below are tests/development/examples XXX ##
-#########################################################
-
-@app.route('/editor', methods=['GET'])
-def page_editortest():
-	return render_template('tests/quill-editor.html')
-		
-@app.route('/upload', methods=['GET', 'POST'])
-def page_upload():
-	if request.method == 'GET':
-		return "/upload: You shouldn't be seeing this"
+@app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])
+def send_image(image_id, dummy_filename):
+	image = SiteImage.query.filter_by(id=image_id).first()
+	if image is not None:
+		byte_io = BytesIO(image.processed_data)
+		return send_file(byte_io, mimetype=image.mime_type)
 	else:
-		app.logger.info("/upload: Accessed the /upload URL with the %s method" % request.method)
-
-		# Log request.form
-		dict = request.form
-		app.logger.info("/upload: request.form dictionary: %s" % dict)
-		app.logger.info("/upload: The POST arguments dictionary has %s items." % len(dict))
-		if len(dict):
-			for key in dict.keys():
-				app.logger.info("/upload: POST[%s]: %s" % (key, dict[key]))
-
-		root = LH.fromstring(dict['content'])
-		for el in root.iter('img'):
-			img = Image(el.attrib['src'])
-			db.session.add(img)
-			db.session.commit()
-			img.save('/www/javi_lavandeira/dev.msx-center.com/ftproot/htdocs/static/image%s.%s' % (img.id, img.ext()))
-			el.attrib['src'] = 'http://dev.msx-center.com/static/image%s.%s' % (img.id, img.ext())
-			app.logger.info("Element: %s" % el)
-
-		app.logger.info("Result: %s" % LH.tostring(root))
-
-		return "/upload: You POSTed something to the page"
+		abort(404)
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##
