@@ -1,0 +1,149 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - Conversation lounges{% endblock %}
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/lightbox.min.css">
+{% endblock %}
+{% block extrajs %}
+<script src="/static/js/lightbox.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-lg-offset-2 col-md-8 col-md-offset-2">
+		<div>
+			<ol class="breadcrumb site-breadcrumbs">
+				<li><a href="{{ url_for('page_lounges_list') }}"><span>Lounges </span></a></li>
+				<li><a href="{{ url_for('page_lounge', lounge_id=lounge.id, slug=lounge.slug) }}"><span>{{ lounge.name_en }}</span></a></li>
+				<li><span>{{ thread.title_en }}</span></li>
+			</ol>
+			<h2>{{ thread.title_en }}</h2>
+		</div>
+	</div>
+</div>
+
+			<!-- START Original poster -->
+            <div class="row">
+                <div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-3" id="original-poster-avatar"><img src="/static/img/justincyr-temp-avatar-4.png">
+                    <address>
+    <strong><a href="#">{{ user.real_name }}</a></strong><br>
+    Joined {{ user.registration_date.strftime('%d/%b/%Y') }}<br>
+</address>
+                    <div><i class="glyphicon glyphicon-user"></i><i class="glyphicon glyphicon-search"></i><i class="glyphicon glyphicon-heart"></i><i class="glyphicon glyphicon-star"></i></div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-9">
+                    <div class="panel panel-danger">
+                        <div class="panel-body">
+							{{ thread.messages[0].body_en|safe }}
+                        </div>
+                        <div class="panel-footer"><span>Posted on January 1st, 1970 at 9:41am</span></div>
+                    </div>
+                </div>
+            </div>
+			<!-- END Original poster -->
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h3>3 replies </h3>
+				</div>
+            </div>
+
+			<!-- START Post reply -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading"><img src="/static/img/justincyr-temp-avatar-1.png" class="poster-avatar">
+                            <h3 class="panel-title">Jane Doe</h3>
+                            <div class="message-date"><span>Posted on January 1st, 1970 at 9:41am </span></div>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie nibh ante, sit amet venenatis dolor facilisis et. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed felis
+                                eros, posuere a turpis eu, volutpat dapibus dolor. Donec et libero neque. Nulla non ligula ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras sed ullamcorper ante, eu
+                                mattis felis. Aliquam commodo fermentum dignissim. Morbi molestie aliquam massa, nec euismod ante volutpat quis. Nulla facilisis eros ut ligula volutpat hendrerit. Curabitur mattis lacus luctus urna egestas maximus. </p>
+                            <p>Remember to remove the &lt;span&gt; from the header and footer of these panels when creating the actual HTML. The text should be naked inside a &lt;div&gt;.</p>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="message-score"><span><strong>Standing:</strong> Good</span></div>
+                            <div class="message-controls"><i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-down"></i><i class="glyphicon glyphicon-flag"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- END Post reply -->
+
+			<!-- START Post reply -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><img src="/static/img/justincyr-temp-avatar-3.png" class="poster-avatar">
+                            <h3 class="panel-title">Donald Drumpf</h3>
+                            <div class="message-date"><span>Posted on January 1st, 1970 at 9:42am </span></div>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie nibh ante, sit amet venenatis dolor facilisis et. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed felis
+                                eros, posuere a turpis eu, volutpat dapibus dolor. Donec et libero neque. Nulla non ligula ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras sed ullamcorper ante, eu
+                                mattis felis. Aliquam commodo fermentum dignissim. Morbi molestie aliquam massa, nec euismod ante volutpat quis. Nulla facilisis eros ut ligula volutpat hendrerit. Curabitur mattis lacus luctus urna egestas maximus. </p>
+                            <p>Remember to remove the &lt;span&gt; from the header and footer of these panels when creating the actual HTML. The text should be naked inside a &lt;div&gt;.</p>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="message-score"><span><strong>Standing:</strong> Normal</span></div>
+                            <div class="message-controls"><i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-down"></i><i class="glyphicon glyphicon-flag"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- END Post reply -->
+
+			<!-- START Post reply -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading"><img src="/static/img/justincyr-temp-avatar-2.png" class="poster-avatar">
+                            <h3 class="panel-title">Donald Drumpf</h3>
+                            <div class="message-date"><span>Posted on January 1st, 1970 at 9:43am </span></div>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie nibh ante, sit amet venenatis dolor facilisis et. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed felis
+                                eros, posuere a turpis eu, volutpat dapibus dolor. Donec et libero neque. Nulla non ligula ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras sed ullamcorper ante, eu
+                                mattis felis. Aliquam commodo fermentum dignissim. Morbi molestie aliquam massa, nec euismod ante volutpat quis. Nulla facilisis eros ut ligula volutpat hendrerit. Curabitur mattis lacus luctus urna egestas maximus. </p>
+                            <p>Remember to remove the &lt;span&gt; from the header and footer of these panels when creating the actual HTML. The text should be naked inside a &lt;div&gt;.</p>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="message-score"><span><strong>Standing:</strong> Bad</span></div>
+                            <div class="message-controls"><i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-down"></i><i class="glyphicon glyphicon-flag"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- END Post reply -->
+
+			<!-- START separator -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <hr>
+                </div>
+            </div>
+			<!-- END separator -->
+
+			<!-- START Post form -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <h3>Post a reply</h3>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">(Javascript editor toolbar goes here)</h3></div>
+                        <div class="panel-body">
+                            <p>(Javascript editor input area goes here)</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button">Post reply</button>
+                </div>
+            </div>
+			<!-- END Post form -->
+
+			<!-- START separator -->
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+                    <hr>
+                </div>
+            </div>
+			<!-- END separator -->
+{% endblock %}

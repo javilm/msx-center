@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from io import BytesIO
 from lxml import etree
 from PIL import Image
+from slugify import slugify
 from validate_email import validate_email
 import lxml.html as LH
 
@@ -35,6 +36,14 @@ app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
 class User(db.Model):
 	__tablename__ = 'users'
 
+	class PreferredLanguageType(enum.Enum):
+		EN = 'en'
+		JA = 'ja'
+		ES = 'es'
+		PT = 'pt'
+		NL = 'nl'
+		KR = 'kr'
+
 	id = db.Column(db.Integer, primary_key=True)
 	real_name = db.Column(db.String)
 	nickname = db.Column(db.String, unique=True)
@@ -49,6 +58,15 @@ class User(db.Model):
 	is_superuser = db.Column(db.Boolean)
 	is_staff = db.Column(db.Boolean)
 	reputation = db.Column(db.Integer)
+	twitter = db.Column(db.String())
+	facebook = db.Column(db.String())
+	linkedin = db.Column(db.String())
+	about = db.Column(db.String())
+	avatar_original = db.Column(db.LargeBinary)
+	avatar_processed = db.Column(db.LargeBinary)
+	preferred_language = db.Column(db.Enum(PreferredLanguageType))
+	slug = db.Column(db.String())
+	# timezone = XXX
 
 	@classmethod
 	def generate_random_password(cls, length=8):
@@ -96,6 +114,7 @@ class User(db.Model):
 		self.is_staff = False
 		self.reputation = 0
 		self.set_password(password)
+		self.slug = slugify(slugify(real_name))
 
 	def set_password(self, password=None):
 		"""Sets the user password. The plaintext form is kept in the object, but not saved to 
@@ -284,6 +303,7 @@ class ConversationLounge(db.Model):
 	num_threads = db.Column(db.Integer)
 	priority = db.Column(db.Integer)
 	color_class = db.Column(db.String())
+	slug = db.Column(db.String())
 
 	def __init__(self, name_en, desc_en, name_ja=None, name_es=None, name_nl=None, name_pt=None, name_kr=None, desc_ja=None, desc_es=None, desc_nl=None, desc_pt=None, desc_kr=None):
 
@@ -315,6 +335,7 @@ class ConversationLounge(db.Model):
 		self.num_threads = 99
 		self.priority = 10
 		self.color_class = 'success'
+		self.slug = slugify(unicode(name_en))
 
 	def add_thread(self, thread):
 		thread.lounge_id = self.id
@@ -342,6 +363,7 @@ class ConversationThread(db.Model):
 	num_messages = db.Column(db.Integer)
 	first_post_date = db.Column(db.DateTime)
 	last_post_date = db.Column(db.DateTime)
+	slug = db.Column(db.String())
 
 	def __init__(self, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
 		self.lounge_id = None
@@ -358,6 +380,7 @@ class ConversationThread(db.Model):
 		self.num_messages = 0
 		self.first_post_date = datetime.utcnow()
 		self.last_post_date = self.first_post_date
+		self.slug = slugify(unicode(title_en))
 
 	def add_message(self, message):
 		message.thread_id = self.id
@@ -417,7 +440,7 @@ class ConversationMessage(db.Model):
 		self.is_moderated = False
 		self.is_deleted = False
 		self.is_staff_favorite = False
-		self.remote_ip = remote_ip or request.remote_addr
+		self.remote_ip = remote_ip or request.headers['X-Real-Ip']
 		self.remote_host = get_host_by_ip(self.remote_ip)
 
 		self.extract_images()
@@ -427,9 +450,17 @@ class ConversationMessage(db.Model):
 
 		for element in root.iter('img'):
 			img = SiteImage(element.attrib['src'])
-			db.session.add(img)
-			db.session.commit()
+			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
+			tmp_img = SiteImage.query.filter_by(md5_hash=img.md5_hash).first()
+			if tmp_img is None:
+				db.session.add(img)
+				db.session.commit()
+			else:
+				img = tmp_img
 			element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
+			element.attrib['class'] = 'img-responsive'
+			element.attrib['data-lightbox'] = 'Image %s' % img.id
+			del img, tmp_img
 
 		self.body_en = LH.tostring(root)
 
@@ -1067,16 +1098,37 @@ def page_lounge_post(lounge_id):
 			if not user_errors:
 				thread = ConversationThread(title_en=dict['title'])
 				lounge.add_thread(thread)
-				app.logger.info("/lounge/%s/new: About to create messaage" % lounge_id)
 				message = ConversationMessage(user, post_as, dict['message'])
-				app.logger.info("/lounge/%s/new: About to add messaage to thread %s" % (lounge_id, thread.id))
 				thread.add_message(message)
-				return "Your message has been posted. This is a temporary message."
+				return json.dumps({
+					'status': 200,
+					'url': url_for('page_thread', thread_id=thread.id, slug=thread.slug)
+				})
 			else:
 				return json.dumps(user_errors, sort_keys=True, indent=4)
 		else:
 			# This is an error, nothing was submitted. Often the case when bots attack the site.
 			return "The input dictionary was empty"
+
+@app.route('/lounges/<int:lounge_id>/<string:slug>', methods=['GET'])
+def page_lounge(lounge_id, slug):
+	return "You want to see lounge %s (%s), but this is not implemented yet" % (lounge_id, slug)
+
+@app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
+def page_thread(thread_id, slug):
+	session['next'] = url_for('page_thread', thread_id=thread_id, slug=slug)
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+	thread = ConversationThread.query.filter_by(id=thread_id).first()
+
+	if thread is None:
+		abort(404)
+
+	if request.method == 'GET':
+		return render_template('lounges/lounges-thread.html', user=user, thread=thread, lounge=thread.lounge)
+	else:
+		return "POSTing here is not implemented yet"
 
 @app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])
 def send_image(image_id, dummy_filename):

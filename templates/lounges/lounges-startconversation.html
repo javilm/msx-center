@@ -125,7 +125,7 @@
 		[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
 		['bold', 'italic', 'underline', 'strike'],        // toggled buttons
 		[{ 'color': [] },],          // dropdown with defaults from theme
-		['image', 'blockquote', 'code-block'],
+		['link', 'image', 'video', 'blockquote', 'code-block'],
 		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
 		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
 
@@ -146,6 +146,7 @@
             method: "POST",
             url: "{{ url_for('page_lounge_post', lounge_id=lounge.id) }}",
             processData: true,
+			dataType: 'json',
             data: {
                 lounge_id: {{ lounge.id }},
 				post_as: $('#field_post_as').val(),
@@ -153,8 +154,9 @@
                 message: quill.root.innerHTML
             }
         })
-        .done(function(msg) {
-            alert(msg);
+        .done(function(result) {
+			console.log('Redirecting to ' + result.url)
+			window.location = result.url;
         });
 		//quill.enable(false);
 		//$("#submitButton").prop("disabled", true);
