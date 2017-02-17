@@ -1,10 +1,11 @@
-import os, string, hashlib, random, re, enum, socket, json
+import os, string, hashlib, random, re, enum, socket, json, copy
 from datetime import datetime
 from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from io import BytesIO
 from lxml import etree
+from lxml.html.clean import Cleaner
 from PIL import Image
 from slugify import slugify
 from validate_email import validate_email
@@ -18,6 +19,7 @@ app.debug = True
 app.config.from_object(__name__)
 mail = Mail(app)
 db = SQLAlchemy(app)
+html_cleaner = Cleaner(page_structure=True, links=False)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -426,12 +428,12 @@ class ConversationMessage(db.Model):
 		else:
 			self.user_id = user.id
 		self.thread_id = None
-		self.body_en = body_en
-		self.body_ja = body_ja
-		self.body_nl = body_nl
-		self.body_es = body_es
-		self.body_pt = body_pt
-		self.body_kr = body_kr
+		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
+		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
+		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
+		self.body_es = html_cleaner.clean_html(body_es) if body_es else None
+		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
+		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
 		self.score = 0
 		self.post_as = post_as	# ANON, REALNAME or NICKNAME
 		self.date_posted = datetime.utcnow()
@@ -449,7 +451,12 @@ class ConversationMessage(db.Model):
 		root = LH.fromstring(self.body_en)
 
 		for element in root.iter('img'):
+			# Make a copy of the original HTML element
+			tmp_element = copy.copy(element)
+
+			# Generate an image by decoding the Base64 content of the src attribute
 			img = SiteImage(element.attrib['src'])
+
 			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
 			tmp_img = SiteImage.query.filter_by(md5_hash=img.md5_hash).first()
 			if tmp_img is None:
@@ -457,9 +464,20 @@ class ConversationMessage(db.Model):
 				db.session.commit()
 			else:
 				img = tmp_img
-			element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
-			element.attrib['class'] = 'img-responsive'
-			element.attrib['data-lightbox'] = 'Image %s' % img.id
+
+			# Modify the attributes in the copy of the <img...> tag
+			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
+			tmp_element.attrib['class'] = 'img-responsive'
+
+			# Create a new <A ...> element that will contain the modified <IMG ...> tag
+			new = etree.Element("a", href=tmp_element.attrib['src'])
+			new.attrib['data-lightbox'] = 'Images for message %s' % self.id
+			# Add the <img> tag inside the new <a> element
+			new.append(tmp_element)
+
+			# Replace the <img ...> tag in the HTML code with the new <a ...><img ...></a>
+			element.getparent().replace(element, new)
+
 			del img, tmp_img
 
 		self.body_en = LH.tostring(root)
@@ -964,48 +982,7 @@ def page_lounges_list():
 			'num_messages': 3,
 			'last_post_date': datetime.utcnow(),
 			'last_post_username': 'Cras Dapibus'
-		},
-		{
-			'title': "How many kidneys are you selling to donate to Kai's games?",
-			'has_new_messages': False,
-			'num_views': 134,
-			'num_messages': 9823,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Oscar Kenneth Albero'
-		},
-		{
-			'title': "Please donate to my MSX-themed cock ring project",
-			'has_new_messages': False,
-			'num_views': 2,
-			'num_messages': 1,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Oscar Kenneth Albero'
-		},
-		{
-			'title': "Donec vitae finibus orci, faucibus sagittis nunc!!!!! ",
-			'has_new_messages': True,
-			'num_views': 23,
-			'num_messages': 4,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Commodo Sodales'
-		},
-		{
-			'title': "VESTIBULUM BIBENDUM DUI NEC ODIO ULTRICES!",
-			'has_new_messages': False,
-			'num_views': 1,
-			'num_messages': 1,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Lacus Mattis'
-		},
-		{
-			'title': "Lorem ipsum dolor sit MSX consectetur adipiscing elit?",
-			'has_new_messages': False,
-			'num_views': 23,
-			'num_messages': 3,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Cras Dapibus'
 		}
-
 	]
 	session['next'] = url_for('page_lounges_list')
 	return render_template('lounges/lounges-list.html', lounges=lounges, threads=dummy_threads, signed_in=signed_in, user=user)
