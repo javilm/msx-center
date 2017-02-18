@@ -69,6 +69,7 @@ class User(db.Model):
 	preferred_language = db.Column(db.Enum(PreferredLanguageType))
 	slug = db.Column(db.String())
 	# timezone = XXX
+	messages = db.relationship("ConversationMessage", backref="user")
 
 	@classmethod
 	def generate_random_password(cls, length=8):
@@ -244,6 +245,7 @@ class SiteImage(db.Model):
 	processed_data = db.Column(db.LargeBinary)	# The resized/watermarked image
 	upload_date = db.Column(db.DateTime)
 	needs_processing = db.Column(db.Boolean)
+	num_views = db.Column(db.Integer)
 
 	def __init__(self, datauri):
 		"""Extracts the Image data from the data-uri 'data:image/png;base64,iVBORw0KGgo...' and
@@ -252,6 +254,7 @@ class SiteImage(db.Model):
 		self.original_data = datauri.split(',')[1].decode('base64')
 		self.upload_date = datetime.utcnow()
 		self.md5_hash = hashlib.md5(self.original_data).hexdigest()
+		self.num_views = 0
 		self.process()
 
 	def _ext(self):
@@ -306,6 +309,7 @@ class ConversationLounge(db.Model):
 	priority = db.Column(db.Integer)
 	color_class = db.Column(db.String())
 	slug = db.Column(db.String())
+	threads = db.relationship("ConversationThread", backref="lounge")
 
 	def __init__(self, name_en, desc_en, name_ja=None, name_es=None, name_nl=None, name_pt=None, name_kr=None, desc_ja=None, desc_es=None, desc_nl=None, desc_pt=None, desc_kr=None):
 
@@ -351,7 +355,6 @@ class ConversationThread(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	lounge_id = db.Column(db.Integer, db.ForeignKey('lounges.id'))
-	lounge = db.relationship('ConversationLounge', backref=db.backref('threads', lazy='dynamic'))
 	title_en = db.Column(db.String())
 	title_ja = db.Column(db.String())
 	title_nl = db.Column(db.String())
@@ -366,6 +369,7 @@ class ConversationThread(db.Model):
 	first_post_date = db.Column(db.DateTime)
 	last_post_date = db.Column(db.DateTime)
 	slug = db.Column(db.String())
+	messages = db.relationship("ConversationMessage", backref="thread")
 
 	def __init__(self, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
 		self.lounge_id = None
@@ -402,9 +406,7 @@ class ConversationMessage(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	thread_id = db.Column(db.Integer, db.ForeignKey('threads.id'))
-	thread = db.relationship('ConversationThread', backref=db.backref('messages', lazy='dynamic'))
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	user = db.relationship('User', backref=db.backref('messages', lazy='dynamic'))
 	body_en = db.Column(db.String())
 	body_ja = db.Column(db.String())
 	body_nl = db.Column(db.String())
@@ -499,7 +501,7 @@ def create_database_tables():
 	# Add initial conversation lounges
 	l1 = ConversationLounge('General conversation', "This lounge is for general conversation. You're welcome to discuss anything that would be offtopic in the other lounges.")
 	l1.priority = 10
-	l1.color_class = 'success'
+	l1.color_class = 'info'
 	l1.allows_anonymous = False
 	l1.allows_nicknames = False
 	l1.allows_unverified = True
@@ -521,7 +523,7 @@ def create_database_tables():
 
 	l3 = ConversationLounge('Music and graphics', "The lounge for our artists. Talk about graphics, music, sound, and the tools and techniques to create them.")
 	l3.priority = 30
-	l3.color_class = 'warning'
+	l3.color_class = 'info'
 	l3.allows_anonymous = False
 	l3.allows_nicknames = True
 	l3.allows_unverified = True
@@ -532,7 +534,7 @@ def create_database_tables():
 
 	l4 = ConversationLounge('Emulation', "Running emulated systems in modern hardware and conversations about the emulators themselves, rather than the systems being emulated.")
 	l4.priority = 40
-	l4.color_class = 'danger'
+	l4.color_class = 'info'
 	l4.allows_anonymous = False
 	l4.allows_nicknames = True
 	l4.allows_unverified = True
@@ -543,7 +545,7 @@ def create_database_tables():
 
 	l5 = ConversationLounge('Trading and collecting', "Our marketplace. Buy and sell stuff!")
 	l5.priority = 50
-	l5.color_class = 'primary'
+	l5.color_class = 'info'
 	l5.allows_anonymous = False
 	l5.allows_nicknames = False
 	l5.allows_unverified = False
@@ -565,7 +567,7 @@ def create_database_tables():
 
 	l7 = ConversationLounge('Administration', "Lounge for MSX Center staff. Maintenance of the site, developmeint, bugfixes, financing, organization, etc.")
 	l7.priority = 70
-	l7.color_class = 'info'
+	l7.color_class = 'danger'
 	l7.allows_anonymous = False
 	l7.allows_nicknames = False
 	l7.allows_unverified = False
@@ -941,51 +943,16 @@ def page_lounges_list():
 		else:
 			signed_in = True
 
+	# Get all the conversation lounges
 	lounges = ConversationLounge.query.order_by(ConversationLounge.priority)
-	dummy_threads = [
-		{
-			'title': "How many kidneys are you selling to donate to Kai's games?",
-			'has_new_messages': False,
-			'num_views': 134,
-			'num_messages': 9823,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Oscar Kenneth Albero'
-		},
-		{
-			'title': "Please donate to my MSX-themed cock ring project",
-			'has_new_messages': False,
-			'num_views': 2,
-			'num_messages': 1,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Oscar Kenneth Albero'
-		},
-		{
-			'title': "Donec vitae finibus orci, faucibus sagittis nunc!!!!! ",
-			'has_new_messages': True,
-			'num_views': 23,
-			'num_messages': 4,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Commodo Sodales'
-		},
-		{
-			'title': "VESTIBULUM BIBENDUM DUI NEC ODIO ULTRICES!",
-			'has_new_messages': False,
-			'num_views': 1,
-			'num_messages': 1,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Lacus Mattis'
-		},
-		{
-			'title': "Lorem ipsum dolor sit MSX consectetur adipiscing elit?",
-			'has_new_messages': False,
-			'num_views': 23,
-			'num_messages': 3,
-			'last_post_date': datetime.utcnow(),
-			'last_post_username': 'Cras Dapibus'
-		}
-	]
-	session['next'] = url_for('page_lounges_list')
-	return render_template('lounges/lounges-list.html', lounges=lounges, threads=dummy_threads, signed_in=signed_in, user=user)
+
+	# Get the latest 5 threads for each lounge
+	threads = {}
+	for lounge in lounges:
+		threads[lounge.id] = ConversationThread.query.filter(ConversationThread.lounge_id == lounge.id).order_by(ConversationThread.last_post_date).limit(5).all()
+		app.logger.info("/lounges: threads[%s] has %s items" % (lounge.id, threads[lounge.id]) )
+
+	return render_template('lounges/lounges-list.html', lounges=lounges, threads=threads, signed_in=signed_in, user=user)
 
 @app.route('/lounge/<int:lounge_id>/new', methods=['GET', 'POST'])
 def page_lounge_post(lounge_id):
@@ -1102,6 +1069,10 @@ def page_thread(thread_id, slug):
 	if thread is None:
 		abort(404)
 
+	db.session.add(thread)
+	thread.num_views += 1
+	db.session.commit()
+
 	if request.method == 'GET':
 		return render_template('lounges/lounges-thread.html', user=user, thread=thread, lounge=thread.lounge)
 	else:
@@ -1111,6 +1082,10 @@ def page_thread(thread_id, slug):
 def send_image(image_id, dummy_filename):
 	image = SiteImage.query.filter_by(id=image_id).first()
 	if image is not None:
+		db.session.add(image)
+		image.num_views += 1
+		db.session.commit()
+
 		byte_io = BytesIO(image.processed_data)
 		return send_file(byte_io, mimetype=image.mime_type)
 	else:
