@@ -311,6 +311,25 @@ class ConversationLounge(db.Model):
 	slug = db.Column(db.String())
 	threads = db.relationship("ConversationThread", backref="lounge")
 
+	@classmethod
+	def	get_permission_errors(cls, user, lounge):
+		# Check the user's permission to post in the lounge
+		user_errors = {}
+		if user is None:
+			if not lounge.allows_anonymous:
+				user_errors['anonymous'] = True
+		elif user.is_blocked:
+			user_errors['blocked'] = True
+		elif user.is_new and not lounge.allows_new:
+			user_errors['new'] = True
+		elif not user.is_verified and not lounge.allows_unverified:
+			user_errors['unverified'] = True
+		elif not user.is_staff and lounge.staff_only:
+			user_errors['not_staff'] = True
+		elif user.reputation < 0 and not lounge.allows_bad_reputation:
+			user_errors['bad_reputation'] = True
+		return user_errors
+
 	def __init__(self, name_en, desc_en, name_ja=None, name_es=None, name_nl=None, name_pt=None, name_kr=None, desc_ja=None, desc_es=None, desc_nl=None, desc_pt=None, desc_kr=None):
 
 		# Lounge name in several languages
@@ -371,6 +390,11 @@ class ConversationThread(db.Model):
 	slug = db.Column(db.String())
 	messages = db.relationship("ConversationMessage", backref="thread")
 
+	@classmethod
+	def	get_permission_errors(cls, user, thread):
+		# Threads inherit the posting permissions from the lounge they're in. Get the lounge object and call the class method.
+		return ConversationLounge.get_permission_errors(user, thread.lounge)
+
 	def __init__(self, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
 		self.lounge_id = None
 		self.title_en = title_en
@@ -392,7 +416,7 @@ class ConversationThread(db.Model):
 		message.thread_id = self.id
 		db.session.add(self)
 		db.session.add(message)
-		self.num_messages = db.session.query(ConversationMessage).filter_by(thread_id=self.id).count()	# Recount to make it accurate
+		self.num_messages = db.session.query(ConversationMessage).filter_by(thread_id=self.id).count()	# Recount to make it accurate instead of just num_messages += 1
 		self.last_post_date = datetime.utcnow()
 		db.session.commit()
 
@@ -950,7 +974,6 @@ def page_lounges_list():
 	threads = {}
 	for lounge in lounges:
 		threads[lounge.id] = ConversationThread.query.filter(ConversationThread.lounge_id == lounge.id).order_by(ConversationThread.last_post_date).limit(5).all()
-		app.logger.info("/lounges: threads[%s] has %s items" % (lounge.id, threads[lounge.id]) )
 
 	return render_template('lounges/lounges-list.html', lounges=lounges, threads=threads, signed_in=signed_in, user=user)
 
@@ -973,20 +996,7 @@ def page_lounge_post(lounge_id):
 
 		# Validate the user's permissions (the user may be denied posting based on more than one criteria, but
 		# the template will only display the first that matches)
-		user_errors = {}
-		if user is None:
-			if not lounge.allows_anonymous:
-				user_errors['anonymous'] = True
-		elif user.is_blocked:
-			user_errors['blocked'] = True
-		elif user.is_new and not lounge.allows_new:
-			user_errors['new'] = True
-		elif not user.is_verified and not lounge.allows_unverified:
-			user_errors['unverified'] = True
-		elif not user.is_staff and lounge.staff_only:
-			user_errors['not_staff'] = True
-		elif user.reputation < 0 and not lounge.allows_bad_reputation:
-			user_errors['bad_reputation'] = True
+		user_errors = ConversationLounge.get_permission_errors(user, lounge)
 
 		template_options = {
 			'lounge': lounge,
@@ -1000,7 +1010,6 @@ def page_lounge_post(lounge_id):
 
 		# Get all the request parameters in an ImmutableMultiDict
 		dict = request.form
-		app.logger.info("/lounge/%s/new: request.form dictionary: %s" % (lounge_id, dict))
 		if len(dict):
 			# Parameters: title, post_as, message
 			# lounge_id comes from the URI
@@ -1069,14 +1078,102 @@ def page_thread(thread_id, slug):
 	if thread is None:
 		abort(404)
 
-	db.session.add(thread)
-	thread.num_views += 1
-	db.session.commit()
-
 	if request.method == 'GET':
-		return render_template('lounges/lounges-thread.html', user=user, thread=thread, lounge=thread.lounge)
+
+		################################################
+		## GET: Present the thread and the reply form ##
+		################################################
+
+		# Update the number of views for this thread
+		db.session.add(thread)
+		thread.num_views += 1
+		db.session.commit()
+
+		# Check the user's permission to post in the thread
+		user_errors = {}
+		if user is None:
+			if not thread.lounge.allows_anonymous:
+				user_errors['anonymous'] = True
+		elif user.is_blocked:
+			user_errors['blocked'] = True
+		elif user.is_new and not thread.lounge.allows_new:
+			user_errors['new'] = True
+		elif not user.is_verified and not thread.lounge.allows_unverified:
+			user_errors['unverified'] = True
+		elif not user.is_staff and thread.lounge.staff_only:
+			user_errors['not_staff'] = True
+		elif user.reputation < 0 and not thread.lounge.allows_bad_reputation:
+			user_errors['bad_reputation'] = True
+
+		# Render the template
+		template_options = {
+			'user': user,
+			'thread': thread,
+			'lounge': thread.lounge,
+			'errors': user_errors
+		}
+
+		return render_template('lounges/lounges-thread.html', **template_options)
+
 	else:
-		return "POSTing here is not implemented yet"
+
+		#############################
+		## POST: Process the reply ##
+		#############################
+
+		# Get all the request parameters in an ImmutableMultiDict
+		dict = request.form
+
+		if len(dict):
+			# Parameters: post_as, message
+			# lounge_id comes from the URI
+			# Possible errors:
+			#	- lounge does not exist
+			#	- failed validation (empty message, anon user in non-anon lounge, etc)
+			lounge = thread.lounge
+
+			# Validate the user's permissions to post
+			user_errors = {}
+			if user is None:
+				# Anonymous user is only allowed to post if the lounge allows anonymous posts, very easy to check
+				if lounge.allows_anonymous:
+					post_as = 'ANON'
+				else:
+					user_errors['anonymous'] = True
+			# At this point the user is not anonymous, so we have to check the user's status (blocked, rep, etc) and 
+			# the lounge's access permissions to see whether he's allowed to post
+			elif user.is_blocked:
+				user_errors['blocked'] = True
+			elif user.is_new and not lounge.allows_new:
+				user_errors['new'] = True
+			elif not user.is_verified and not lounge.allows_unverified:
+				user_errors['unverified'] = True
+			elif not user.is_staff and lounge.staff_only:
+				user_errors['not_staff'] = True
+			elif user.reputation < 0 and not lounge.allows_bad_reputation:
+				user_errors['bad_reputation'] = True
+			# At this point the user is allowed to post. If the user requests to post as anonymous or using a nickname
+			# then check whether the lounge allows it.
+			elif dict['post_as'] == '3' and lounge.allows_anonymous:
+				post_as = 'ANON'
+			elif dict['post_as'] == '2' and lounge.allows_nicknames:
+				post_as = 'NICKNAME'
+			else:
+				post_as = 'REALNAME'
+
+			if not user_errors:
+				message = ConversationMessage(user, post_as, body_en=dict['message'])
+				thread.add_message(message)
+				return json.dumps({
+					'status': 200,
+					'url': url_for('page_thread', thread_id=thread.id, slug=thread.slug)
+				})
+			else:
+				return json.dumps(user_errors, sort_keys=True, indent=4)
+		else:
+			# This is an error, nothing was submitted. Often the case when bots attack the site.
+			return "The input dictionary was empty"
+
 
 @app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])
 def send_image(image_id, dummy_filename):

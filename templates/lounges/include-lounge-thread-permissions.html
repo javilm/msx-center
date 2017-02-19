@@ -1,0 +1,8 @@
+<div class="form-group hidden-xs">
+	<label class="control-label">Permissions </label>
+	<div class="btn-group btn-group-justified" role="group">
+		<a class="btn {% if lounge.allows_anonymous %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-anonymoususers" role="button" tabindex="0" href="#" data-toggle="popover" title="Anonymous users" data-content="Anonymous users are visitors who haven't signed in to MSX Center.">Anonymous </a>
+		<a class="btn {% if lounge.allows_new %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-newmembers" role="button" tabindex="1" href="#" data-toggle="popover" title="New members" data-content="New members are those who have been active for less than a week, or have posted less than 10 messages.">New members</a>
+		<a class="btn {% if lounge.allows_unverified %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-unverifiedmembers" role="button" tabindex="2" href="#" data-toggle="popover" title="Unverified users" data-content="Unverified members are those whose identify we haven't confirmed yet. Verified members are those who we have confirmed they are who they say they are.">Unverified members</a>
+		<a class="btn {% if lounge.allows_nicknames %}btn-success{% else %}btn-default{% endif %} permission-button" id="button-nicknames" role="button" tabindex="4" href="#" data-toggle="popover" title="Nicknames" data-content="Some lounges accept posting using nicknames, some don't.">Nicknames </a></div>
+</div>
