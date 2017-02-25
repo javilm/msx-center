@@ -22,7 +22,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li class="dropdown-header" role="presentation"><strong>{{ user.real_name }}</strong></li>
                                 <li class="divider" role="presentation"></li>
-                                <li role="presentation"><a href="#">Profile </a></li>
+                                <li role="presentation"><a href="{{ url_for('page_member', member_id=user.id, slug=user.slug) }}">Profile </a></li>
                                 <li role="presentation"><a href="#">Messages <span class="badge" style="float: right; margin-top: 3px">34</span></a></li>
                                 <li role="presentation"><a href="#">Verify identity </a></li>
                                 <li role="presentation"><a href="#">Settings </a></li>

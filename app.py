@@ -1,4 +1,7 @@
 import os, string, hashlib, random, re, enum, socket, json, copy
+import jinja_filters
+import lxml.html as LH
+import pycountry
 from datetime import datetime
 from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file
 from flask_mail import Mail, Message
@@ -7,14 +10,14 @@ from io import BytesIO
 from lxml import etree
 from lxml.html.clean import Cleaner
 from PIL import Image
+from server import run_server
 from slugify import slugify
 from validate_email import validate_email
-import lxml.html as LH
-
-from server import run_server
 
 # Create and initialize app
 app = Flask(__name__)
+app.jinja_env.filters['pretty_date'] = jinja_filters.pretty_date
+app.jinja_env.auto_reload = True
 app.debug = True
 app.config.from_object(__name__)
 mail = Mail(app)
@@ -30,6 +33,9 @@ app.config.update(dict(
 	SERVER_NAME='dev.msx-center.com'
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
+
+# Create ordered list of countries
+countries = sorted(pycountry.countries, key = lambda c: c.name)
 
 ############
 ## MODELS ##
@@ -50,25 +56,39 @@ class User(db.Model):
 	real_name = db.Column(db.String)
 	nickname = db.Column(db.String, unique=True)
 	email = db.Column(db.String, unique=True)
+	is_public_email = db.Column(db.Boolean)
 	password_hash = db.Column(db.String)
+	# Metadata
 	registration_date = db.Column(db.DateTime)
 	last_signin_date = db.Column(db.DateTime)
+	last_active_date = db.Column(db.DateTime)
+	reputation = db.Column(db.Integer)
+	num_messages = db.Column(db.Integer)
+	# Flags
 	is_active = db.Column(db.Boolean)
 	is_new = db.Column(db.Boolean)
 	is_blocked = db.Column(db.Boolean)
 	is_verified = db.Column(db.Boolean)
 	is_superuser = db.Column(db.Boolean)
 	is_staff = db.Column(db.Boolean)
-	reputation = db.Column(db.Integer)
+	is_moderator = db.Column(db.Boolean)
+	# Social data
 	twitter = db.Column(db.String())
 	facebook = db.Column(db.String())
 	linkedin = db.Column(db.String())
+	# Other profile info
+	birth_date = db.Column(db.Date)
 	about = db.Column(db.String())
 	avatar_original = db.Column(db.LargeBinary)
 	avatar_processed = db.Column(db.LargeBinary)
+	avatar_small = db.Column(db.LargeBinary)
+	use_standard_background = db.Column(db.Boolean)
+	standard_background_filename = db.Column(db.String())
+	background_original = db.Column(db.LargeBinary)
 	preferred_language = db.Column(db.Enum(PreferredLanguageType))
 	slug = db.Column(db.String())
-	# timezone = XXX
+	from_country = db.Column(db.String(2))
+	in_country = db.Column(db.String(2))
 	messages = db.relationship("ConversationMessage", backref="user")
 
 	@classmethod
@@ -82,7 +102,12 @@ class User(db.Model):
 	@classmethod
 	def get_signed_in_user(cls):
 		if cls.is_signed_in():
-			return User.query.filter_by(id=session['user_id']).first()
+			user = User.query.filter_by(id=session['user_id']).first()
+			if user is not None:
+				db.session.add(user)
+				user.last_seen_date = datetime.utcnow()
+				db.session.commit()
+			return user
 		else:
 			return None
 
@@ -118,6 +143,8 @@ class User(db.Model):
 		self.reputation = 0
 		self.set_password(password)
 		self.slug = slugify(slugify(real_name))
+		self.use_standard_background = True
+		self.standard_background_filename = 'profile_background_1.jpg'
 
 	def set_password(self, password=None):
 		"""Sets the user password. The plaintext form is kept in the object, but not saved to 
@@ -172,6 +199,9 @@ class User(db.Model):
 	def __repr__(self):
 		return "<User(real_name='%s', short_name='%s', email='%s', password_hash='%s', registration_date='%s', is_active='%s')>" % (
 			self.real_name, self.short_name, self.email, self.password_hash, self.registration_date, self.is_active)
+
+	def profile_background_url(self):
+		return '/static/img/Backgrounds/%s' % self.standard_background_filename
 
 class ActivationKey(db.Model):
 	__tablename__ = 'activation_keys'
@@ -235,7 +265,7 @@ class VerificationKey(db.Model):
 			self.user.real_name, self.key, self.creation_date)
 
 class SiteImage(db.Model):
-	"""Stores all images in the site."""
+	"""Stores all comment and article images in the site."""
 	__tablename__ = 'images'
 
 	id = db.Column(db.Integer, primary_key=True)
@@ -1063,9 +1093,27 @@ def page_lounge_post(lounge_id):
 			# This is an error, nothing was submitted. Often the case when bots attack the site.
 			return "The input dictionary was empty"
 
-@app.route('/lounges/<int:lounge_id>/<string:slug>', methods=['GET'])
+@app.route('/lounges/<int:lounge_id>/<string:slug>/list', methods=['GET'])
 def page_lounge(lounge_id, slug):
-	return "You want to see lounge %s (%s), but this is not implemented yet" % (lounge_id, slug)
+	session['next'] = url_for('page_lounge', lounge_id=lounge_id, slug=slug)
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	# Get the ConversationLounge details
+	lounge = ConversationLounge.query.filter_by(id=lounge_id).first()
+
+	# Return a 404 error if the lounge doesn't exist
+	if lounge is None:
+		abort(404)
+	
+	# Render the template
+	template_options = {
+		'user': user,
+		'lounge': lounge
+	}
+
+	return render_template('lounges/lounge-thread-list.html', **template_options)
 
 @app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
 def page_thread(thread_id, slug):
@@ -1174,7 +1222,6 @@ def page_thread(thread_id, slug):
 			# This is an error, nothing was submitted. Often the case when bots attack the site.
 			return "The input dictionary was empty"
 
-
 @app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])
 def send_image(image_id, dummy_filename):
 	image = SiteImage.query.filter_by(id=image_id).first()
@@ -1187,6 +1234,53 @@ def send_image(image_id, dummy_filename):
 		return send_file(byte_io, mimetype=image.mime_type)
 	else:
 		abort(404)
+
+@app.route('/member/<int:member_id>/<string:slug>')
+def page_member(member_id, slug):
+	# Note: in the context of this route, the "user" is the logged in user, and the "member" is
+	# the user whose profile is being visited. They may or may not be the same.
+	session['next'] = url_for('page_member', member_id=member_id, slug=slug)
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	# Get the visited member
+	member = User.query.filter_by(id=member_id).first()
+
+	if member is None:
+		abort(404)
+
+	# Get the country objects from the profile, if there are any
+	in_country = pycountry.countries.get(alpha_2=member.in_country) if member.in_country else None
+	from_country = pycountry.countries.get(alpha_2=member.from_country) if member.from_country else None
+	
+	return render_template('member/member_view.html', user=user, member=member, in_country=in_country, from_country=from_country)
+
+@app.route('/member/edit/background', methods=['GET', 'POST'])
+def page_member_edit_background():
+	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
+	
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	if request.method == 'GET':
+		return render_template('member/member_edit_background.html', user=user)
+	else:
+		# Request is POST
+		error_message = None
+		background_num = int(request.form['standard_background_number'])
+		if background_num < 1 or background_num > 6:
+			error_message = "The background you selected isn't available. Please try again."
+			return render_template('member/member_edit_background.html', user=user, )
+		else:
+			user.standard_background_filename = 'profile_background_%s.jpg' % background_num
+			db.session.add(user)
+			db.session.commit()
+			return redirect(url_for('page_member', member_id=user.id, slug=user.slug))
+	
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

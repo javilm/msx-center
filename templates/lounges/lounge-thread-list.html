@@ -1,0 +1,53 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - Conversation lounge: {{ lounge.name_en }}{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1>{{ lounge.name_en }}</h1>
+		<div class="lead">{{ lounge.desc_en }}</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12 col-md-12">
+		<div class="panel panel-{{ lounge.color_class }}">
+
+			{% if lounge.threads %}
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th> </th>
+							<th>Topic </th>
+							<th>Views </th>
+							<th>Messages </th>
+							<th>Last post</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for thread in lounge.threads %}
+							<tr>
+								<td> <i class="glyphicon glyphicon-alert boardalert"></i></td>
+								<td>
+									<a href="{{ url_for('page_thread', thread_id=thread.id, slug=thread.slug) }}">{{ thread.title_en }}</a>
+									{% if thread.has_new_messages %}<span class="label label-danger">New</span>{% endif %}
+								</td>
+								<td>{{ thread.num_views }}</td>
+								<td>{{ thread.num_messages }}</td>
+								<td>By <a href="#">{{ thread.last_post_username }}</a> {{ thread.last_post_date.strftime('%b %-d, %Y at %-I:%M%p') }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<div class="panel-body">
+					<div class="alert alert-warning" role="alert">There aren't any conversations in this lounge yet.</div>
+					<a href="{{ url_for('page_lounge_post', lounge_id=lounge.id) }}"><button class="btn btn-{{ lounge.color_class }} btn-sm" type="button"><i class="glyphicon glyphicon-pencil lounge_button"></i> Start new conversation</button></a>
+				</div>
+			{% endif %}
+
+		</div>
+		<a href="{{ url_for('page_lounge_post', lounge_id=lounge.id) }}"><button class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-pencil lounge_button"></i> Start new conversation</button></a>
+
+	</div>
+</div>
+{% endblock %}

@@ -171,7 +171,7 @@
 
 div#feature {
   padding:30px;
-  background:url(../../assets/img/sony.jpg) no-repeat;
+  background:url(/static/img/sony.jpg) no-repeat;
   background-size:cover;
   background-position:center;
 }
@@ -189,7 +189,7 @@ div#feature {
 }
 
 body {
-  background-color:#f8f8f8;
+  background-color:#f8f8ff;
 }
 
 div #signup-info {
