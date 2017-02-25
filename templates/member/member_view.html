@@ -44,7 +44,7 @@
 			</div>
 			{% if member.id == user.id %}
 			<div class="btn-group-vertical btn-group-sm btn-block" role="group" id="profile-buttons">
-				<button class="btn btn-success profile-stats-box" type="submit">Change profile photo</button>
+				<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_photo') }}">Change profile photo</button>
 				<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_background') }}">Change background</a>
 				<button class="btn btn-success profile-stats-box" type="submit">Change password</button>
 				<button class="btn btn-success profile-stats-box" type="submit">Edit profile</button>
@@ -70,6 +70,6 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-$('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ user.standard_background_filename }})');
+$('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ member.standard_background_filename }})');
 </script>
 {% endblock %}
