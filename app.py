@@ -105,7 +105,7 @@ class User(db.Model):
 			user = User.query.filter_by(id=session['user_id']).first()
 			if user is not None:
 				db.session.add(user)
-				user.last_seen_date = datetime.utcnow()
+				user.last_active_date = datetime.utcnow()
 				db.session.commit()
 			return user
 		else:
@@ -1269,7 +1269,7 @@ def page_member_edit_background():
 	if request.method == 'GET':
 		return render_template('member/member_edit_background.html', user=user)
 	else:
-		# Request is POST
+		# Request method is POST
 		error_message = None
 		background_num = int(request.form['standard_background_number'])
 		if background_num < 1 or background_num > 6:
@@ -1280,7 +1280,22 @@ def page_member_edit_background():
 			db.session.add(user)
 			db.session.commit()
 			return redirect(url_for('page_member', member_id=user.id, slug=user.slug))
+
+@app.route('/member/edit/photo', methods=['GET', 'POST'])
+def page_member_edit_photo():
+	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
 	
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	if request.method == 'GET':
+		return render_template('member/member_edit_photo.html', user=user)
+	else:
+		# Request method is POST
+		pass
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##
