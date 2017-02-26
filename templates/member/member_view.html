@@ -12,43 +12,10 @@
 <div id="user-stats"></div>
 <div class="container">
 	<div class="row">
-		<div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar"><img src="/static/img/javilm-avatar.jpg" class="img-responsive img-profile center-block">
-			{% if member.is_blocked %}
-				<div class="alert alert-danger">
-					<strong>BLOCKED</strong>
-					<p>This member account is block he/she can still visit all the message lounges, but cannot post replies nor start new conversations.</p>
-				</div>
-			{% endif %}
-			{% if member.real_name %}<p id="profile-user-name" class="text-center"><strong>{{ member.real_name }}</strong> </p>{% endif %}
-			{% if member.nickname %}<p id="profile-user-nickname" class="text-center"><strong>"JaviLM" </strong></p>{% endif %}
-			<div id="profile-labels" class="text-center">
-				{% if member.is_new %}<span class="label label-warning">NEW</span>{% endif %}
-				{% if member.is_verified %}<span class="label label-success">VERIFIED</span>{% endif %}
-				{% if member.is_moderator %}<span class="label label-info">MODERATOR</span>{% endif %}
-				{% if member.is_staff %}<span class="label label-primary">STAFF</span>{% endif %}
-				{% if member.is_superuser %}<span class="label label-danger">ADMIN</span>{% endif %}
-			</div>
-			{% if member.about %}<div id="profile-bio"><p>{{ member.about }}</p></div>{% endif %}
-			<div id="profile-data">
-				<ul class="fa-ul">
-					<li><i class="fa fa-li fa-bookmark"></i> <a href="http://www.lavandeira.net" target="_new">www.lavandeira.net</a></li>
-					{% if member.twitter %}<li><i class="fa fa-li fa-twitter"></i> <a href="https://twitter.com/{{ member.twitter }}" target="_new">@{{ member.twitter }}</a></li>{% endif %}
-					{% if member.facebook %}<li><i class="fa fa-li fa-facebook"></i> <a href="https://www.facebook.com/{{ member.facebook }}" target="_new">{{ member.facebook }}</a></li>{% endif %}
-					{% if member.linkedin %}<li><i class="fa fa-li fa-linkedin"></i> <a href="https://www.linkedin.com/in/{{ member.linkedin }}" target="_new">{{ member.linkedin }}</a></li>{% endif %}
-					{% if from_country %}<li><i class="fa fa-li fa-compass"></i> From {{ from_country.name }}</li>{% endif %}
-					{% if in_country %}<li><i class="fa fa-li fa-home"></i> Living in {{ in_country.name }}</li>{% endif %}
-					<li><i class="fa fa-li fa-id-card"></i> Joined on {{ member.registration_date.strftime('%B %Y')}}</li>
-					<li><i class="fa fa-li fa-calendar"></i> Last active {{ member.last_active_date|pretty_date }}</li>
-					{% if member.birth_date %}<li><i class="fa fa-li fa-birthday-cake"></i> Born in {{ member.birth_date.strftime('%B %Y') }}</li>{% endif %}
-				</ul>
-			</div>
+		<div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
+			{{ macros.member_profile_data(member=member) }}
 			{% if member.id == user.id %}
-			<div class="btn-group-vertical btn-group-sm btn-block" role="group" id="profile-buttons">
-				<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_photo') }}">Change profile photo</button>
-				<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_background') }}">Change background</a>
-				<button class="btn btn-success profile-stats-box" type="submit">Change password</button>
-				<button class="btn btn-success profile-stats-box" type="submit">Edit profile</button>
-			</div>
+				{{ macros.member_profile_buttons() }}
 			{% endif %}
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-9">
@@ -65,7 +32,7 @@
 			</div>
 		</div>
 	</div>
-	</div>
+</div>
 {% endblock %}
 
 {% block extrajs %}

@@ -1,0 +1,138 @@
+{% extends "layout/template-base.html" %}
+
+{% block title %}MSX Center - Change profile picture{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+</div>{# we don't want to use the grid container opened by the template #}
+<div id="profile-background"></div>
+<div id="user-stats"></div>
+<div class="container">
+	<div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
+            {{ macros.member_profile_data(member=user) }}
+            {{ macros.member_profile_buttons(active='edit_background') }}
+        </div>
+		<div class="col-lg-9 col-md-9 col-sm-9">
+			<h1>Change your portrait</h1>
+			<p class="lead">Upload your own profile photo or choose one of our already-made portraits. Click the <kbd>Save</kbd> button at the bottom of the page to save the changes, or <kbd>Cancel</kbd> to discard them.</p>
+
+			<h3>Standard portraits</h3>
+			<form action="{{ url_for('page_member_edit_photo') }}" method="POST" enctype="multipart/form-data">
+				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id }}">
+				<input type="hidden" id="custom_portrait_number_field" name="custom_portrait_number" value="{{ user.custom_portrait_id }}">
+
+				<div class="row">
+					{% for num in range(1, 9) %}
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+							{# Only one CSS class per element changes, but replicating the whole block for readability #}
+							{% if user.standard_portrait_id == num %}
+								<img id="img_portrait_{{ num }}" src="/static/img/profile/standard_profile_{{ num }}_512x512.png" class="img-responsive member-portrait member-portrait-selected">
+								<button id="button_portrait_{{ num }}" class="btn btn-success btn-block btn-sm" type="button">Selected</button>
+							{% else %}
+								<img id="img_portrait_{{ num }}" src="/static/img/profile/standard_profile_{{ num }}_512x512.png" class="img-responsive member-portrait">
+								<button id="button_portrait_{{ num }}" class="btn btn-default btn-block btn-sm" type="button">Use</button>
+							{% endif %}
+						</div>
+						{% if num == 4 %}
+							</div>
+							<div class="row">
+						{% endif %}
+					{% endfor %}
+				</div>
+
+				{% if user.custom_portraits|length %}
+					<h3>Your portrait collection</h3>
+					<div class="row">
+						{% for p in user.custom_portraits %}
+							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+								{% if user.custom_portrait_id == p.id %}
+									<img id="img_custom_portrait_{{ p.id}}"src="{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait member-portrait-selected">
+									<button id="button_custom_portrait_{{ p.id }}" class="btn btn-success btn-block btn-sm" type="button">Selected</button>
+								{% else %}
+									<img id="img_custom_portrait_{{ p.id}}"src="{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait">
+									<button id="button_custom_portrait_{{ p.id }}" class="btn btn-default btn-block btn-sm" type="button">Use</button>
+								{% endif %}
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
+
+				<h3>Upload a new portrait</h3>
+				{% if errors %}
+					<div class="alert alert-danger" role="alert">{{ errors }}</div>
+				{% endif %}
+				<div class="form-group">
+					<p>Choose an image to upload from your computer. Once uploaded it will be added to your portrait collection.</p>
+					<input type="file" name="uploaded_photo" accept="image/*">
+					<p class="help-block">For best results upload an image at least 512x512 pixels. If the image you choose isn't square then we'll crop it and keep only the center area.</p>
+					<button id="cancel_button" class="btn btn-default btn-sm" type="reset">Cancel</button>
+					<button id="submit_button" class="btn btn-success btn-sm" type="submit">Save</button>
+				</div>
+			</form>
+			
+		</div>
+	</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+
+{# Change the background #}
+$('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ user.standard_background_filename }})');
+
+{# Make the Cancel button redirect back to the user's profile #}
+$('#cancel_button').click(function() {
+    window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
+});
+
+{# Oh, yeah! Using Python to generate shitty Javascript code! :-) #}
+
+var portrait = $('#member-portrait');
+
+function reset_selected() {
+{% for num in range(1,9) %}
+    $('#button_portrait_{{ num }}').text('Use');
+    $('#button_portrait_{{ num }}').removeClass('btn-success').addClass('btn-default');
+    $('#img_portrait_{{ num }}').removeClass('member-portrait-selected');
+{% endfor %}
+    $('#standard_portrait_number_field').val(0);
+{% if user.custom_portraits|length %}
+	{% for p in user.custom_portraits %}
+	$('#button_custom_portrait_{{ p.id }}').text('Use');
+	$('#button_custom_portrait_{{ p.id }}').removeClass('btn-success').addClass('btn-default');
+	$('#img_custom_portrait_{{ p.id }}').removeClass('member-portrait-selected');
+	{% endfor %}
+	$('#custom_portrait_number_field').val(0);
+{% endif %}
+}
+
+{% for num in range(1,9) %}
+$('#button_portrait_{{ num }}').click(function () {
+    portrait.attr('src', '/static/img/profile/standard_profile_{{ num }}_512x512.png');
+    reset_selected();
+    $('#button_portrait_{{ num }}').text('Selected');
+    $('#button_portrait_{{ num }}').removeClass('btn-default').addClass('btn-success');
+    $('#img_portrait_{{ num }}').addClass('member-portrait-selected');
+    $('#standard_portrait_number_field').val({{ num }});
+});
+{% endfor %}
+
+{% if user.custom_portraits|length %}
+	{% for p in user.custom_portraits %}
+$('#button_custom_portrait_{{ p.id }}').click(function () {
+    portrait.attr('src', '{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}');
+    reset_selected();
+    $('#button_custom_portrait_{{ p.id }}').text('Selected');
+    $('#button_custom_portrait_{{ p.id }}').removeClass('btn-default').addClass('btn-success');
+    $('#img_custom_portrait_{{ p.id }}').addClass('member-portrait-selected');
+    $('#custom_portrait_number_field').val({{ p.id }});
+});
+	{% endfor %}
+{% endif %}
+
+</script>
+{% endblock %}

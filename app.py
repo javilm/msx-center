@@ -13,6 +13,7 @@ from PIL import Image
 from server import run_server
 from slugify import slugify
 from validate_email import validate_email
+from werkzeug.datastructures import FileStorage
 
 # Create and initialize app
 app = Flask(__name__)
@@ -30,7 +31,8 @@ app.config.update(dict(
 	MAIL_SERVER='192.168.1.200',
 	DEFAULT_MAIL_SENDER='javi.lavandeira@msx-center.com',
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
-	SERVER_NAME='dev.msx-center.com'
+	SERVER_NAME='dev.msx-center.com',
+	MAX_CONTENT_LENGTH=8*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
 
@@ -79,9 +81,12 @@ class User(db.Model):
 	# Other profile info
 	birth_date = db.Column(db.Date)
 	about = db.Column(db.String())
-	avatar_original = db.Column(db.LargeBinary)
-	avatar_processed = db.Column(db.LargeBinary)
-	avatar_small = db.Column(db.LargeBinary)
+
+	# Only one of these will contain a value
+	standard_portrait_id = db.Column(db.Integer)
+	custom_portrait_id = db.Column(db.Integer)
+	custom_portraits = db.relationship("ProfileImage", backref="user")
+
 	use_standard_background = db.Column(db.Boolean)
 	standard_background_filename = db.Column(db.String())
 	background_original = db.Column(db.LargeBinary)
@@ -203,6 +208,15 @@ class User(db.Model):
 	def profile_background_url(self):
 		return '/static/img/Backgrounds/%s' % self.standard_background_filename
 
+	def profile_photo_url(self, size='standard'):
+		res = '512x512' if size == 'standard' else '64x64'
+		if self.standard_portrait_id:
+			return '/static/img/profile/standard_profile_%s_%s.png' % (self.standard_portrait_id, res)
+		elif self.custom_portrait_id:
+			return url_for('send_custom_portrait_image', portrait_id=self.custom_portrait_id, size=size)
+		else:
+			return '/static/img/anonymous_user_%s.png' % ('256x256' if size == 'standard' else '64x64')
+
 class ActivationKey(db.Model):
 	__tablename__ = 'activation_keys'
 
@@ -310,6 +324,86 @@ class SiteImage(db.Model):
 		self.processed_data = processed.getvalue()
 		self.needs_processing = False
 		del original, processed
+
+class ProfileImage(db.Model):
+	"""Stores profile images for users."""
+	__tablename__ = 'profile_images'
+
+	id = db.Column(db.Integer, primary_key=True)
+	mime_type = db.Column(db.String())
+	original_data = db.Column(db.LargeBinary)   # Stores the original image (to be resized/watermarked in the future)
+	thumbnail_data = db.Column(db.LargeBinary)			# At most 256x256
+	thumbnail_small_data = db.Column(db.LargeBinary)	# 64x64
+	upload_date = db.Column(db.DateTime)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	needs_processing = db.Column(db.Boolean)
+	is_valid = False    # Used only during validation when uploading new profile images
+
+	def __init__(self, src_file, user):
+		"""Imports an uploaded image from the filesystem into the database."""
+		app.logger.info('ProfileImage: file is %s' % src_file)
+		self.is_valid = False
+#		try:
+		if src_file.__class__ == FileStorage:
+			app.logger.info('ProfileImage: handling with stream')
+			self.original_data = src_file.read()
+		else:
+			app.logger.info('ProfileImage: handling with getvalue()')
+			self.original_data = src_file.getvalue()
+
+		original = Image.open(BytesIO(self.original_data))
+
+		# Check that it's a valid image
+		self.is_valid = True
+		self.mime_type = 'image/jpeg'
+		self.upload_date = datetime.utcnow()
+		self.user_id = user.id
+
+		# Generate the thumbnails
+		self.process(original)
+#		except: 
+#			self.is_valid = False
+
+	def process(self, original):
+		"""Takes the original_data contents from the instance and generates a cropped square version of it. Then
+		it generates a 256x256 version and a 64x64 thumbnail."""
+		# Read image in memory
+		#original = Image.open(BytesIO(self.original_data))
+
+		# Create the square version
+		width, height = original.size
+		if width > height:
+			box = ( (width - height)/2, 0, (width + height)/2, height)
+			square = original.crop(box)
+		elif height > width:
+			box = (0, (height - width)/2, width, (width + height)/2)
+			square = original.crop(box)
+		else:
+			# Already square, no need to crop
+			square = original.copy()
+
+		# Make the thumbnails
+
+		# 256x256
+		processed = square.copy()
+		processed.thumbnail((256, 256), resample=Image.LANCZOS)
+		tmp = BytesIO()
+		processed.save(tmp, 'jpeg')
+		self.thumbnail_data = tmp.getvalue()
+		del tmp
+
+		# 64x64
+		thumbnail = square.copy()
+		processed.thumbnail((64, 64), resample=Image.LANCZOS)
+		tmp = BytesIO()
+		processed.save(tmp, 'jpeg')
+		self.thumbnail_small_data = tmp.getvalue()
+		del tmp
+
+		del original, square, processed, thumbnail  
+
+		self.needs_processing = False
+
 
 class ConversationLounge(db.Model):
 	__tablename__ = 'lounges'
@@ -1256,6 +1350,23 @@ def page_member(member_id, slug):
 	
 	return render_template('member/member_view.html', user=user, member=member, in_country=in_country, from_country=from_country)
 
+@app.route('/member/portrait/<int:portrait_id>/<string:size>')
+def send_custom_portrait_image(portrait_id, size):
+	# If "size" isn't either 'standard' or 'small' then return a 404
+	if size != 'standard' and size != 'small':
+		abort(404)
+
+	image = ProfileImage.query.filter_by(id=portrait_id).first()
+	if image is not None:
+		if size == 'standard':
+			byte_io = BytesIO(image.thumbnail_data)
+		elif size == 'small':
+			byte_io = BytesIO(image.thumbnail_small_data)
+		
+		return send_file(byte_io, mimetype=image.mime_type)
+	else:
+		abort(404)
+
 @app.route('/member/edit/background', methods=['GET', 'POST'])
 def page_member_edit_background():
 	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
@@ -1292,10 +1403,49 @@ def page_member_edit_photo():
 		abort(401)
 
 	if request.method == 'GET':
-		return render_template('member/member_edit_photo.html', user=user)
+		return render_template('member/member_edit_photo.html', user=user, errors=None)
 	else:
 		# Request method is POST
-		pass
+
+		# First update the portrait selection
+		if request.form['standard_portrait_number'] is not None:
+			user.standard_portrait_id = int(request.form['standard_portrait_number'])
+		else:
+			user.standard_portrait_id = None
+		if request.form['custom_portrait_number'] is not None:
+			user.custom_portrait_id = int(request.form['custom_portrait_number'])
+		else:
+			user.custom_portrait_id = None
+		db.session.add(user)
+
+		# Then process the upload, if there is one
+		upload_handled = False
+		if 'uploaded_photo' in request.files:
+			src_file = request.files['uploaded_photo']
+			if src_file.filename:
+				portrait = ProfileImage(src_file, user)
+				if portrait.is_valid:
+					app.logger.info("UPLOAD: upload is valid")
+					db.session.add(portrait)
+					db.session.commit()
+					user.custom_portrait_id = portrait.id
+					app.logger.info("UPLOAD: custom_portrait_id = %s" % user.custom_portrait_id)
+					upload_handled = True
+				else:
+					errors = "The file you uploaded doesn't seem to be a valid image. Please try a different file."
+					return render_template('member/member_edit_photo.html', user=user, errors=errors)
+			# else there was no file upload
+
+		# Save the changes in the database
+		db.session.commit()
+
+		# Finally, redirect the user back to his profile view (if there were no uploads) or back to the portrait page (if there were)
+		if upload_handled:
+			return render_template('member/member_edit_photo.html', user=user, errors=None)
+		else:
+			return redirect(url_for('page_member', member_id=user.id, slug=user.slug))
+		
+		
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

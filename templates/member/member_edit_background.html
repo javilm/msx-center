@@ -12,60 +12,27 @@
 <div id="user-stats"></div>
 <div class="container">
 	<div class="row">
-		<div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar"><img src="/static/img/javilm-avatar.jpg" class="img-responsive img-profile center-block">
-			{% if user.is_blocked %}
-				<div class="alert alert-danger">
-					<strong>BLOCKED</strong>
-					<p>Your account is blocked. You can still visit all the message lounges, but cannot post replies nor start new conversations.</p>
-				</div>
-			{% endif %}
-			{% if user.real_name %}<p id="profile-user-name" class="text-center"><strong>{{ user.real_name }}</strong> </p>{% endif %}
-			{% if user.nickname %}<p id="profile-user-nickname" class="text-center"><strong>"JaviLM" </strong></p>{% endif %}
-			<div id="profile-labels" class="text-center">
-				{% if user.is_new %}<span class="label label-warning">NEW</span>{% endif %}
-				{% if user.is_verified %}<span class="label label-success">VERIFIED</span>{% endif %}
-				{% if user.is_moderator %}<span class="label label-info">MODERATOR</span>{% endif %}
-				{% if user.is_staff %}<span class="label label-primary">STAFF</span>{% endif %}
-				{% if user.is_superuser %}<span class="label label-danger">ADMIN</span>{% endif %}
-			</div>
-			{% if user.about %}<div id="profile-bio"><p>{{ user.about }}</p></div>{% endif %}
-			<div id="profile-data">
-				<ul class="fa-ul">
-					<li><i class="fa fa-li fa-bookmark"></i> <a href="http://www.lavandeira.net" target="_new">www.lavandeira.net</a></li>
-					{% if user.twitter %}<li><i class="fa fa-li fa-twitter"></i> <a href="https://twitter.com/{{ user.twitter }}" target="_new">@{{ user.twitter }}</a></li>{% endif %}
-					{% if user.facebook %}<li><i class="fa fa-li fa-facebook"></i> <a href="https://www.facebook.com/{{ user.facebook }}" target="_new">{{ user.facebook }}</a></li>{% endif %}
-					{% if user.linkedin %}<li><i class="fa fa-li fa-linkedin"></i> <a href="https://www.linkedin.com/in/{{ user.linkedin }}" target="_new">{{ user.linkedin }}</a></li>{% endif %}
-					{% if from_country %}<li><i class="fa fa-li fa-compass"></i> From {{ from_country.name }}</li>{% endif %}
-					{% if in_country %}<li><i class="fa fa-li fa-home"></i> Living in {{ in_country.name }}</li>{% endif %}
-					<li><i class="fa fa-li fa-id-card"></i> Joined on {{ user.registration_date.strftime('%B %Y')}}</li>
-					<li><i class="fa fa-li fa-calendar"></i> Last active {{ user.last_active_date|pretty_date }}</li>
-					{% if user.birth_date %}<li><i class="fa fa-li fa-birthday-cake"></i> Born in {{ user.birth_date.strftime('%B %Y') }}</li>{% endif %}
-				</ul>
-			</div>
-			<div class="btn-group-vertical btn-group-sm btn-block" role="group" id="profile-buttons">
-				<button class="btn btn-success profile-stats-box disabled" type="submit">Change profile photo</button>
-				<button class="btn btn-success profile-stats-box" type="submit">Change background</button>
-				<button class="btn btn-success profile-stats-box disabled" type="submit">Change password</button>
-				<button class="btn btn-success profile-stats-box disabled" type="submit">Edit profile</button>
-			</div>
+        <div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
+            {{ macros.member_profile_data(member=user) }}
+			{{ macros.member_profile_buttons(active='edit_background') }}
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-9">
 			<h1>Change profile background</h1>
 			<p class="lead">Customize your profile by changing the background image. Click the <kbd>Save</kbd> button at the bottom of the page to save the changes, or <kbd>Cancel</kbd> to discard them.</p>
 			<h3>Standard backgrounds</h3>
 			<div class="row">
-{% for num in range(1, 7) %}
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-					<div class="panel">
-						<img id="img_background_{{ num}}" src="/static/img/Backgrounds/profile_background_{{ num }}_thumb.jpg" class="img-responsive">
-						<button id="button_background_{{ num }}" class="btn btn-default btn-sm btn-block" type="button">Use</button>
+				{% for num in range(1, 7) %}
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+						<div class="panel">
+							<img id="img_background_{{ num}}" src="/static/img/Backgrounds/profile_background_{{ num }}_thumb.jpg" class="img-responsive">
+							<button id="button_background_{{ num }}" class="btn btn-default btn-sm btn-block" type="button">Use</button>
+						</div>
 					</div>
-				</div>
-	{% if num == 3 %}
-			</div>
-			<div class="row">
-	{% endif %}
-{% endfor %}
+					{% if num == 3 %}
+						</div>
+						<div class="row">
+					{% endif %}
+				{% endfor %}
 			</div>
 {#
 			XXX Will implement this after launch
@@ -95,15 +62,17 @@
 {% block extrajs %}
 <script type="text/javascript">
 
+// Load the member's background image
 $('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ user.standard_background_filename }})');
 
-var background = $('#profile-background');
-
-{# Oh, yeah! Using Python to generate shitty Javascript code! :-) #}
-
+// Make the Cancel buttom reload the member's profile view page
 $('#cancel_button').click(function() {
 	window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
 });
+
+{# Oh, yeah! Using Python to generate shitty Javascript code! :-) #}
+
+var background = $('#profile-background');
 
 function reset_selected() {
 {% for background in range(1,7) %}
