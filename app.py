@@ -60,6 +60,7 @@ class User(db.Model):
 	email = db.Column(db.String, unique=True)
 	is_public_email = db.Column(db.Boolean)
 	password_hash = db.Column(db.String)
+	password_set_date = db.Column(db.Date)
 	# Metadata
 	registration_date = db.Column(db.DateTime)
 	last_signin_date = db.Column(db.DateTime)
@@ -162,6 +163,7 @@ class User(db.Model):
 			password = User.generate_random_password()
 		self.password = password # Used to notify the user via email
 		self.password_hash = hashlib.sha512(password).hexdigest()
+		self.password_set_date = datetime.utcnow()
 
 	def signin(self):
 		"""Validation has been done externally, as in the activation form"""
