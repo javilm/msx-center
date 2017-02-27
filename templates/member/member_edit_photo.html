@@ -14,13 +14,14 @@
 	<div class="row">
         <div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
             {{ macros.member_profile_data(member=user) }}
-            {{ macros.member_profile_buttons(active='edit_background') }}
+            {{ macros.member_profile_buttons(active='edit_photo') }}
         </div>
 		<div class="col-lg-9 col-md-9 col-sm-9">
 			<h1>Change your portrait</h1>
 			<p class="lead">Upload your own profile photo or choose one of our already-made portraits. Click the <kbd>Save</kbd> button at the bottom of the page to save the changes, or <kbd>Cancel</kbd> to discard them.</p>
 
 			<h3>Standard portraits</h3>
+			<p>The eight portraits below were created by <a target="_new" href="https://twitter.com/JUSTIN_CYR">Justin Cyr</a>. Go check his fantastic pixel art on <a target="_new" href="http://justinpaulcyr.tumblr.com">his Tumblr</a>!
 			<form action="{{ url_for('page_member_edit_photo') }}" method="POST" enctype="multipart/form-data">
 				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id }}">
 				<input type="hidden" id="custom_portrait_number_field" name="custom_portrait_number" value="{{ user.custom_portrait_id }}">

@@ -343,26 +343,26 @@ class ProfileImage(db.Model):
 		"""Imports an uploaded image from the filesystem into the database."""
 		app.logger.info('ProfileImage: file is %s' % src_file)
 		self.is_valid = False
-#		try:
-		if src_file.__class__ == FileStorage:
-			app.logger.info('ProfileImage: handling with stream')
-			self.original_data = src_file.read()
-		else:
-			app.logger.info('ProfileImage: handling with getvalue()')
-			self.original_data = src_file.getvalue()
+		try:
+			if src_file.__class__ == FileStorage:
+				app.logger.info('ProfileImage: handling with stream')
+				self.original_data = src_file.read()
+			else:
+				app.logger.info('ProfileImage: handling with getvalue()')
+				self.original_data = src_file.getvalue()
 
-		original = Image.open(BytesIO(self.original_data))
+			original = Image.open(BytesIO(self.original_data))
 
-		# Check that it's a valid image
-		self.is_valid = True
-		self.mime_type = 'image/jpeg'
-		self.upload_date = datetime.utcnow()
-		self.user_id = user.id
+			# Check that it's a valid image
+			self.is_valid = True
+			self.mime_type = 'image/jpeg'
+			self.upload_date = datetime.utcnow()
+			self.user_id = user.id
 
-		# Generate the thumbnails
-		self.process(original)
-#		except: 
-#			self.is_valid = False
+			# Generate the thumbnails
+			self.process(original)
+		except: 
+			self.is_valid = False
 
 	def process(self, original):
 		"""Takes the original_data contents from the instance and generates a cropped square version of it. Then
@@ -1445,7 +1445,77 @@ def page_member_edit_photo():
 		else:
 			return redirect(url_for('page_member', member_id=user.id, slug=user.slug))
 		
+@app.route('/member/edit/password', methods=['GET', 'POST'])
+def page_member_edit_password():
+	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
+	
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	if request.method == 'GET':
+		return render_template('member/member_edit_password.html', user=user, errors=None)
+	else:
+		# Method is POST, user trying to change the passwordd
+		num_validation_errors = 0
+		error_messages = []
+
+		# Check that the passwords match
+		if request.form['new_pass'] != request.form['new_pass_conf']:
+			num_validation_errors += 1
+			error_messages.append("The passwords you entered don't match")
+
+		# Check that the new password isn't the same as the current password
+		if request.form['new_pass'] == request.form['current_pass']:
+			num_validation_errors += 1
+			error_messages.append("The new password can't be the same as your current password.")
+
+		# Check that the password passes validation
+		if not User.valid_password(request.form['new_pass']):
+			num_validation_errors += 1
+			error_messages.append("The password doesn't meet all the requirements.")
+
+		# Check that the current password is correct
+		if not User.valid_credentials(user.email, request.form['current_pass']):
+			num_validation_errors += 1
+			error_messages.append("The current password that you entered isn't the one on record.")
+
+		if num_validation_errors:
+			return render_template('member/member_edit_password.html', user=user, errors=error_messages)
+		else:
+			user.set_password(request.form['new_pass'])
+			db.session.add(user)
+			db.session.commit()
+			# Redirect instead of rendering the template to avoid resubmission of the form data
+			return redirect(url_for('page_member_edit_password_success'))
 		
+@app.route('/member/edit/password/success', methods=['GET'])
+def page_member_edit_password_success():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	return render_template('member/member_edit_password_success.html', user=user)
+
+@app.route('/member/edit/profile', methods=['GET', 'POST'])
+def page_member_edit_profile():
+	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
+	
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	if request.method == 'GET':
+		return "this is aget"
+	else:
+		return "this is a post"
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

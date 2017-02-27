@@ -60,10 +60,16 @@
 
 {% macro member_profile_buttons(active=None) %}
 <div class="btn-group-vertical btn-group-sm btn-block" role="group" id="profile-buttons">
-	<a class="btn btn-success profile-stats-box{% if active and active != 'edit_photo'      %} disabled{% endif %}" href="{{ url_for('page_member_edit_photo') }}">Change profile photo</button>
+{#
+	<a class="btn btn-success profile-stats-box{% if active and active != 'edit_photo'      %} disabled{% endif %}" href="{{ url_for('page_member_edit_photo') }}">Change portrait</button>
 	<a class="btn btn-success profile-stats-box{% if active and active != 'edit_background' %} disabled{% endif %}" href="{{ url_for('page_member_edit_background') }}">Change background</a>
 	<a class="btn btn-success profile-stats-box{% if active and active != 'edit_password'   %} disabled{% endif %}" type="submit">Change password</a>
 	<a class="btn btn-success profile-stats-box{% if active and active != 'edit_profile'    %} disabled{% endif %}" type="submit">Edit profile</a>
+#}
+	<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_photo') }}">Change portrait</button>
+	<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_background') }}">Change background</a>
+	<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_password') }}">Change password</a>
+	<a class="btn btn-success profile-stats-box" href="{{ url_for('page_member_edit_profile') }}">Edit profile</a>
 </div>
 {% endmacro %}
 
