@@ -1,0 +1,228 @@
+{% extends "layout/template-base.html" %}
+
+{% block title %}MSX Center - Edit profile{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+{% endblock %}
+
+{% block content %}
+</div>{# we don't want to use the grid container opened by the template #}
+<div id="profile-background"></div>
+<div id="user-stats"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
+            {{ macros.member_profile_data(member=user) }}
+			{{ macros.member_profile_buttons(active='edit_background') }}
+		</div>
+		<div class="col-lg-9 col-md-9 col-sm-9">
+			<h1>Edit your profile</h1>
+			<p class="lead">For security reasons, do not use the same password you're using somewhere else. If we get hacked then the attacker could use your password to access other sites (or vice versa).</p>
+			<div class="row">
+				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+					{% if True %}
+						<div class="alert alert-danger" role="alert">
+							{% if errors|length > 1 %}
+								<strong>There were errors with your submission:</strong>
+							{% else %}
+								<strong>There was an error with your submission:</strong>
+							{% endif %}
+							<ul>
+								{% for error in errors %}
+									<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+					<form class="form-horizontal" method="POST" action="{{ url_for('page_member_edit_profile')}}" >
+
+						<h4 class="text-uppercase">Personal information</h4>
+
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="real_name_field" class="control-label">Real name</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<input class="form-control" id="real_name_field" name="real_name" type="text" required="" placeholder="Your real name" value="{{ user.real_name|supress_none }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="nickname_field" class="control-label">Nickname</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<input class="form-control" id="nickname_field" name="nickname" type="text" required="" placeholder="Nickname" value="{{ user.nickname|supress_none }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="email_field" class="control-label">Email</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<input class="form-control" id="email_field" name="email" type="email" required="" placeholder="Your email address" value="{{ user.email|supress_none }}" disabled>
+								<p class="help-block">Your email is always private. It's used to log in and to reset your password if you forget what it was. We never disclose it to any third parties.</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="birthday_field" class="control-label">Birthday</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								{#<input class="form-control" id="birthday_field" name="birthday" type="date" value="{{ user.birth_date|supress_none }}">#}
+								<input class="form-control" id="birthday_field" name="birthday" type="date">
+								<div class="checkbox">
+									<label class="control-label" for="birthday">
+										<input type="checkbox"{% if user.is_public_birth_date %} checked{% endif %}> Make public
+									</label>
+									<p class="help-block">If you make your birthday public other members will see a notice when they log in during your birthday.</p>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="about_field" class="control-label">About yourself</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<textarea class="form-control" id="about_field" name="about" placeholder="Write something about yourself" rows="5">{{ user.about|supress_none }}</textarea>
+								<p class="help-block">This is a short self introduction that will appear under your profile photo.</p>
+							</div>
+						</div>
+
+						<hr>
+
+						<h4 class="text-uppercase">Region and language</h4>
+
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="from_country_field" class="control-label">Born in</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<select class="form-control" id="from_country_field" name="from_country">
+									<option value="--">(Choose below)</option>
+									{% for country in country_list %}
+										<option value="{{ country.alpha_2 }}"{% if user.from_country == country.alpha_2 %} selected{% endif %}>{{ country.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="in_country_field" class="control-label">Living in</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<select class="form-control" id="in_country_field" name="in_country">
+									<option value="--">(Choose below)</option>
+									{% for country in country_list %}
+										<option value="{{ country.alpha_2 }}"{% if user.in_country == country.alpha_2 %} selected{% endif %}>{{ country.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="timezone_field" class="control-label">Time zone</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<select class="form-control" id="timezone_field" name="timezone">
+									{% for timezone in timezone_list %}
+										<option value="{{ timezone }}"{% if user.timezone == timezone %} selected{% endif %}>{{ timezone }}</option>
+									{% endfor %}
+								</select>
+								<p class="help-block">We use this field to show times corresponding to the area you're in.</p>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="language_field" class="control-label">Preferred language</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<select class="form-control" id="language_field" name="language">
+									<option value="EN"{% if user.preferred_language == 'EN' %} selected{% endif %}>English</option>
+									<option value="JA"{% if user.preferred_language == 'JA' %} selected{% endif %}>Japanese</option>
+									<option value="ES"{% if user.preferred_language == 'ES' %} selected{% endif %}>Spanish</option>
+									<option value="PT"{% if user.preferred_language == 'PT' %} selected{% endif %}>Portuguese</option>
+									<option value="NL"{% if user.preferred_language == 'NL' %} selected{% endif %}>Dutch</option>
+									<option value="KR"{% if user.preferred_language == 'KR' %} selected{% endif %}>Korean</option>
+								</select>
+								<p class="help-block">Setting this value will change the language of this website (as soon as web add multilanguage support).</p>
+							</div>
+						</div>
+
+
+
+						<hr>
+
+						<h4 class="text-uppercase">Social links</h4>
+
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="website_field" class="control-label">Web site</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<div class="input-group">
+									<span class="input-group-addon" id="addon-website"><i class="fa fa-globe"></i></span>
+									<span class="input-group-addon" id="addon-website-url">http://</span>
+									<input class="form-control" id="website_field" name="website" type="text" placeholder="www.your-site.com" value="{{ user.website|supress_none }}" aria-describedby="addon-website">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="facebook_field" class="control-label">Facebook</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<div class="input-group">
+									<span class="input-group-addon" id="addon-facebook"><i class="fa fa-facebook"></i></span>
+									<span class="input-group-addon" id="addon-facebook-url">https://www.facebook.com/</span>
+									<input class="form-control" id="facebook_field" name="facebook" type="text" placeholder="Your Facebook user name" value="{{ user.facebook|supress_none }}" aria-describedby="addon-facebook">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="linkedin_field" class="control-label">LinkedIn</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<div class="input-group">
+									<span class="input-group-addon" id="addon-linkedin"><i class="fa fa-linkedin"></i></span>
+									<span class="input-group-addon" id="addon-linkedin-url">https://www.linkedin.com/in/</span>
+									<input class="form-control" id="linkedin_field" name="linkedin" type="text" placeholder="Your LinkedIn address" value="{{ user.linkedin|supress_none }}" aria-describedby="addon-linkedin">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="twitter_field" class="control-label">Twitter</label>
+							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+								<div class="input-group">
+									<span class="input-group-addon" id="addon-twitter"><i class="fa fa-twitter"></i></span>
+									<span class="input-group-addon" id="addon-twitter-url">https://twitter.com/</span>
+									<input class="form-control" id="twitter_field" name="twitter" type="text" placeholder="Your Twitter user name" value="{{ user.twitter|supress_none }}" aria-describedby="addon-twitter">
+								</div>
+							</div>
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<button id="cancel_button" class="btn btn-default btn-sm" type="reset">Cancel</button>
+							<button id="submit_button" class="btn btn-success btn-sm" type="submit">Save profile</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+
+{% block extrajs %}
+<script src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript">
+
+// Start with the submit button disabled
+$("#submit_button").attr("disabled", "disabled");
+
+// Initialize the new password confirmation popover
+$(function () {
+  $('[data-toggle="popover"]').popover()
+});
+
+// Initalize the datepicker
+$(function () {
+	$("#birthday_field").datepicker({
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: 'DD MM d, yy'
+	});
+	var date_from_db = "{{ user.birth_date }}".split("-");
+	var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
+	$("#birthday_field").datepicker("setDate", date);
+});
+
+// Load the member's background image
+$('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ user.standard_background_filename }})');
+
+// Make the Cancel buttom reload the member's profile view page
+$('#cancel_button').click(function() {
+    window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
+});
+
+</script>
+{% endblock %}

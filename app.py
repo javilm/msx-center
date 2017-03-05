@@ -2,10 +2,12 @@ import os, string, hashlib, random, re, enum, socket, json, copy
 import jinja_filters
 import lxml.html as LH
 import pycountry
+import pytz
 from datetime import datetime
 from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
+from geoip import geolite2
 from io import BytesIO
 from lxml import etree
 from lxml.html.clean import Cleaner
@@ -18,6 +20,7 @@ from werkzeug.datastructures import FileStorage
 # Create and initialize app
 app = Flask(__name__)
 app.jinja_env.filters['pretty_date'] = jinja_filters.pretty_date
+app.jinja_env.filters['supress_none'] = jinja_filters.supress_none
 app.jinja_env.auto_reload = True
 app.debug = True
 app.config.from_object(__name__)
@@ -36,8 +39,9 @@ app.config.update(dict(
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
 
-# Create ordered list of countries
-countries = sorted(pycountry.countries, key = lambda c: c.name)
+# Create ordered lists of countries and timezones
+country_list = sorted(pycountry.countries, key = lambda c: c.name)
+timezone_list = sorted(pytz.common_timezones)
 
 ############
 ## MODELS ##
@@ -58,7 +62,6 @@ class User(db.Model):
 	real_name = db.Column(db.String)
 	nickname = db.Column(db.String, unique=True)
 	email = db.Column(db.String, unique=True)
-	is_public_email = db.Column(db.Boolean)
 	password_hash = db.Column(db.String)
 	password_set_date = db.Column(db.Date)
 	# Metadata
@@ -76,11 +79,13 @@ class User(db.Model):
 	is_staff = db.Column(db.Boolean)
 	is_moderator = db.Column(db.Boolean)
 	# Social data
+	website = db.Column(db.String())
 	twitter = db.Column(db.String())
 	facebook = db.Column(db.String())
 	linkedin = db.Column(db.String())
 	# Other profile info
 	birth_date = db.Column(db.Date)
+	is_public_birth_date = db.Column(db.Boolean)
 	about = db.Column(db.String())
 
 	# Only one of these will contain a value
@@ -95,6 +100,7 @@ class User(db.Model):
 	slug = db.Column(db.String())
 	from_country = db.Column(db.String(2))
 	in_country = db.Column(db.String(2))
+	timezone = db.Column(db.String())
 	messages = db.relationship("ConversationMessage", backref="user")
 
 	@classmethod
@@ -151,6 +157,10 @@ class User(db.Model):
 		self.slug = slugify(slugify(real_name))
 		self.use_standard_background = True
 		self.standard_background_filename = 'profile_background_1.jpg'
+		ip = geolite2.lookup(request.headers['X-Real-IP'])
+		if ip is not None:
+			self.in_country = ip.country.lower()
+			self.timezone = ip.timezone
 
 	def set_password(self, password=None):
 		"""Sets the user password. The plaintext form is kept in the object, but not saved to 
@@ -1515,7 +1525,7 @@ def page_member_edit_profile():
 		abort(401)
 
 	if request.method == 'GET':
-		return "this is aget"
+		return render_template('member/member_edit_profile.html', user=user, country_list=country_list, timezone_list=timezone_list)
 	else:
 		return "this is a post"
 

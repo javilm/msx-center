@@ -36,3 +36,9 @@ def pretty_date(time=False):
 	if day_diff < 365:
 		return str(day_diff / 30) + " months ago"
 	return str(day_diff / 365) + " years ago"
+
+def supress_none(value):
+	if value is not None:
+		return value
+	else:
+		return ''
