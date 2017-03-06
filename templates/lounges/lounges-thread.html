@@ -29,10 +29,14 @@
 
 {# Original poster #}
 <div class="row">
-	<div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-3" id="original-poster-avatar"><img src="/static/img/justincyr-temp-avatar-4.png">
+	<div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-3" id="original-poster-avatar"><img class="img-responsive" src="{{ thread.messages[0].user.profile_photo_url() }}">
 		<address>
 			{% if thread.messages[0].user %}
-				<strong><a href="#">{{ thread.messages[0].user.real_name }}</a></strong><br>
+				{% if thread.messages[0].post_as == thread.messages[0].PostAsType.REALNAME %}
+					<strong><a href="#">{{ thread.messages[0].user.real_name }}</a></strong><br>
+				{% else %}
+					<strong><a href="#">{{ thread.messages[0].user.nickname }}</a></strong><br>
+				{% endif %}
 				Joined {{ thread.messages[0].user.registration_date.strftime('%d/%b/%Y') }}<br>
 			{% else %}
 				<strong>Anonymous</strong>
@@ -59,7 +63,7 @@
 <div class="row">
 	<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
 		<div class="panel panel-success">
-			<div class="panel-heading"><img src="/static/img/justincyr-temp-avatar-1.png" class="poster-avatar">
+			<div class="panel-heading"><img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
 				{% if message.post_as == message.PostAsType.REALNAME %}
 					<h3 class="panel-title">{{ message.user.real_name }}</h3>
 				{% elif message.post_as == message.PostAsType.NICKNAME %}

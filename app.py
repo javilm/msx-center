@@ -99,7 +99,9 @@ class User(db.Model):
 	preferred_language = db.Column(db.Enum(PreferredLanguageType))
 	slug = db.Column(db.String())
 	from_country = db.Column(db.String(2))
+	from_country_name = db.Column(db.String())
 	in_country = db.Column(db.String(2))
+	in_country_name = db.Column(db.String())
 	timezone = db.Column(db.String())
 	messages = db.relationship("ConversationMessage", backref="user")
 
@@ -154,12 +156,12 @@ class User(db.Model):
 		self.is_staff = False
 		self.reputation = 0
 		self.set_password(password)
-		self.slug = slugify(slugify(real_name))
+		self.slug = slugify(slugify(real_name if real_name else nickname))
 		self.use_standard_background = True
 		self.standard_background_filename = 'profile_background_1.jpg'
 		ip = geolite2.lookup(request.headers['X-Real-IP'])
 		if ip is not None:
-			self.in_country = ip.country.lower()
+			self.set_in_country(ip.country.lower())
 			self.timezone = ip.timezone
 
 	def set_password(self, password=None):
@@ -228,6 +230,14 @@ class User(db.Model):
 			return url_for('send_custom_portrait_image', portrait_id=self.custom_portrait_id, size=size)
 		else:
 			return '/static/img/anonymous_user_%s.png' % ('256x256' if size == 'standard' else '64x64')
+
+	def set_from_country(self, from_country=None):
+		self.from_country = from_country
+		self.from_country_name = pycountry.countries.get(alpha_2=from_country).name if from_country else None
+
+	def set_in_country(self, in_country=None):
+		self.in_country = in_country
+		self.in_country_name = pycountry.countries.get(alpha_2=in_country).name if in_country else None
 
 class ActivationKey(db.Model):
 	__tablename__ = 'activation_keys'
@@ -1356,11 +1366,7 @@ def page_member(member_id, slug):
 	if member is None:
 		abort(404)
 
-	# Get the country objects from the profile, if there are any
-	in_country = pycountry.countries.get(alpha_2=member.in_country) if member.in_country else None
-	from_country = pycountry.countries.get(alpha_2=member.from_country) if member.from_country else None
-	
-	return render_template('member/member_view.html', user=user, member=member, in_country=in_country, from_country=from_country)
+	return render_template('member/member_view.html', user=user, member=member)
 
 @app.route('/member/portrait/<int:portrait_id>/<string:size>')
 def send_custom_portrait_image(portrait_id, size):
@@ -1527,7 +1533,51 @@ def page_member_edit_profile():
 	if request.method == 'GET':
 		return render_template('member/member_edit_profile.html', user=user, country_list=country_list, timezone_list=timezone_list)
 	else:
-		return "this is a post"
+		# Method is POST, user trying to change the passwordd
+		num_validation_errors = 0
+		error_messages = []
+
+		# Check that the passwords match
+		if not request.form['real_name'] and not request.form['nickname']:
+			num_validation_errors += 1
+			error_messages.append("You can't leave blank both your real name and your nickname.")
+
+		if num_validation_errors:
+			return render_template('member/member_edit_profile.html', user=user, country_list=country_list, timezone_list=timezone_list, errors=error_messages)
+		else:
+			user.real_name = request.form['real_name']
+			user.nickname = request.form['nickname']
+			user.birth_date = request.form['birthdate']
+			if 'is_public_birthdate' in request.form:
+				user.is_public_birth_date = True
+			else: 
+				user.is_public_birth_date = False
+			user.about = request.form['about']
+			user.set_from_country(request.form['from_country'])
+			user.set_in_country(request.form['in_country'])
+			user.timezone = request.form['timezone']
+			user.preferred_language = request.form['language'].upper()
+			user.website = request.form['website']
+			user.facebook = request.form['facebook']
+			user.linkedin = request.form['linkedin']
+			user.twitter = request.form['twitter']
+			user.slug = slugify(slugify(request.form['real_name'] if request.form['real_name'] else request.form['nickname']))
+			db.session.add(user)
+			db.session.commit()
+			# Redirect instead of rendering template to avoid double-posting on page reload
+			return redirect(url_for('page_member_edit_profile_success'))
+
+@app.route('/member/edit/profile/success', methods=['GET'])
+def page_member_edit_profile_success():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+
+	return render_template('member/member_edit_profile_success.html', user=user)
+
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

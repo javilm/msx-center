@@ -22,7 +22,7 @@
 			<p class="lead">For security reasons, do not use the same password you're using somewhere else. If we get hacked then the attacker could use your password to access other sites (or vice versa).</p>
 			<div class="row">
 				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-					{% if True %}
+					{% if errors %}
 						<div class="alert alert-danger" role="alert">
 							{% if errors|length > 1 %}
 								<strong>There were errors with your submission:</strong>
@@ -39,6 +39,7 @@
 					<form class="form-horizontal" method="POST" action="{{ url_for('page_member_edit_profile')}}" >
 
 						<h4 class="text-uppercase">Personal information</h4>
+						<p class="help-block">Below you can enter your real name and/or your nickname. You have to enter at least one of them. Note that in order to avoid abuse and scams, some conversation lounges only allow posting if you enter your real name.</p>
 
 						<div class="form-group">
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="real_name_field" class="control-label">Real name</label>
@@ -60,13 +61,12 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="birthday_field" class="control-label">Birthday</label>
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="birthdate_field" class="control-label">Birthday</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
-								{#<input class="form-control" id="birthday_field" name="birthday" type="date" value="{{ user.birth_date|supress_none }}">#}
-								<input class="form-control" id="birthday_field" name="birthday" type="date">
+								<input class="form-control" id="birthdate_field" name="birthdate" type="date">
 								<div class="checkbox">
-									<label class="control-label" for="birthday">
-										<input type="checkbox"{% if user.is_public_birth_date %} checked{% endif %}> Make public
+									<label class="control-label" for="birthdate">
+										<input name="is_public_birthdate" type="checkbox"{% if user.is_public_birth_date %} checked{% endif %}> Make public
 									</label>
 									<p class="help-block">If you make your birthday public other members will see a notice when they log in during your birthday.</p>
 								</div>
@@ -88,9 +88,9 @@
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="from_country_field" class="control-label">Born in</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
 								<select class="form-control" id="from_country_field" name="from_country">
-									<option value="--">(Choose below)</option>
+									<option value="">(Choose below)</option>
 									{% for country in country_list %}
-										<option value="{{ country.alpha_2 }}"{% if user.from_country == country.alpha_2 %} selected{% endif %}>{{ country.name }}</option>
+										<option value="{{ country.alpha_2 }}"{% if user.from_country.lower() == country.alpha_2.lower() %} selected{% endif %}>{{ country.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -99,9 +99,9 @@
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="in_country_field" class="control-label">Living in</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
 								<select class="form-control" id="in_country_field" name="in_country">
-									<option value="--">(Choose below)</option>
+									<option value="">(Choose below)</option>
 									{% for country in country_list %}
-										<option value="{{ country.alpha_2 }}"{% if user.in_country == country.alpha_2 %} selected{% endif %}>{{ country.name }}</option>
+										<option value="{{ country.alpha_2 }}"{% if user.in_country.lower() == country.alpha_2.lower() %} selected{% endif %}>{{ country.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -110,6 +110,7 @@
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="timezone_field" class="control-label">Time zone</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
 								<select class="form-control" id="timezone_field" name="timezone">
+										<option value="">(Choose below)</option>
 									{% for timezone in timezone_list %}
 										<option value="{{ timezone }}"{% if user.timezone == timezone %} selected{% endif %}>{{ timezone }}</option>
 									{% endfor %}
@@ -122,18 +123,16 @@
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="language_field" class="control-label">Preferred language</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
 								<select class="form-control" id="language_field" name="language">
-									<option value="EN"{% if user.preferred_language == 'EN' %} selected{% endif %}>English</option>
-									<option value="JA"{% if user.preferred_language == 'JA' %} selected{% endif %}>Japanese</option>
-									<option value="ES"{% if user.preferred_language == 'ES' %} selected{% endif %}>Spanish</option>
-									<option value="PT"{% if user.preferred_language == 'PT' %} selected{% endif %}>Portuguese</option>
-									<option value="NL"{% if user.preferred_language == 'NL' %} selected{% endif %}>Dutch</option>
-									<option value="KR"{% if user.preferred_language == 'KR' %} selected{% endif %}>Korean</option>
+									<option value="EN"{% if user.preferred_language.value.upper() == "EN" %} selected{% endif %}>English</option>
+									<option value="JA"{% if user.preferred_language.value.upper() == "JA" %} selected{% endif %}>Japanese</option>
+									<option value="ES"{% if user.preferred_language.value.upper() == "ES" %} selected{% endif %}>Spanish</option>
+									<option value="PT"{% if user.preferred_language.value.upper() == "PT" %} selected{% endif %}>Portuguese</option>
+									<option value="NL"{% if user.preferred_language.value.upper() == "NL" %} selected{% endif %}>Dutch</option>
+									<option value="KR"{% if user.preferred_language.value.upper() == "KR" %} selected{% endif %}>Korean</option>
 								</select>
 								<p class="help-block">Setting this value will change the language of this website (as soon as web add multilanguage support).</p>
 							</div>
 						</div>
-
-
 
 						<hr>
 
@@ -196,24 +195,25 @@
 <script src="/static/js/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
+{# Make the Cancel button redirect back to the user's profile #}
+$('#cancel_button').click(function() {
+	window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
+});
+
 // Start with the submit button disabled
 $("#submit_button").attr("disabled", "disabled");
 
-// Initialize the new password confirmation popover
-$(function () {
-  $('[data-toggle="popover"]').popover()
-});
-
 // Initalize the datepicker
 $(function () {
-	$("#birthday_field").datepicker({
+	$("#birthdate_field").datepicker({
 		changeMonth: true,
 		changeYear: true,
+		yearRange: "1940:2017",
 		dateFormat: 'DD MM d, yy'
 	});
 	var date_from_db = "{{ user.birth_date }}".split("-");
 	var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
-	$("#birthday_field").datepicker("setDate", date);
+	$("#birthdate_field").datepicker("setDate", date);
 });
 
 // Load the member's background image
@@ -223,6 +223,29 @@ $('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{
 $('#cancel_button').click(function() {
     window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
 });
+
+// Submit button only becomes active when at least one of the real name and nickname are entered
+
+// Enable/disable the submit button depending on the status of the form
+function updateButtonStatus()
+{
+    if ($('#real_name_field').val() && $('#nickname_field').val()) {
+        $("#submit_button").attr("disabled", null);
+    } else {
+        $("#submit_button").attr("disabled", "disabled");
+    }
+}
+
+$('#real_name_field').keyup( function() {
+	updateButtonStatus();
+});
+
+$('#nickname_field').keyup( function() {
+	updateButtonStatus();
+});
+
+// Run at least once to check
+updateButtonStatus();
 
 </script>
 {% endblock %}

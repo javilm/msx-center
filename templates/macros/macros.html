@@ -81,6 +81,7 @@
 		<p>This member account is blocked. He/she can still visit all the message lounges, but cannot post replies nor start new conversations.</p>
 	</div>
 {% endif %}
+<p id="profile-id" class="text-center"><strong>Member ID#{{ member.id }}</strong></p>
 {% if member.real_name %}<p id="profile-user-name" class="text-center"><strong>{{ member.real_name }}</strong> </p>{% endif %}
 {% if member.nickname %}<p id="profile-user-nickname" class="text-center"><strong>"{{ member.nickname }}" </strong></p>{% endif %}
 <div id="profile-labels" class="text-center">
@@ -93,15 +94,15 @@
 {% if member.about %}<div id="profile-bio"><p>{{ member.about }}</p></div>{% endif %}
 <div id="profile-data">
 	<ul class="fa-ul">
-		<li><i class="fa fa-li fa-bookmark"></i> <a href="http://www.lavandeira.net" target="_new">www.lavandeira.net</a></li>
+		{% if member.website %}<li><i class="fa fa-li fa-bookmark"></i> <a href="http://{{ member.website }}" target="_new">{{ member.website }}</a></li>{% endif %}
 		{% if member.twitter %}<li><i class="fa fa-li fa-twitter"></i> <a href="https://twitter.com/{{ member.twitter }}" target="_new">@{{ member.twitter }}</a></li>{% endif %}
 		{% if member.facebook %}<li><i class="fa fa-li fa-facebook"></i> <a href="https://www.facebook.com/{{ member.facebook }}" target="_new">{{ member.facebook }}</a></li>{% endif %}
 		{% if member.linkedin %}<li><i class="fa fa-li fa-linkedin"></i> <a href="https://www.linkedin.com/in/{{ member.linkedin }}" target="_new">{{ member.linkedin }}</a></li>{% endif %}
-		{% if from_country %}<li><i class="fa fa-li fa-compass"></i> From {{ from_country.name }}</li>{% endif %}
-		{% if in_country %}<li><i class="fa fa-li fa-home"></i> Living in {{ in_country.name }}</li>{% endif %}
+		{% if member.from_country_name %}<li><i class="fa fa-li fa-compass"></i> From {{ member.from_country_name }}</li>{% endif %}
+		{% if member.in_country_name %}<li><i class="fa fa-li fa-home"></i> Living in {{ member.in_country_name }}</li>{% endif %}
 		<li><i class="fa fa-li fa-id-card"></i> Joined on {{ member.registration_date.strftime('%B %Y')}}</li>
 		<li><i class="fa fa-li fa-calendar"></i> Last active {{ member.last_active_date|pretty_date }}</li>
-		{% if member.birth_date %}<li><i class="fa fa-li fa-birthday-cake"></i> Born in {{ member.birth_date.strftime('%B %Y') }}</li>{% endif %}
+		{% if member.birth_date and member.is_public_birth_date %}<li><i class="fa fa-li fa-birthday-cake"></i> Born in {{ member.birth_date.strftime('%B %Y') }}</li>{% endif %}
 	</ul>
 </div>
 {% endmacro %}

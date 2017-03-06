@@ -1,0 +1,35 @@
+{% extends "layout/template-base.html" %}
+
+{% block title %}MSX Center - Edit profile{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+</div>{# we don't want to use the grid container opened by the template #}
+<div id="profile-background"></div>
+<div id="user-stats"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3" id="original-poster-avatar">
+            {{ macros.member_profile_data(member=user) }}
+			{{ macros.member_profile_buttons(active='edit_background') }}
+		</div>
+		<div class="col-lg-9 col-md-9 col-sm-9">
+			<h1>Profile changes saved</h1>
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+					<p class="alert alert-success">You've saved the changes to your profile.</p>	
+					<p><a href="{{ url_for('page_member', member_id=user.id, slug=user.slug) }}">Return to your activity</a>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+{# Change the background #}
+$('#profile-background').css('background-image', 'url(/static/img/Backgrounds/{{ user.standard_background_filename }})');
+</script>
+{% endblock %}
