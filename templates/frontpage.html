@@ -1,0 +1,73 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - Cover{% endblock %}
+
+{% macro news_categories_nav(active=None) %}
+<div id="categories-nav">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ul class="nav nav-pills nav-justified" id="article-category-links">
+					<li{% if active == "all" %} class="active"{% endif %}><a class="text-uppercase" href="#">All news</a></li>
+					<li{% if active == "events" %} class="active"{% endif %}><a class="text-uppercase" href="#">Events</a></li>
+					<li{% if active == "reviews" %} class="active"{% endif %}><a class="text-uppercase" href="#">Reviews</a></li>
+					<li{% if active == "games" %} class="active"{% endif %}><a class="text-uppercase" href="#">Games</a></li>
+					<li{% if active == "development" %} class="active"{% endif %}><a class="text-uppercase" href="#">Development</a></li>
+					<li{% if active == "hardware" %} class="active"{% endif %}><a class="text-uppercase" href="#">Hardware</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro main_feature(url=None, title=None, caption=None, category=None) %}
+<div class="main-feature">
+	<div id="main-feature-meta">
+		<h4 class="text-uppercase">{{ category }}</h4>
+		<h1><a href="{{ url }}">{{ title }}</a></h1>
+		<p><a href="{{ url }}">{{ caption }}</a></p>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro sub_feature(url=None, title=None, order=None) %}
+<div id="sub-feature-{{ order }}" class="sub-feature">
+	<div class="sub-feature-meta">
+		<h1><a href="{{ url }}">{{ title }}</a></h1>
+	</div>
+</div>
+{% endmacro %}
+
+{% block content %}
+</div>{# close the main container #}
+
+	{{ news_categories_nav(active="all") }}
+
+    <div class="container" id="frontpage-content">
+        <h2>Featured news and articles</h2>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				{{ main_feature(url="#", title="All future CES will be MSX-only", caption="Not really, but I needed some dummy content here", category="Events") }}
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						{{ sub_feature(url="#", title="All future CES1 will be MSX-only", order=1) }}
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						{{ sub_feature(url="#", title="All future CES2 will be MSX-only", order=2) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						{{ sub_feature(url="#", title="All future CES3 will be MSX-only", order=3) }}
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						{{ sub_feature(url="#", title="All future CES4 will be MSX-only", order=4) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3>Blah blah blah blah blah</h3>
+	</div>
+{% endblock %}

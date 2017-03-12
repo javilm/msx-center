@@ -776,17 +776,22 @@ def get_host_by_ip(ip):
 def page_main():
 	session['next'] = url_for('page_main')
 
-	if User.is_signed_in():
-		user = User.get_signed_in_user()
-		if user:
-			return render_template('index.html', active_item='home', user=user)
-		else:
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	return render_template('frontpage.html', user=user)
+
+#	if User.is_signed_in():
+#		user = User.get_signed_in_user()
+#		if user:
+#			return render_template('index.html', active_item='home', user=user)
+#		else:
 			# Invalid user ID in session. Remove it from the session and ask the user to sign in again
-			session.pop('user_id', None)
-			flash('You were signed out. Please sign in again.')
-			return redirect(url_for('page_signin'))
-	else:
-		return render_template('index.html', active_item='home', user=None)
+#			session.pop('user_id', None)
+#			flash('You were signed out. Please sign in again.')
+#			return redirect(url_for('page_signin'))
+#	else:
+#		return render_template('index.html', active_item='home', user=None)
 
 @app.route('/signin', methods=['GET', 'POST'])
 def page_signin():
@@ -1577,6 +1582,20 @@ def page_member_edit_profile_success():
 		abort(401)
 
 	return render_template('member/member_edit_profile_success.html', user=user)
+
+@app.route('/admin', methods=['GET'])
+def page_admin():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/main.html', user=user)
 
 
 #################################

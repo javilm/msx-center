@@ -16,21 +16,7 @@
                     <li {% if active_item == 'abou' %}class="active"{% endif %}role="presentation"><a href="#">About us</a></li>
                 </ul>
                 {% if user %}
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="dropdown" id="user-options">
-                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#"><img src="{{ user.profile_photo_url(size='small') }}" width="30" height="30"> <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-header" role="presentation"><strong>{{ user.real_name }}</strong></li>
-                                <li class="divider" role="presentation"></li>
-                                <li role="presentation"><a href="{{ url_for('page_member', member_id=user.id, slug=user.slug) }}">Profile </a></li>
-                                <li role="presentation"><a href="#">Messages <span class="badge" style="float: right; margin-top: 3px">34</span></a></li>
-                                <li role="presentation"><a href="#">Verify identity </a></li>
-                                <li role="presentation"><a href="#">Settings </a></li>
-                                <li class="divider" role="presentation"></li>
-                                <li role="presentation"><a href="{{ url_for('page_signout') }}">Sign out</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+					{{ user_pulldown(user) }}
                 {% else %}
                     <p class="navbar-text navbar-right actions">
                         <a class="navbar-link btn btn-default login" href="/signin">Sign in</a>
@@ -49,6 +35,27 @@
     </nav>
 </div>
 {%- endmacro %}
+
+{% macro user_pulldown(user=None) %}
+<ul class="nav navbar-nav navbar-right">
+	<li class="dropdown" id="user-options">
+		<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#"><img src="{{ user.profile_photo_url(size='small') }}" width="30" height="30"> <span class="caret"></span></a>
+		<ul class="dropdown-menu" role="menu">
+			<li class="dropdown-header" role="presentation"><strong>{{ user.real_name }}</strong></li>
+			<li class="divider" role="presentation"></li>
+			<li role="presentation"><a href="{{ url_for('page_member', member_id=user.id, slug=user.slug) }}">Profile</a></li>
+			<li role="presentation"><a href="#">Messages <span class="badge" style="float: right; margin-top: 3px">34</span></a></li>
+			<li role="presentation"><a href="#">Verify identity</a></li>
+			<li role="presentation"><a href="#">Settings</a></li>
+			{% if user.is_superuser or user.is_staff %}
+				<li role="presentation"><a href="{{ url_for('page_admin') }}">Administration</a></li>
+			{% endif %}
+			<li class="divider" role="presentation"></li>
+			<li role="presentation"><a href="{{ url_for('page_signout') }}">Sign out</a></li>
+		</ul>
+	</li>
+</ul>
+{% endmacro %}
 
 {% macro footer() %}
 <footer class="footer">
