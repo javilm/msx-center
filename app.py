@@ -1583,6 +1583,10 @@ def page_member_edit_profile_success():
 
 	return render_template('member/member_edit_profile_success.html', user=user)
 
+###########################
+## ADMINISTRATION ROUTES ##
+###########################
+
 @app.route('/admin', methods=['GET'])
 def page_admin():
 
@@ -1595,8 +1599,77 @@ def page_admin():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/main.html', user=user)
+	return render_template('admin/dashboard.html', user=user, active='dashboard')
 
+@app.route('/admin/news', methods=['GET'])
+def page_admin_news():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/dashboard.html', user=user, active='news')
+
+@app.route('/admin/articles', methods=['GET'])
+def page_admin_articles():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/dashboard.html', user=user, active='articles')
+
+@app.route('/admin/lounges', methods=['GET'])
+def page_admin_lounges():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/dashboard.html', user=user, active='lounges')
+
+@app.route('/admin/members', methods=['GET'])
+def page_admin_members():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/dashboard.html', user=user, active='members')
+
+@app.route('/admin/domains', methods=['GET'])
+def page_admin_domains():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/dashboard.html', user=user, active='domains')
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

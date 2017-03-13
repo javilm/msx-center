@@ -1,0 +1,27 @@
+{% macro admin_navbar() %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header"><a class="navbar-brand navbar-link" href="#">MSX Center Administration</a>
+			<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+		</div>
+		<div class="collapse navbar-collapse" id="navcol-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li role="presentation"><a href="{{ url_for('page_main') }}">Back to site</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+{% endmacro %}
+
+{% macro admin_sidebar(active=None) %}
+<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 sidebar">
+	<ul class="nav nav-sidebar">
+		<li{% if active == 'dashboard' %} class="active"{% endif %}><a href="{{ url_for('page_admin') }}">Dashboard</a></li>
+		<li{% if active == 'news' %} class="active"{% endif %}><a href="{{ url_for('page_admin_news') }}">News</a></li>
+		<li{% if active == 'articles' %} class="active"{% endif %}><a href="{{ url_for('page_admin_articles') }}">Articles</a></li>
+		<li{% if active == 'lounges' %} class="active"{% endif %}><a href="{{ url_for('page_admin_lounges') }}">Lounges</a></li>
+		<li{% if active == 'members' %} class="active"{% endif %}><a href="{{ url_for('page_admin_members') }}">Members</a></li>
+		<li{% if active == 'domains' %} class="active"{% endif %}><a href="{{ url_for('page_admin_domains') }}">Domains</a></li>
+	</ul>
+</div>
+{% endmacro %}

@@ -1,0 +1,35 @@
+{% import 'macros/admin-macros.html' as admin_macros %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/css/Navigation-Clean1.css">
+    <link rel="stylesheet" href="/static/css/Navigation-with-Button1.css">
+    <link rel="stylesheet" href="/static/css/Navigation-with-Search1.css">
+    <link rel="stylesheet" href="/static/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+	{% block extracss %}{% endblock %}
+</head>
+
+<body>
+	{{ admin_macros.admin_navbar() }}
+    <div class="container-fluid" id="container-admin">
+        <div class="row">
+			{{ admin_macros.admin_sidebar(active=active) }}
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-9 admin-content">
+				{% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+	{% block extrajs %}{% endblock %}
+</body>
+
+</html>
