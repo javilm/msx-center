@@ -1,3 +1,7 @@
+body {
+	padding-top: 50px;
+}
+
 .nav-sidebar {
   margin-right:-21px;
   margin-bottom:20px;
@@ -28,3 +32,10 @@
   background-color:#428bca;
 }
 
+.admin-content {
+	padding: 20px 40px;
+}
+
+.admin-content .page-header {
+	margin-top: 0;
+}

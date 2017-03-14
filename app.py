@@ -793,6 +793,10 @@ def page_main():
 #	else:
 #		return render_template('index.html', active_item='home', user=None)
 
+########################
+## SIGNIN AND SIGNOUT ##
+########################
+
 @app.route('/signin', methods=['GET', 'POST'])
 def page_signin():
 	# If the user is already signed in but comes here anyway, redirect to the front page
@@ -813,6 +817,10 @@ def page_signin():
 def page_signout():
 	session.pop('user_id', None)
 	return redirect_to_next()
+
+###################################
+## SIGNUP AND ACCOUNT ACTIVATION ##
+###################################
 
 # Account creation process:
 #
@@ -976,6 +984,10 @@ def page_activate():
 			# Redirect to the main page
 			return redirect(url_for('page_main'))
 
+##############################
+## RESET FORGOTTEN PASSWORD ##
+##############################
+
 # Password reset. This is very similar to the account activation function.
 #
 # 1: Request password reset, generate verification key and send verification email
@@ -1102,6 +1114,10 @@ def page_verifypasswordreset():
 
 			# Redirect to the main page
 			return redirect(url_for('page_main'))
+
+##########################
+## CONVERSATION LOUNGES ##
+##########################
 
 @app.route('/lounges', methods=['GET'])
 def page_lounges_list():
@@ -1356,6 +1372,10 @@ def send_image(image_id, dummy_filename):
 	else:
 		abort(404)
 
+####################
+## MEMBER PROFILE ##
+####################
+
 @app.route('/member/<int:member_id>/<string:slug>')
 def page_member(member_id, slug):
 	# Note: in the context of this route, the "user" is the logged in user, and the "member" is
@@ -1583,6 +1603,19 @@ def page_member_edit_profile_success():
 
 	return render_template('member/member_edit_profile_success.html', user=user)
 
+##########
+## NEWS ##
+##########
+
+@app.route('/news', methods=['GET'])
+def page_news():
+	session['next'] = url_for('page_news')
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	return render_template('news/news-list.html', user=user)
+
 ###########################
 ## ADMINISTRATION ROUTES ##
 ###########################
@@ -1613,7 +1646,7 @@ def page_admin_news():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='news')
+	return render_template('admin/news.html', user=user, active='news')
 
 @app.route('/admin/articles', methods=['GET'])
 def page_admin_articles():
@@ -1627,7 +1660,7 @@ def page_admin_articles():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='articles')
+	return render_template('admin/articles.html', user=user, active='articles')
 
 @app.route('/admin/lounges', methods=['GET'])
 def page_admin_lounges():
@@ -1641,7 +1674,7 @@ def page_admin_lounges():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='lounges')
+	return render_template('admin/lounges.html', user=user, active='lounges')
 
 @app.route('/admin/members', methods=['GET'])
 def page_admin_members():
@@ -1655,7 +1688,7 @@ def page_admin_members():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='members')
+	return render_template('admin/members.html', user=user, active='members')
 
 @app.route('/admin/domains', methods=['GET'])
 def page_admin_domains():
@@ -1669,7 +1702,7 @@ def page_admin_domains():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='domains')
+	return render_template('admin/domains.html', user=user, active='domains')
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

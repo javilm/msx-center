@@ -9,9 +9,9 @@
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav">
                     <li {% if active_item == 'home' %}class="active"{% endif %}role="presentation"><a href="#">Home </a></li>
-                    <li {% if active_item == 'news' %}class="active"{% endif %}role="presentation"><a href="#">News </a></li>
+                    <li {% if active_item == 'news' %}class="active"{% endif %}role="presentation"><a href="{{ url_for('page_news') }}">News </a></li>
                     <li {% if active_item == 'arti' %}class="active"{% endif %}role="presentation"><a href="#">Articles </a></li>
-                    <li {% if active_item == 'loun' %}class="active"{% endif %}role="presentation"><a href="/lounges">Lounges </a></li>
+                    <li {% if active_item == 'loun' %}class="active"{% endif %}role="presentation"><a href="{{ url_for('page_lounges_list') }}">Lounges </a></li>
                     <li {% if active_item == 'shop' %}class="active"{% endif %}role="presentation"><a href="#">Shop </a></li>
                     <li {% if active_item == 'abou' %}class="active"{% endif %}role="presentation"><a href="#">About us</a></li>
                 </ul>

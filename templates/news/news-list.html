@@ -1,0 +1,105 @@
+{% extends "layout/template-base.html" %}
+
+{% block title %}MSX Center - News{% endblock %}
+
+{% block extracss %}
+    <link rel="stylesheet" href="/static/css/news.css">
+{% endblock %}
+
+{% macro news_sidebar_most_popular() %}
+<h4 class="news-section-divider">Most popular</h4>
+<p class="text-muted">The most visited news items of the last 90 days;</p>
+<ol>
+	<li><a href="#">Something happened in that user meeting</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
+	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
+</ol>
+{% endmacro %}
+
+{% macro news_sidebar_sponsor() %}
+<h4 class="news-section-divider">Sponsor</h4>
+<div class="text-center"><img src="/static/img/Ads/googleads-200x200.png"></div>
+{% endmacro %}
+
+{% macro news_sidebar_archive() %}
+<h4 class="news-section-divider">News archive </h4>
+<ul>
+	<li><a href="#">March 2017 (12 items)</a></li>
+	<li><a href="#">February 2017 (8 items)</a></li>
+	<li><a href="#">January 2017 (1 item)</a></li>
+	<li><a href="#">December 2016 (15 items)</a></li>
+</ul>
+{% endmacro %}
+
+{% macro news_item(category=None, image_url=None, headline=None, subhead=None, date=None, author=None, body=None, url=None, num_comments=None, is_full=False) %}
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
+	<div class="news-item">
+		{% if category %}<h5 class="text-uppercase">{{ category }}</h5>{% endif %}
+		{% if image_url %}<img src="{{ image_url }}" class="img-responsive">{% endif %}
+		<h3>{{ headline|safe }}</h3>
+		{% if subhead %}<h4>{{ subhead|safe }}</h4>{% endif %}
+		{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ author.name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}
+		<p class="news-item-date">Posted on {{ date }} by <a href="#">{{ author }}</a></p>
+		<div class="news-item-body text-justify">{{ body|safe }}</div>
+		<div class="news-item-comment text-right">
+		{% if is_full %}
+			{% if num_comments %}
+				<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ num_comments }})</a></span>
+			{% else %}
+				<span><i class="fa fa-pencil"></i> <a href="#">Write a comment</a></span>
+			{% endif %}
+		{% else %}
+			<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ num_comments }})</a></span>
+		{% endif %}
+		</div>
+	</div>
+</div>
+{% endmacro %}
+
+
+{% block content %}
+<div class="row">
+	<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+		<h4 class="news-section-divider">Recent news</h4>
+		<div class="row">
+			{{ news_item(category="Events", image_url="/static/img/Articles/article4.jpg", headline="All future CES will be MSX-only", subhead="Not really, but I had to type something here", date="March 14, 2017", author="Javi Lavandeira", body="<p>And here we say something about this news item. It doesn't actually have to be true because this is just placeholder text. Yes, I know that I could just copy & paste something from lipsum.com, but I just felt like typing this nonsense.</p>", num_comments=20, is_full=False) }}
+			{{ news_item(category="Interviews", image_url="/static/img/Articles/carmack.jpg", headline="John Carmark reviews Life on Mars", subhead="Says that <em>It's a Metroid ripoff</em>", date="March 13, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=281, is_full=False) }}
+		</div>
+		<div class="row">
+			{{ news_item(category="Games", image_url="/static/img/Articles/article2.jpg", headline="PAC-MAN's ghosts migrate to Canada", subhead="Sick of Donald Trump", date="March 12, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=0, is_full=False) }}
+			{{ news_item(category="Drugs", image_url="/static/img/Articles/article3.jpg", headline="Super Mario Bros mushrooms give a super high", subhead=None, date="March 11, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=0, is_full=False) }}
+		</div>
+	</div>
+
+	{# sidebar #} 
+	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+		{{ news_sidebar_sponsor() }}
+		{{ news_sidebar_most_popular() }}
+		{{ news_sidebar_archive() }}
+	</div>
+</div>
+
+{# pagination #}
+<div class="row">
+	<div class="col-md-12">
+		<nav>
+			<ul class="pagination">
+				<li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+				<li><a>1</a></li>
+				<li><a>2</a></li>
+				<li><a>3</a></li>
+				<li><a>4</a></li>
+				<li><a>5</a></li>
+				<li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
+			</ul>
+		</nav>
+	</div>
+</div>
+{% endblock %}
