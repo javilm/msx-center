@@ -301,7 +301,7 @@ class VerificationKey(db.Model):
 			self.user.real_name, self.key, self.creation_date)
 
 class SiteImage(db.Model):
-	"""Stores all comment and article images in the site."""
+	"""Stores all conversation images in the site."""
 	__tablename__ = 'images'
 
 	id = db.Column(db.Integer, primary_key=True)
@@ -425,7 +425,6 @@ class ProfileImage(db.Model):
 		del original, square, processed, thumbnail  
 
 		self.needs_processing = False
-
 
 class ConversationLounge(db.Model):
 	__tablename__ = 'lounges'
@@ -653,6 +652,59 @@ class ConversationMessage(db.Model):
 			del img, tmp_img
 
 		self.body_en = LH.tostring(root)
+
+class NewsCategory(db.Model):
+	__tablename__ = 'news_categories'
+
+	id = db.Column(db.Integer, primary_key=True)
+	name_en = db.Column(db.String())
+	name_ja = db.Column(db.String())
+	name_nl = db.Column(db.String())
+	name_es = db.Column(db.String())
+	name_pt = db.Column(db.String())
+	name_kr = db.Column(db.String())
+
+	def __init__(self, name_en=None, name_ja=None, name_nl=None, name_es=None, name_pt=None, name_kr=None):
+		self.name_en = html_cleaner.clean_html(name_en) if name_en else None
+		self.name_ja = html_cleaner.clean_html(name_ja) if name_ja else None
+		self.name_nl = html_cleaner.clean_html(name_nl) if name_nl else None
+		self.name_es = html_cleaner.clean_html(name_es) if name_es else None
+		self.name_pt = html_cleaner.clean_html(name_pt) if name_pt else None
+		self.name_kr = html_cleaner.clean_html(name_kr) if name_kr else None
+
+class NewsItem(db.Model):
+	__tablename__ = 'news_items'
+
+	id = db.Column(db.Integer, primary_key=True)
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	headline_en = db.Column(db.String())
+	headline_ja = db.Column(db.String())
+	headline_nl = db.Column(db.String())
+	headline_es = db.Column(db.String())
+	headline_pt = db.Column(db.String())
+	headline_kr = db.Column(db.String())
+	subhead_en = db.Column(db.String())
+	subhead_ja = db.Column(db.String())
+	subhead_nl = db.Column(db.String())
+	subhead_es = db.Column(db.String())
+	subhead_pt = db.Column(db.String())
+	subhead_kr = db.Column(db.String())
+	body_en = db.Column(db.String())
+	body_ja = db.Column(db.String())
+	body_nl = db.Column(db.String())
+	body_es = db.Column(db.String())
+	body_pt = db.Column(db.String())
+	body_kr = db.Column(db.String())
+	header_image = db.Column(db.Integer, db.ForeignKey('images.id'))
+	date_published = db.Column(db.DateTime)
+	is_published = db.Column(db.Boolean)
+	is_hidden = db.Column(db.Boolean)
+	is_feature = db.Column(db.Boolean)	# Feature items are eligible to appear in the front page
+	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
+	allows_comments = db.Column(db.Boolean)
+	url = db.Column(db.String())
+	num_comments = db.Column(db.Integer)
+	
 
 #######################
 ## APPLICATION SETUP ##
