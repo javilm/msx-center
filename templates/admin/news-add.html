@@ -1,0 +1,70 @@
+{% extends "layout/admin-base.html" %}
+
+{% block title %}MSX Center Administration - Add news item{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+<h1 class="page-header">News <span class="small">Add new item</span></h1>
+<ul class="nav nav-pills">
+	<li class="active"><a href="#">English</a></li>
+	<li><a href="#">Japanese</a></li>
+	<li><a href="#">Dutch</a></li>
+	<li><a href="#">Spanish</a></li>
+	<li><a href="#">Portuguese</a></li>
+	<li><a href="#">Korean</a></li>
+</ul>
+<form method="post" enctype="multipart/form-data">
+	<div class="form-group">
+		<label class="control-label">Headline </label><i class="fa fa-exclamation-circle"></i>
+		<input class="form-control" type="text">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Secondary headline</label>
+		<input class="form-control" type="text">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Body </label><i class="fa fa-exclamation-circle"></i>
+		<textarea class="form-control" rows="10"></textarea>
+	</div>
+	<div class="form-group">
+		<label class="control-label">Author </label><i class="fa fa-exclamation-circle"></i>
+		<select class="form-control">
+			<optgroup label="Staff">
+				<option value="12" selected="">Javi Lavandeira</option>
+				<option value="13">MSX Center</option>
+				<option value="14">John Doe</option>
+			</optgroup>
+		</select>
+	</div>
+	<div class="form-group">
+		<label class="control-label">Featured image</label>
+		<input type="file">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Publication date</label>
+		<input class="form-control" type="date">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Options</label>
+		<div class="checkbox">
+			<label class="control-label">
+				<input type="checkbox">Feature</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input type="checkbox">Hidden</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input type="checkbox">Allow comments</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<button class="btn btn-default btn-sm" type="button">Cancel </button>
+		<button class="btn btn-primary btn-sm" type="submit">Save </button>
+	</div>
+</form>
+{% endblock %}

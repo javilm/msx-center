@@ -2,6 +2,43 @@
 {% block title %}MSX Center Administration - News{% endblock %}
 {% block content %}
 <h1 class="page-header">News</h1>
-Something goes here
+<a href="{{ url_for('page_admin_news_add') }}" class="btn btn-primary btn-xs" type="button">Add new item</a>
+
+{# This table will appear only if there are any news items in the database #}
+<div class="table-responsive news-table">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th>Headline </th>
+				<th>Author </th>
+				<th>Category </th>
+				<th>Tags</th>
+				<th> <i class="fa fa-comment"></i></th>
+				<th>Date </th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><a href="#"><strong>All future CES will be MSX-only</strong></a><strong> </strong>
+					<div class="news-item-labels"><span class="label label-success">Feature </span><span class="label label-warning">Draft </span></div>
+				</td>
+				<td><a href="#">Javi Lavandeira</a></td>
+				<td>Events </td>
+				<td>aaa, bbb, ccc, ddd, eee</td>
+				<td>20 </td>
+				<td>2017/Mar/14 </td>
+			</tr>
+			<tr>
+				<td><a href="#"><strong>John Carmark reviews Life on Mars</strong></a></td>
+				<td><a href="#">Javi Lavandeira</a></td>
+				<td>Interviews </td>
+				<td>carmark, interview</td>
+				<td>280 </td>
+				<td>2017/Mar/13 </td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
 {% endblock %}
 

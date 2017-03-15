@@ -695,7 +695,8 @@ class NewsItem(db.Model):
 	body_es = db.Column(db.String())
 	body_pt = db.Column(db.String())
 	body_kr = db.Column(db.String())
-	header_image = db.Column(db.Integer, db.ForeignKey('images.id'))
+	header_image_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+	date_created = db.Column(db.DateTime)
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
 	is_hidden = db.Column(db.Boolean)
@@ -704,7 +705,87 @@ class NewsItem(db.Model):
 	allows_comments = db.Column(db.Boolean)
 	url = db.Column(db.String())
 	num_comments = db.Column(db.Integer)
+	score = db.Column(db.Integer)
 	
+	def __init__(self, author, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, header_image=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None):
+		self.author_id = author.id
+		self.headline_en = html_cleaner.clean_html(headline_en) if headline_en else None
+		self.headline_ja = html_cleaner.clean_html(headline_ja) if headline_ja else None
+		self.headline_nl = html_cleaner.clean_html(headline_nl) if headline_nl else None
+		self.headline_es = html_cleaner.clean_html(headline_es) if headline_es else None
+		self.headline_pt = html_cleaner.clean_html(headline_pt) if headline_pt else None
+		self.headline_kr = html_cleaner.clean_html(headline_kr) if headline_kr else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
+		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
+		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
+		self.body_es = html_cleaner.clean_html(body_es) if body_es else None
+		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
+		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
+		self.header_image_id = header_image.id if header_image else None
+		self.date_created = datetime.utcnow()
+		self.date_published = date_published or self.date_created
+		self.is_published = is_published
+		self.is_hidden = is_hidden
+		self.is_feature = is_feature
+		self.is_archived = is_archived
+		self.allows_comments = allows_comments
+		self.url = url
+		self.num_comments = 0
+		self.score = 0
+
+		self.extract_images()
+
+	def extract_images(self):
+		root = LH.fromstring(self.body_en)
+
+		for element in root.iter('img'):
+			# Make a copy of the original HTML element
+			tmp_element = copy.copy(element)
+
+			# Generate an image by decoding the Base64 content of the src attribute
+			img = SiteImage(element.attrib['src'])
+
+			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
+			tmp_img = SiteImage.query.filter_by(md5_hash=img.md5_hash).first()
+			if tmp_img is None:
+				db.session.add(img)
+				db.session.commit()
+			else:
+				img = tmp_img
+
+			# Modify the attributes in the copy of the <img...> tag
+			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
+			tmp_element.attrib['class'] = 'img-responsive'
+
+			# Create a new <A ...> element that will contain the modified <IMG ...> tag
+			new = etree.Element("a", href=tmp_element.attrib['src'])
+			new.attrib['data-lightbox'] = 'Images for comment %s' % self.id
+			# Add the <img> tag inside the new <a> element
+			new.append(tmp_element)
+
+			# Replace the <img ...> tag in the HTML code with the new <a ...><img ...></a>
+			element.getparent().replace(element, new)
+
+			del img, tmp_img
+
+		self.body_en = LH.tostring(root)
+
+class ExternalLink(db.Model):
+	__tablename__ = 'external_links'
+
+	id = db.Column(db.Integer, primary_key=True)
+	url = db.Column(db.String())
+	num_visits = db.Column(db.Integer)
+	
+	def __init__(self, url=None):
+		self.url = url
+		self.num_visits = 0
 
 #######################
 ## APPLICATION SETUP ##
@@ -1699,6 +1780,20 @@ def page_admin_news():
 			abort(401)
 
 	return render_template('admin/news.html', user=user, active='news')
+
+@app.route('/admin/news/add', methods=['GET', 'POST'])
+def page_admin_news_add():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	return render_template('admin/news-add.html', user=user, active='news')
 
 @app.route('/admin/articles', methods=['GET'])
 def page_admin_articles():
