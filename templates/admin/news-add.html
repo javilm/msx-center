@@ -4,67 +4,254 @@
 
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 {% endblock %}
+
+{% macro inputs_for_language(lang) %}
+<div class="form-group">
+	<label class="control-label">Headline ({{ lang }})</label><i class="fa fa-exclamation-circle"></i>
+	<input class="form-control" id="field_headline_{{ lang }}" type="text">
+</div>
+<div class="form-group">
+	<label class="control-label">Secondary headline ({{ lang }})</label>
+	<input class="form-control" id="field_subhead_{{ lang }}" type="text">
+</div>
+<div class="form-group">
+	<label class="control-label">Body ({{ lang }})</label>
+	<div class="form-control" id="quillEditor_{{ lang }}"></div>
+</div>
+<div class="form-group">
+	<label class="control-label">Draft status ({{ lang }})</label>
+	<div class="checkbox">
+		<label class="control-label">
+			<input id="field_is_draft_{{ lang }}" type="checkbox" checked>Draft
+		</label>
+	</div>
+</div>
+{% endmacro %}
 
 {% block content %}
 <h1 class="page-header">News <span class="small">Add new item</span></h1>
-<ul class="nav nav-pills">
-	<li class="active"><a href="#">English</a></li>
-	<li><a href="#">Japanese</a></li>
-	<li><a href="#">Dutch</a></li>
-	<li><a href="#">Spanish</a></li>
-	<li><a href="#">Portuguese</a></li>
-	<li><a href="#">Korean</a></li>
+<ul class="nav nav-pills" role="tablist">
+	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
+	<li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
+	<li role="presentation" id="tab-nl"><a href="#input-nl" aria-controls="input-nl" role="tab" data-toggle="tab">Dutch</a></li>
+	<li role="presentation" id="tab-es"><a href="#input-es" aria-controls="input-es" role="tab" data-toggle="tab">Spanish</a></li>
+	<li role="presentation" id="tab-pt"><a href="#input-pt" aria-controls="input-pt" role="tab" data-toggle="tab">Portuguese</a></li>
+	<li role="presentation" id="tab-kr"><a href="#input-kr" aria-controls="input-kr" role="tab" data-toggle="tab">Korean</a></li>
 </ul>
+
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+	{% if errors|length > 1 %}
+		<strong>There were errors with your submission:</strong>
+	{% else %}
+		<strong>There was an error with your submission:</strong>
+	{% endif %}
+	<ul>
+		{% for error in errors %}
+			<li>{{ error }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
 <form method="post" enctype="multipart/form-data">
-	<div class="form-group">
-		<label class="control-label">Headline </label><i class="fa fa-exclamation-circle"></i>
-		<input class="form-control" type="text">
-	</div>
-	<div class="form-group">
-		<label class="control-label">Secondary headline</label>
-		<input class="form-control" type="text">
-	</div>
-	<div class="form-group">
-		<label class="control-label">Body </label><i class="fa fa-exclamation-circle"></i>
-		<textarea class="form-control" rows="10"></textarea>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-ja">{{ inputs_for_language('ja') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-nl">{{ inputs_for_language('nl') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-es">{{ inputs_for_language('es') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-pt">{{ inputs_for_language('pt') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-kr">{{ inputs_for_language('kr') }}</div>
 	</div>
 	<div class="form-group">
 		<label class="control-label">Author </label><i class="fa fa-exclamation-circle"></i>
-		<select class="form-control">
+		<select id="field_author_id" class="form-control">
+			{% if staff %}
 			<optgroup label="Staff">
-				<option value="12" selected="">Javi Lavandeira</option>
-				<option value="13">MSX Center</option>
-				<option value="14">John Doe</option>
+				{% for author in staff %}
+					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
 			</optgroup>
+			{% endif %}
+			{% if superusers %}
+			<optgroup label="Superusers">
+				{% for author in superusers %}
+					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
+			</optgroup>
+			{% endif %}
 		</select>
 	</div>
 	<div class="form-group">
 		<label class="control-label">Featured image</label>
-		<input type="file">
+		<input name="header_image" type="file">
 	</div>
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
-		<input class="form-control" type="date">
+		<input id="field_date_published" class="form-control" type="date">
 	</div>
 	<div class="form-group">
 		<label class="control-label">Options</label>
 		<div class="checkbox">
 			<label class="control-label">
-				<input type="checkbox">Feature</label>
+				<input id="field_is_feature" type="checkbox">Feature
+			</label>
 		</div>
 		<div class="checkbox">
 			<label class="control-label">
-				<input type="checkbox">Hidden</label>
+				<input id="field_is_hidden" type="checkbox">Hidden
+			</label>
 		</div>
 		<div class="checkbox">
 			<label class="control-label">
-				<input type="checkbox">Allow comments</label>
+				<input id="field_allows_comments" type="checkbox">Allow comments
+			</label>
 		</div>
 	</div>
 	<div class="form-group">
-		<button class="btn btn-default btn-sm" type="button">Cancel </button>
-		<button class="btn btn-primary btn-sm" type="submit">Save </button>
+		<button id="cancelButton" class="btn btn-default btn-sm" type="button">Cancel</button>
+		<button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>
 	</div>
 </form>
 {% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript">
+	// Initialize Quill editors
+	var toolbarOptions = [
+		[{ 'header': [1, 2, 3, false] }],
+		[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+		['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+		[{ 'color': [] },],          // dropdown with defaults from theme
+		['link', 'image', 'video', 'blockquote', 'code-block'],
+		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+	];
+
+	var quill_en = new Quill('#quillEditor_en' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+	var quill_ja = new Quill('#quillEditor_ja' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+	var quill_nl = new Quill('#quillEditor_nl' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+	var quill_es = new Quill('#quillEditor_es' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+	var quill_pt = new Quill('#quillEditor_pt' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+	var quill_kr = new Quill('#quillEditor_kr' , {
+		modules : {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+
+	// Initialize datepicker
+	$(function () {
+		$("#field_date_published").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			yearRange: "2013:2020",
+			dateFormat: 'DD MM d, yy'
+		});
+		// Code here to initialize the datepicker to the date entered in the form, or today's date if not especified
+		// var date_from_db = "{{ user.birth_date }}".split("-");
+		// var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
+		// $("#birthdate_field").datepicker("setDate", date);
+	});
+
+
+	// Link event to the submit button
+    $("#saveButton").click(function (e) {
+        e.preventDefault();
+        console.log("Button pressed");
+
+        $.ajax({
+            method: "POST",
+            url: "{{ url_for('page_admin_news_add') }}",
+            processData: true,
+            dataType: 'json',
+            data: {
+				'en': {
+					headline: $('#field_headline_en').val(),
+					subhead: $('#field_subhead_en').val(),
+					body: quill_en.root.innerHTML,
+					is_draft: $('#field_is_draft_en').is(':checked')?'on':'off'
+				},
+				'ja': {
+					headline: $('#field_headline_ja').val(),
+					subhead: $('#field_subhead_ja').val(),
+					body: quill_ja.root.innerHTML,
+					is_draft: $('#field_is_draft_ja').is(':checked')?'on':'off'
+				},
+				'nl': {
+					headline: $('#field_headline_nl').val(),
+					subhead: $('#field_subhead_nl').val(),
+					body: quill_nl.root.innerHTML,
+					is_draft: $('#field_is_draft_nl').is(':checked')?'on':'off'
+				},
+				'es': {
+					headline: $('#field_headline_es').val(),
+					subhead: $('#field_subhead_es').val(),
+					body: quill_es.root.innerHTML,
+					is_draft: $('#field_is_draft_es').is(':checked')?'on':'off'
+				},
+				'pt': {
+					headline: $('#field_headline_pt').val(),
+					subhead: $('#field_subhead_pt').val(),
+					body: quill_pt.root.innerHTML,
+					is_draft: $('#field_is_draft_pt').is(':checked')?'on':'off'
+				},
+				'kr': {
+					headline: $('#field_headline_kr').val(),
+					subhead: $('#field_subhead_kr').val(),
+					body: quill_kr.root.innerHTML,
+					is_draft: $('#field_is_draft_kr').is(':checked')?'on':'off'
+				},
+                author_id: $('#field_author_id').val(),
+                date_published: $('#field_date_published').val(),
+                is_feature: $('#field_is_feature').is(':checked')?'on':'off',
+                is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
+                allows_comments: $('#field_allows_comments').is(':checked')?'on':'off'
+            }
+        })
+        .done(function(result) {
+            window.location = result.url;
+        });
+        quill_en.enable(false);
+        quill_ja.enable(false);
+        quill_nl.enable(false);
+        quill_es.enable(false);
+        quill_pt.enable(false);
+        quill_kr.enable(false);
+        $("#saveButton").prop("disabled", true);
+    });	
+
+</script>
+{% endblock %}
+
+

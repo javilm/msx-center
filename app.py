@@ -695,6 +695,12 @@ class NewsItem(db.Model):
 	body_es = db.Column(db.String())
 	body_pt = db.Column(db.String())
 	body_kr = db.Column(db.String())
+	is_draft_en = db.Column(db.Boolean)
+	is_draft_ja = db.Column(db.Boolean)
+	is_draft_nl = db.Column(db.Boolean)
+	is_draft_es = db.Column(db.Boolean)
+	is_draft_pt = db.Column(db.Boolean)
+	is_draft_kr = db.Column(db.Boolean)
 	header_image_id = db.Column(db.Integer, db.ForeignKey('images.id'))
 	date_created = db.Column(db.DateTime)
 	date_published = db.Column(db.DateTime)
@@ -707,8 +713,8 @@ class NewsItem(db.Model):
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	
-	def __init__(self, author, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, header_image=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None):
-		self.author_id = author.id
+	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None):
+		self.author_id = author_id
 		self.headline_en = html_cleaner.clean_html(headline_en) if headline_en else None
 		self.headline_ja = html_cleaner.clean_html(headline_ja) if headline_ja else None
 		self.headline_nl = html_cleaner.clean_html(headline_nl) if headline_nl else None
@@ -1793,7 +1799,52 @@ def page_admin_news_add():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/news-add.html', user=user, active='news')
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'news'
+	template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
+	template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
+
+	if request.method == 'GET':
+		return render_template('admin/news-add.html', **template_options)
+	else:
+		# Request is a POST
+
+		# For each language, if the news item is a draft (which it is, by default) then validation isn't strict. If
+		# the item isn't a draft then it will require a proper headline and body.
+
+		# XXX DEBUG: Log the form variables
+		result = ''
+		for var in request.form:
+			result = "\n".join([result, "%s = %s" % (var, request.form[var]) ])
+		app.logger.info(result)
+
+		# Extract form content
+
+		# YYY Security risk	Not validating the author_id to check that it is one of the presented values, or even that
+		# 					the user actually exists. This risk is mitigated by the fact that POSTing to this URL requires
+		#					authentication.
+
+		model_vars = {}
+		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
+			model_vars['headline_%s' % lang] = request.form['%s[headline]' % lang]
+			model_vars['subhead_%s' % lang] = request.form['%s[subhead]' % lang]
+			model_vars['body_%s' % lang] = request.form['%s[body]' % lang]
+			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
+
+		model_vars['author_id'] = request.form['author_id']
+		model_vars['date_published'] = request.form['date_published']
+		model_vars['is_feature'] = request.form['is_feature']
+		model_vars['is_hidden'] = request.form['is_hidden']
+		model_vars['allows_comments'] = request.form['allows_comments']
+		# XXX Ignore the feature image for now.
+
+		# Create the news item
+		news_item = NewsItem(**model_vars)
+		db.session.add(news_item)
+		db.session.commit()
+
+		return url_for('page_admin_news')
 
 @app.route('/admin/articles', methods=['GET'])
 def page_admin_articles():
