@@ -90,8 +90,8 @@ class User(db.Model):
 
 	# Only one of these will contain a value
 	standard_portrait_id = db.Column(db.Integer)
-	custom_portrait_id = db.Column(db.Integer)
-	custom_portraits = db.relationship("ProfileImage", backref="user")
+	member_portrait_id = db.Column(db.Integer)
+	member_portraits = db.relationship("MemberPortrait", backref="user")
 
 	use_standard_background = db.Column(db.Boolean)
 	standard_background_filename = db.Column(db.String())
@@ -161,7 +161,7 @@ class User(db.Model):
 		self.standard_background_filename = 'profile_background_1.jpg'
 		ip = geolite2.lookup(request.headers['X-Real-IP'])
 		if ip is not None:
-			self.set_in_country(ip.country.lower())
+			self.set_in_country(ip.country.upper())
 			self.timezone = ip.timezone
 
 	def set_password(self, password=None):
@@ -226,8 +226,8 @@ class User(db.Model):
 		res = '512x512' if size == 'standard' else '64x64'
 		if self.standard_portrait_id:
 			return '/static/img/profile/standard_profile_%s_%s.png' % (self.standard_portrait_id, res)
-		elif self.custom_portrait_id:
-			return url_for('send_custom_portrait_image', portrait_id=self.custom_portrait_id, size=size)
+		elif self.member_portrait_id:
+			return url_for('send_member_portrait_image', portrait_id=self.member_portrait_id, size=size)
 		else:
 			return '/static/img/anonymous_user_%s.png' % ('256x256' if size == 'standard' else '64x64')
 
@@ -300,131 +300,166 @@ class VerificationKey(db.Model):
 		return "<VerificationKey(user='%s', key='%s', creation_date='%s')>" % (
 			self.user.real_name, self.key, self.creation_date)
 
-class SiteImage(db.Model):
-	"""Stores all conversation images in the site."""
-	__tablename__ = 'images'
-
+class StoredImage(db.Model):
+	__tablename__ = 'stored_images'
+	
 	id = db.Column(db.Integer, primary_key=True)
 	md5_hash = db.Column(db.String(32), unique=True)
 	mime_type = db.Column(db.String())
-	original_data = db.Column(db.LargeBinary)	# Stores the original image (to be resized/watermarked in the future)
-	processed_data = db.Column(db.LargeBinary)	# The resized/watermarked image
-	upload_date = db.Column(db.DateTime)
-	needs_processing = db.Column(db.Boolean)
+	format = db.Column(db.String())
+	width = db.Column(db.Integer)
+	height = db.Column(db.Integer)
+	data = db.Column(db.LargeBinary)
+	datetime_created = db.Column(db.DateTime)
 	num_views = db.Column(db.Integer)
-
-	def __init__(self, datauri):
-		"""Extracts the Image data from the data-uri 'data:image/png;base64,iVBORw0KGgo...' and
-		creates a new Image object."""
-		self.mime_type = datauri.split(':')[1].split(';')[0] 
-		self.original_data = datauri.split(',')[1].decode('base64')
-		self.upload_date = datetime.utcnow()
-		self.md5_hash = hashlib.md5(self.original_data).hexdigest()
-		self.num_views = 0
-		self.process()
-
-	def _ext(self):
-		return self.mime_type.split('/')[1]
-
-	def save_to_file(self, filename):
-		if self.needs_processing:
-			self.process()
-
-		with open(filename, "wb") as fh:
-			fh.write(self.processed_data)
-
-	def process(self):
-		# Read image in memory
-		original = Image.open(BytesIO(self.original_data))
-		# If image doesn't fit in 1980x1080 (HD) then scale it
-		if original.size[0] > 1980 or original.size[1] > 1080:	# Width
-			original.thumbnail((1980, 1080), resample=Image.LANCZOS)
-		
-		# Store the resulting image in processed_data
-		processed = BytesIO()
-		original.save(processed, string.upper(self._ext()))
-		self.processed_data = processed.getvalue()
-		self.needs_processing = False
-		del original, processed
-
-class ProfileImage(db.Model):
-	"""Stores profile images for users."""
-	__tablename__ = 'profile_images'
-
-	id = db.Column(db.Integer, primary_key=True)
-	mime_type = db.Column(db.String())
-	original_data = db.Column(db.LargeBinary)   # Stores the original image (to be resized/watermarked in the future)
-	thumbnail_data = db.Column(db.LargeBinary)			# At most 256x256
-	thumbnail_small_data = db.Column(db.LargeBinary)	# 64x64
-	upload_date = db.Column(db.DateTime)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	needs_processing = db.Column(db.Boolean)
-	is_valid = False    # Used only during validation when uploading new profile images
-
-	def __init__(self, src_file, user):
-		"""Imports an uploaded image from the filesystem into the database."""
-		app.logger.info('ProfileImage: file is %s' % src_file)
-		self.is_valid = False
-		try:
-			if src_file.__class__ == FileStorage:
-				app.logger.info('ProfileImage: handling with stream')
-				self.original_data = src_file.read()
+	original_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	
+	def __init__(self, file=None, datauri=None, original=None):
+		if file:
+			# Create an image from a file or an instance of Werkzeug's FileStorage class
+			if file.__class__ == FileStorage:
+				self.data = file.stream.read()
 			else:
-				app.logger.info('ProfileImage: handling with getvalue()')
-				self.original_data = src_file.getvalue()
+				self.data = file.getvalue()
+			
+			self.original_id = None
+			
+		elif datauri:
+			# Read the image data from a Base64-encoded stream in the format:
+			# 'data:image/png;base64,iVBORw0KGgo...'
+			self.data = datauri.split(',')[1].decode('base64')
 
-			original = Image.open(BytesIO(self.original_data))
-
-			# Check that it's a valid image
-			self.is_valid = True
-			self.mime_type = 'image/jpeg'
-			self.upload_date = datetime.utcnow()
-			self.user_id = user.id
-
-			# Generate the thumbnails
-			self.process(original)
-		except: 
-			self.is_valid = False
-
-	def process(self, original):
-		"""Takes the original_data contents from the instance and generates a cropped square version of it. Then
-		it generates a 256x256 version and a 64x64 thumbnail."""
-		# Read image in memory
-		#original = Image.open(BytesIO(self.original_data))
-
-		# Create the square version
-		width, height = original.size
-		if width > height:
-			box = ( (width - height)/2, 0, (width + height)/2, height)
-			square = original.crop(box)
-		elif height > width:
-			box = (0, (height - width)/2, width, (width + height)/2)
-			square = original.crop(box)
+			self.original_id = None
+			
+		elif original:
+			# Create a new image by duplicating one from the database
+			self.data = original.data
+			self.original_id = original.id
+		
 		else:
-			# Already square, no need to crop
-			square = original.copy()
+			return None
 
-		# Make the thumbnails
+		# Check that the data represents a valid image
+		try:
+			tmp = Image.open(BytesIO(self.data))
+		except IOError:
+			return None
+			
+		# The image was opened without errors
+		self.format = tmp.format
+		self.mime_type = Image.MIME[tmp.format]
+		self.width = tmp.width
+		self.height = tmp.height
+		self.datetime_created = datetime.utcnow()
+		self.num_views = 0
+		self.update_md5()
+		
+	@classmethod
+	def from_file(cls, file):
+		return cls(file=file)
+		
+	@classmethod
+	def from_datauri(cls, datauri):
+		return cls(datauri=datauri)
+		
+	@classmethod
+	def from_original(cls, original):
+		return cls(original=original)
+		
+	def make_square(self):
+		"""If the image isn't square then crop it and keep only the central square part."""
+		
+		# Read image in memory
+		original = Image.open(BytesIO(self.data))
 
-		# 256x256
-		processed = square.copy()
-		processed.thumbnail((256, 256), resample=Image.LANCZOS)
-		tmp = BytesIO()
-		processed.save(tmp, 'jpeg')
-		self.thumbnail_data = tmp.getvalue()
-		del tmp
+		# Do nothing if the image is already square
+		if self.width == self.height:
+			return True
+		
+		# Crop if not square
+		if self.width > self.height:
+			box = (
+				(self.width - self.height)/2,
+				0,
+				(self.width + self.height)/2,
+				self.height
+			)
+		elif self.height > self.width:
+			box = (
+				0,
+				(self.height - self.width)/2,
+				self.width,
+				(self.height + self.width)/2
+			)
+		square_image = original.crop(box)
 
-		# 64x64
-		thumbnail = square.copy()
-		processed.thumbnail((64, 64), resample=Image.LANCZOS)
-		tmp = BytesIO()
-		processed.save(tmp, 'jpeg')
-		self.thumbnail_small_data = tmp.getvalue()
-		del tmp
+		# Update the data and size values
+		tmp_stream = BytesIO()
+		square_image.save(tmp_stream, string.upper(self.format))
+		self.data = tmp_stream.getvalue()
+		self.width = square_image.width
+		self.height = square_image.height
+		self.update_md5()
+		
+	def	fit_within(self, width, height):
+		"""Make the image fit within (width, height). Replaces the original data."""
 
-		del original, square, processed, thumbnail  
+		# Read image in memory
+		original = Image.open(BytesIO(self.data))
+		
+		# If the image doesn't fit within (witdth, height) then resample it
+		if original.size[0] > width or original.size[1] > height:
+			original.thumbnail((width, height), resample=Image.LANCZOS)
+			
+		# Store the resampled data
+		resampled_stream = BytesIO()
+		original.save(resampled_stream, string.upper(self.format))
+		self.data = resampled_stream.getvalue()
+		self.width = original.width
+		self.height = original.height
+		self.update_md5()
 
-		self.needs_processing = False
+	def update_md5(self):
+		self.md5_hash = hashlib.md5(self.data).hexdigest()
+
+class MemberPortrait(db.Model):
+	__tablename__ = 'member_portraits'
+	
+	id = db.Column(db.Integer, primary_key=True)
+	original_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	standard_portrait_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	thumbnail_portrait_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	
+	def __init__(self, src_file):
+	
+		# Store the original image
+		original = StoredImage.from_file(src_file)
+		
+		if original:	# Will be None if the original couldn't be imported
+			db.session.add(original)
+			db.session.commit()
+			self.original_id = original.id
+		
+			# Create standard portrait
+			standard_portrait = StoredImage.from_original(original)
+			standard_portrait.make_square()
+			standard_portrait.fit_within(256, 256)
+			
+			# Create portrait thumbnail
+			thumbnail_portrait = StoredImage.from_original(original)
+			thumbnail_portrait.make_square()
+			thumbnail_portrait.fit_within(64, 64)
+
+			# Save the new portraits in the database and store the IDs in the instance
+			db.session.add(standard_portrait)
+			db.session.add(thumbnail_portrait)
+			db.session.commit()
+			self.standard_portrait_id = standard_portrait.id
+			self.thumbnail_portrait_id = thumbnail_portrait.id
+			
+		else:
+			return None
 
 class ConversationLounge(db.Model):
 	__tablename__ = 'lounges'
@@ -626,10 +661,10 @@ class ConversationMessage(db.Model):
 			tmp_element = copy.copy(element)
 
 			# Generate an image by decoding the Base64 content of the src attribute
-			img = SiteImage(element.attrib['src'])
+			img = StoredImage.from_datauri(element.attrib['src'])
 
 			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
-			tmp_img = SiteImage.query.filter_by(md5_hash=img.md5_hash).first()
+			tmp_img = StoredImage.query.filter_by(md5_hash=img.md5_hash).first()
 			if tmp_img is None:
 				db.session.add(img)
 				db.session.commit()
@@ -701,7 +736,7 @@ class NewsItem(db.Model):
 	is_draft_es = db.Column(db.Boolean)
 	is_draft_pt = db.Column(db.Boolean)
 	is_draft_kr = db.Column(db.Boolean)
-	header_image_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
 	date_created = db.Column(db.DateTime)
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
@@ -715,24 +750,30 @@ class NewsItem(db.Model):
 	
 	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None):
 		self.author_id = author_id
-		self.headline_en = html_cleaner.clean_html(headline_en) if headline_en else None
-		self.headline_ja = html_cleaner.clean_html(headline_ja) if headline_ja else None
-		self.headline_nl = html_cleaner.clean_html(headline_nl) if headline_nl else None
-		self.headline_es = html_cleaner.clean_html(headline_es) if headline_es else None
-		self.headline_pt = html_cleaner.clean_html(headline_pt) if headline_pt else None
-		self.headline_kr = html_cleaner.clean_html(headline_kr) if headline_kr else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
-		self.subhead_en = html_cleaner.clean_html(subhead_en) if subhead_en else None
+		self.headline_en = headline_en
+		self.headline_ja = headline_ja
+		self.headline_nl = headline_nl
+		self.headline_es = headline_es
+		self.headline_pt = headline_pt
+		self.headline_kr = headline_kr
+		self.subhead_en = subhead_en
+		self.subhead_ja = subhead_ja
+		self.subhead_nl = subhead_nl
+		self.subhead_es = subhead_es
+		self.subhead_pt = subhead_pt
+		self.subhead_kr = subhead_kr
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
 		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
 		self.body_es = html_cleaner.clean_html(body_es) if body_es else None
 		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
 		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
+		self.is_draft_en = is_draft_en
+		self.is_draft_ja = is_draft_ja
+		self.is_draft_nl = is_draft_nl
+		self.is_draft_es = is_draft_es
+		self.is_draft_pt = is_draft_pt
+		self.is_draft_kr = is_draft_kr
 		self.header_image_id = header_image.id if header_image else None
 		self.date_created = datetime.utcnow()
 		self.date_published = date_published or self.date_created
@@ -755,10 +796,10 @@ class NewsItem(db.Model):
 			tmp_element = copy.copy(element)
 
 			# Generate an image by decoding the Base64 content of the src attribute
-			img = SiteImage(element.attrib['src'])
+			img = StoredImage.from_datauri(element.attrib['src'])
 
 			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
-			tmp_img = SiteImage.query.filter_by(md5_hash=img.md5_hash).first()
+			tmp_img = StoredImage.query.filter_by(md5_hash=img.md5_hash).first()
 			if tmp_img is None:
 				db.session.add(img)
 				db.session.commit()
@@ -919,18 +960,6 @@ def page_main():
 	user = User.get_signed_in_user()
 
 	return render_template('frontpage.html', user=user)
-
-#	if User.is_signed_in():
-#		user = User.get_signed_in_user()
-#		if user:
-#			return render_template('index.html', active_item='home', user=user)
-#		else:
-			# Invalid user ID in session. Remove it from the session and ask the user to sign in again
-#			session.pop('user_id', None)
-#			flash('You were signed out. Please sign in again.')
-#			return redirect(url_for('page_signin'))
-#	else:
-#		return render_template('index.html', active_item='home', user=None)
 
 ########################
 ## SIGNIN AND SIGNOUT ##
@@ -1500,13 +1529,13 @@ def page_thread(thread_id, slug):
 
 @app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])
 def send_image(image_id, dummy_filename):
-	image = SiteImage.query.filter_by(id=image_id).first()
+	image = StoredImage.query.filter_by(id=image_id).first()
 	if image is not None:
 		db.session.add(image)
 		image.num_views += 1
 		db.session.commit()
 
-		byte_io = BytesIO(image.processed_data)
+		byte_io = BytesIO(image.data)
 		return send_file(byte_io, mimetype=image.mime_type)
 	else:
 		abort(404)
@@ -1533,19 +1562,21 @@ def page_member(member_id, slug):
 	return render_template('member/member_view.html', user=user, member=member)
 
 @app.route('/member/portrait/<int:portrait_id>/<string:size>')
-def send_custom_portrait_image(portrait_id, size):
+def send_member_portrait_image(portrait_id, size):
 	# If "size" isn't either 'standard' or 'small' then return a 404
 	if size != 'standard' and size != 'small':
 		abort(404)
 
-	image = ProfileImage.query.filter_by(id=portrait_id).first()
-	if image is not None:
+	portrait = MemberPortrait.query.filter_by(id=portrait_id).first()
+	if portrait is not None:
 		if size == 'standard':
-			byte_io = BytesIO(image.thumbnail_data)
+			image = StoredImage.query.filter_by(id=portrait.standard_portrait_id).first()
 		elif size == 'small':
-			byte_io = BytesIO(image.thumbnail_small_data)
-		
+			image = StoredImage.query.filter_by(id=portrait.thumbnail_portrait_id).first()
+
+		byte_io = BytesIO(image.data)
 		return send_file(byte_io, mimetype=image.mime_type)
+
 	else:
 		abort(404)
 
@@ -1594,10 +1625,10 @@ def page_member_edit_photo():
 			user.standard_portrait_id = int(request.form['standard_portrait_number'])
 		else:
 			user.standard_portrait_id = None
-		if request.form['custom_portrait_number'] is not None:
-			user.custom_portrait_id = int(request.form['custom_portrait_number'])
+		if request.form['member_portrait_number'] is not None:
+			user.member_portrait_id = int(request.form['member_portrait_number'])
 		else:
-			user.custom_portrait_id = None
+			user.member_portrait_id = None
 		db.session.add(user)
 
 		# Then process the upload, if there is one
@@ -1605,13 +1636,12 @@ def page_member_edit_photo():
 		if 'uploaded_photo' in request.files:
 			src_file = request.files['uploaded_photo']
 			if src_file.filename:
-				portrait = ProfileImage(src_file, user)
-				if portrait.is_valid:
-					app.logger.info("UPLOAD: upload is valid")
+				portrait = MemberPortrait(src_file)
+				if portrait:
+					portrait.user_id = user.id
 					db.session.add(portrait)
 					db.session.commit()
-					user.custom_portrait_id = portrait.id
-					app.logger.info("UPLOAD: custom_portrait_id = %s" % user.custom_portrait_id)
+					user.member_portrait_id = portrait.id
 					upload_handled = True
 				else:
 					errors = "The file you uploaded doesn't seem to be a valid image. Please try a different file."
@@ -1785,7 +1815,9 @@ def page_admin_news():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/news.html', user=user, active='news')
+	news_items = NewsItem.query.all()
+
+	return render_template('admin/news.html', user=user, active='news', news_items=news_items)
 
 @app.route('/admin/news/add', methods=['GET', 'POST'])
 def page_admin_news_add():
@@ -1816,7 +1848,7 @@ def page_admin_news_add():
 		# XXX DEBUG: Log the form variables
 		result = ''
 		for var in request.form:
-			result = "\n".join([result, "%s = %s" % (var, request.form[var]) ])
+			result = "\n".join([result, "Param %s = %s" % (var, request.form[var]) ])
 		app.logger.info(result)
 
 		# Extract form content
@@ -1837,7 +1869,8 @@ def page_admin_news_add():
 		model_vars['is_feature'] = request.form['is_feature']
 		model_vars['is_hidden'] = request.form['is_hidden']
 		model_vars['allows_comments'] = request.form['allows_comments']
-		# XXX Ignore the feature image for now.
+
+		# XXX Process set the image, if there is one
 
 		# Create the news item
 		news_item = NewsItem(**model_vars)

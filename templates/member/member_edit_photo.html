@@ -23,8 +23,8 @@
 			<h3>Standard portraits</h3>
 			<p>The eight portraits below were created by <a target="_new" href="https://twitter.com/JUSTIN_CYR">Justin Cyr</a>. Go check his fantastic pixel art on <a target="_new" href="http://justinpaulcyr.tumblr.com">his Tumblr</a>!
 			<form action="{{ url_for('page_member_edit_photo') }}" method="POST" enctype="multipart/form-data">
-				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id }}">
-				<input type="hidden" id="custom_portrait_number_field" name="custom_portrait_number" value="{{ user.custom_portrait_id }}">
+				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id|supress_none }}">
+				<input type="hidden" id="member_portrait_number_field" name="member_portrait_number" value="{{ user.member_portrait_id|supress_none }}">
 
 				<div class="row">
 					{% for num in range(1, 9) %}
@@ -45,17 +45,17 @@
 					{% endfor %}
 				</div>
 
-				{% if user.custom_portraits|length %}
+				{% if user.member_portraits|length %}
 					<h3>Your portrait collection</h3>
 					<div class="row">
-						{% for p in user.custom_portraits %}
+						{% for p in user.member_portraits %}
 							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-								{% if user.custom_portrait_id == p.id %}
-									<img id="img_custom_portrait_{{ p.id}}"src="{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait member-portrait-selected">
-									<button id="button_custom_portrait_{{ p.id }}" class="btn btn-success btn-block btn-sm" type="button">Selected</button>
+								{% if user.member_portrait_id == p.id %}
+									<img id="img_member_portrait_{{ p.id}}"src="{{ url_for('send_member_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait member-portrait-selected">
+									<button id="button_member_portrait_{{ p.id }}" class="btn btn-success btn-block btn-sm" type="button">Selected</button>
 								{% else %}
-									<img id="img_custom_portrait_{{ p.id}}"src="{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait">
-									<button id="button_custom_portrait_{{ p.id }}" class="btn btn-default btn-block btn-sm" type="button">Use</button>
+									<img id="img_member_portrait_{{ p.id}}"src="{{ url_for('send_member_portrait_image', portrait_id=p.id, size='standard') }}" class="img-responsive member-portrait">
+									<button id="button_member_portrait_{{ p.id }}" class="btn btn-default btn-block btn-sm" type="button">Use</button>
 								{% endif %}
 							</div>
 						{% endfor %}
@@ -101,13 +101,13 @@ function reset_selected() {
     $('#img_portrait_{{ num }}').removeClass('member-portrait-selected');
 {% endfor %}
     $('#standard_portrait_number_field').val(0);
-{% if user.custom_portraits|length %}
-	{% for p in user.custom_portraits %}
-	$('#button_custom_portrait_{{ p.id }}').text('Use');
-	$('#button_custom_portrait_{{ p.id }}').removeClass('btn-success').addClass('btn-default');
-	$('#img_custom_portrait_{{ p.id }}').removeClass('member-portrait-selected');
+	$('#member_portrait_number_field').val(0);
+{% if user.member_portraits|length %}
+	{% for p in user.member_portraits %}
+	$('#button_member_portrait_{{ p.id }}').text('Use');
+	$('#button_member_portrait_{{ p.id }}').removeClass('btn-success').addClass('btn-default');
+	$('#img_member_portrait_{{ p.id }}').removeClass('member-portrait-selected');
 	{% endfor %}
-	$('#custom_portrait_number_field').val(0);
 {% endif %}
 }
 
@@ -122,15 +122,15 @@ $('#button_portrait_{{ num }}').click(function () {
 });
 {% endfor %}
 
-{% if user.custom_portraits|length %}
-	{% for p in user.custom_portraits %}
-$('#button_custom_portrait_{{ p.id }}').click(function () {
-    portrait.attr('src', '{{ url_for('send_custom_portrait_image', portrait_id=p.id, size='standard') }}');
+{% if user.member_portraits|length %}
+	{% for p in user.member_portraits %}
+$('#button_member_portrait_{{ p.id }}').click(function () {
+    portrait.attr('src', '{{ url_for('send_member_portrait_image', portrait_id=p.id, size='standard') }}');
     reset_selected();
-    $('#button_custom_portrait_{{ p.id }}').text('Selected');
-    $('#button_custom_portrait_{{ p.id }}').removeClass('btn-default').addClass('btn-success');
-    $('#img_custom_portrait_{{ p.id }}').addClass('member-portrait-selected');
-    $('#custom_portrait_number_field').val({{ p.id }});
+    $('#button_member_portrait_{{ p.id }}').text('Selected');
+    $('#button_member_portrait_{{ p.id }}').removeClass('btn-default').addClass('btn-success');
+    $('#img_member_portrait_{{ p.id }}').addClass('member-portrait-selected');
+    $('#member_portrait_number_field').val({{ p.id }});
 });
 	{% endfor %}
 {% endif %}

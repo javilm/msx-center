@@ -31,7 +31,7 @@
 </div>
 {% endmacro %}
 
-{% block content %}
+{% macro news_item_data() %}
 <h1 class="page-header">News <span class="small">Add new item</span></h1>
 <ul class="nav nav-pills" role="tablist">
 	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
@@ -57,7 +57,7 @@
 </div>
 {% endif %}
 
-<form method="post" enctype="multipart/form-data">
+<form id="news_item_add_form" method="post">
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
 		<div role="tabpanel" class="tab-pane" id="input-ja">{{ inputs_for_language('ja') }}</div>
@@ -86,10 +86,6 @@
 		</select>
 	</div>
 	<div class="form-group">
-		<label class="control-label">Featured image</label>
-		<input name="header_image" type="file">
-	</div>
-	<div class="form-group">
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">
 	</div>
@@ -116,6 +112,32 @@
 		<button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>
 	</div>
 </form>
+{% endmacro %}
+
+{% macro news_item_feature_image() %}
+<h2 class="page-header">Feature image</h1>
+<div id="feature_image_div"></div>
+<form id="feature_image_form" enctype="multipart/form-data">
+	<div class="form-group">
+		<label class="control-label">Featured image</label>
+		<p class="help-block">This image will appear in the feature page and the list of news items.</p>
+		<input name="feature_image" type="file">
+	</div>
+	<div class="form-group">
+		<button id="uploadButton" class="btn btn-primary btn-sm" type="submit">Upload image</button>
+	</div>
+</form>
+{% endmacro %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		{{ news_item_data() }}
+	</div>
+	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		{{ news_item_feature_image() }}
+	</div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
@@ -179,69 +201,38 @@
 			dateFormat: 'DD MM d, yy'
 		});
 		// Code here to initialize the datepicker to the date entered in the form, or today's date if not especified
-		// var date_from_db = "{{ user.birth_date }}".split("-");
-		// var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
-		// $("#birthdate_field").datepicker("setDate", date);
+		var date = Date.now()
+		$("#field_date_published").datepicker("setDate", date);
 	});
 
 
 	// Link event to the submit button
     $("#saveButton").click(function (e) {
         e.preventDefault();
-        console.log("Button pressed");
+        console.log("Save button pressed");
+
+		fd = new FormData(document.getElementById("#news_item_add_form"));
+		fd.append('body_en', quill_en.root.innerHTML);
+		fd.append('body_ja', quill_ja.root.innerHTML);
+		fd.append('body_nl', quill_nl.root.innerHTML);
+		fd.append('body_es', quill_es.root.innerHTML);
+		fd.append('body_pt', quill_pt.root.innerHTML);
+		fd.append('body_kr', quill_kr.root.innerHTML);
+		
 
         $.ajax({
             method: "POST",
             url: "{{ url_for('page_admin_news_add') }}",
-            processData: true,
-            dataType: 'json',
-            data: {
-				'en': {
-					headline: $('#field_headline_en').val(),
-					subhead: $('#field_subhead_en').val(),
-					body: quill_en.root.innerHTML,
-					is_draft: $('#field_is_draft_en').is(':checked')?'on':'off'
-				},
-				'ja': {
-					headline: $('#field_headline_ja').val(),
-					subhead: $('#field_subhead_ja').val(),
-					body: quill_ja.root.innerHTML,
-					is_draft: $('#field_is_draft_ja').is(':checked')?'on':'off'
-				},
-				'nl': {
-					headline: $('#field_headline_nl').val(),
-					subhead: $('#field_subhead_nl').val(),
-					body: quill_nl.root.innerHTML,
-					is_draft: $('#field_is_draft_nl').is(':checked')?'on':'off'
-				},
-				'es': {
-					headline: $('#field_headline_es').val(),
-					subhead: $('#field_subhead_es').val(),
-					body: quill_es.root.innerHTML,
-					is_draft: $('#field_is_draft_es').is(':checked')?'on':'off'
-				},
-				'pt': {
-					headline: $('#field_headline_pt').val(),
-					subhead: $('#field_subhead_pt').val(),
-					body: quill_pt.root.innerHTML,
-					is_draft: $('#field_is_draft_pt').is(':checked')?'on':'off'
-				},
-				'kr': {
-					headline: $('#field_headline_kr').val(),
-					subhead: $('#field_subhead_kr').val(),
-					body: quill_kr.root.innerHTML,
-					is_draft: $('#field_is_draft_kr').is(':checked')?'on':'off'
-				},
-                author_id: $('#field_author_id').val(),
-                date_published: $('#field_date_published').val(),
-                is_feature: $('#field_is_feature').is(':checked')?'on':'off',
-                is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
-                allows_comments: $('#field_allows_comments').is(':checked')?'on':'off'
-            }
-        })
-        .done(function(result) {
-            window.location = result.url;
+            processData: false,
+            contenType: 'multipart/form-data',
+            data: fd,
+			success: function(data) {
+				alert(data);
+			}
         });
+        //.done(function(result) {
+        //    window.location = result.url;
+        //});
         quill_en.enable(false);
         quill_ja.enable(false);
         quill_nl.enable(false);
@@ -250,6 +241,12 @@
         quill_kr.enable(false);
         $("#saveButton").prop("disabled", true);
     });	
+
+	// Link event to the upload button
+	$("#uploadButton").click(function(e) {
+		e.preventDefault();
+		console.log("Upload button pressed");
+	});
 
 </script>
 {% endblock %}
