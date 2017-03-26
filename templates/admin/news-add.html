@@ -256,9 +256,13 @@
 			contentType: false,
 			method: 'POST',
 			success: function(data) {
-				$("#feature_image_img").remove();
-				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
-				console.log(JSON.stringify(data));
+				if (data.success == true) {
+					$("#feature_image_img").remove();
+					$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
+					console.log(JSON.stringify(data));
+				} else {
+					$("#feature_image_img").remove();
+				}
 			}
 		});
 	});

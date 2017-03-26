@@ -365,6 +365,11 @@ class StoredImage(db.Model):
 	@classmethod
 	def from_original(cls, original):
 		return cls(original=original)
+
+	@classmethod
+	def from_database_md5(cls, md5_hash):
+		"""Returns the image in the database with the given MD5 hash, or None if it doesn't exist"""
+		return StoredImage.query.filter_by(md5_hash=md5_hash).first()
 		
 	def make_square(self):
 		"""If the image isn't square then crop it and keep only the central square part."""
@@ -1892,20 +1897,27 @@ def ajax_admin_news_add_feature_image():
 			abort(401)
 
 	json_results = {}
+	json_results['success'] = False
+	json_results['image_id'] = 0
 
 	if 'feature_image' in request.files:
-		# Try to import the image
-		feature_image = StoredImage.from_file(request.files['feature_image'])
+		if request.files['feature_image'].filename:
 
-		# Check whether we were able to import it	
-		if feature_image is not None:
-			db.session.add(feature_image)
-			db.session.commit()
-			json_results['success'] = True
-			json_results['image_id'] = feature_image.id
-		else:
-			json_results['success'] = False
-			json_results['image_id'] = 0
+			# Try to import the image. Will be None on failure.
+			feature_image = StoredImage.from_file(request.files['feature_image'])
+
+			if feature_image:
+
+				# If it exists in the database, get the stored image. Otherwise, save it.
+				tmp_image = StoredImage.from_database_md5(feature_image.md5_hash)
+				if tmp_image is None:
+					db.session.add(feature_image)
+					db.session.commit()
+				else:
+					feature_image = tmp_image
+
+				json_results['success'] = True
+				json_results['image_id'] = feature_image.id
 
 	return jsonify(**json_results)
 
