@@ -117,7 +117,7 @@
 {% macro news_item_feature_image() %}
 <h2 class="page-header">Feature image</h1>
 <div id="feature_image_div"></div>
-<form id="feature_image_form" enctype="multipart/form-data">
+<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
 	<div class="form-group">
 		<label class="control-label">Featured image</label>
 		<p class="help-block">This image will appear in the feature page and the list of news items.</p>
@@ -243,9 +243,24 @@
     });	
 
 	// Link event to the upload button
-	$("#uploadButton").click(function(e) {
+	$("#uploadButton").click(function (e) {
 		e.preventDefault();
 		console.log("Upload button pressed");
+
+		var fd = new FormData(document.getElementById('feature_image_form'));
+
+		$.ajax({
+			url: '{{ url_for('ajax_admin_news_add_feature_image') }}',
+			data: fd,
+			processData: false,
+			contentType: false,
+			method: 'POST',
+			success: function(data) {
+				$("#feature_image_img").remove();
+				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
+				console.log(JSON.stringify(data));
+			}
+		});
 	});
 
 </script>

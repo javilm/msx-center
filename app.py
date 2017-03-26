@@ -4,7 +4,7 @@ import lxml.html as LH
 import pycountry
 import pytz
 from datetime import datetime
-from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file
+from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file, jsonify
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from geoip import geolite2
@@ -1878,6 +1878,36 @@ def page_admin_news_add():
 		db.session.commit()
 
 		return url_for('page_admin_news')
+
+@app.route('/admin/news/add/feature_image', methods=['POST'])
+def ajax_admin_news_add_feature_image():
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	json_results = {}
+
+	if 'feature_image' in request.files:
+		# Try to import the image
+		feature_image = StoredImage.from_file(request.files['feature_image'])
+
+		# Check whether we were able to import it	
+		if feature_image is not None:
+			db.session.add(feature_image)
+			db.session.commit()
+			json_results['success'] = True
+			json_results['image_id'] = feature_image.id
+		else:
+			json_results['success'] = False
+			json_results['image_id'] = 0
+
+	return jsonify(**json_results)
 
 @app.route('/admin/articles', methods=['GET'])
 def page_admin_articles():
