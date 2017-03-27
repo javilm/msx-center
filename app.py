@@ -1850,15 +1850,9 @@ def page_admin_news_add():
 		# For each language, if the news item is a draft (which it is, by default) then validation isn't strict. If
 		# the item isn't a draft then it will require a proper headline and body.
 
-		# XXX DEBUG: Log the form variables
-		result = ''
-		for var in request.form:
-			result = "\n".join([result, "Param %s = %s" % (var, request.form[var]) ])
-		app.logger.info(result)
-
 		# Extract form content
 
-		# YYY Security risk	Not validating the author_id to check that it is one of the presented values, or even that
+		# XXX Security risk	Not validating the author_id to check that it is one of the presented values, or even that
 		# 					the user actually exists. This risk is mitigated by the fact that POSTing to this URL requires
 		#					authentication.
 
@@ -1875,14 +1869,42 @@ def page_admin_news_add():
 		model_vars['is_hidden'] = request.form['is_hidden']
 		model_vars['allows_comments'] = request.form['allows_comments']
 
-		# XXX Process set the image, if there is one
-
 		# Create the news item
 		news_item = NewsItem(**model_vars)
 		db.session.add(news_item)
 		db.session.commit()
 
-		return url_for('page_admin_news')
+		return jsonify(url=url_for('page_admin_news'))
+
+@app.route('/admin/news/<int:item_id>/edit', methods=['GET', 'POST'])
+def page_admin_news_edit(item_id):
+
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	# Try and retrieve the news item from the database
+	item = NewsItem.query.filter_by(id=item_id).first()
+	if item is None:
+		abort(404)
+
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'news'
+	template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
+	template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
+	template_options['item'] = item
+
+	if request.method == 'GET':
+		return render_template('admin/news-edit.html', **template_options)
+	else:
+		# Method is POST
+		return "Nothing to see here (yet)"
 
 @app.route('/admin/news/add/feature_image', methods=['POST'])
 def ajax_admin_news_add_feature_image():

@@ -26,10 +26,10 @@
 		<tbody>
 			{% for item in news_items %}
 				<tr>
-					<td rowspan="6"><a href="#">{{ item.id }}</a>
+					<td rowspan="6"><a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}">{{ item.id }}</a>
 						{% if item.is_feature %}<div class="news-item-labels"><span class="label label-success">Feature</span></div>{% endif %}
 					</td>
-					<td>EN: <a href="#"><strong>{{ item.headline_en }}</strong></a>
+					<td>EN: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_en }}</strong></a>
 						{% if item.is_draft_en %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 					<td rowspan="6"><a href="#">Javi Lavandeira</a></td>
@@ -38,27 +38,27 @@
 					<td rowspan="6">{{ item.date_published.strftime('%d/%b/%Y') }}</td>
 				</tr>
 				<tr>
-					<td>JA: <a href="#"><strong>{{ item.headline_ja }}</strong></a>
+					<td>JA: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_ja }}</strong></a>
 						{% if item.is_draft_ja %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 				</tr>
 				<tr>
-					<td>NL: <a href="#"><strong>{{ item.headline_nl }}</strong></a>
+					<td>NL: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_nl }}</strong></a>
 						{% if item.is_draft_nl %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 				</tr>
 				<tr>
-					<td>ES: <a href="#"><strong>{{ item.headline_es }}</strong></a>
+					<td>ES: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_es }}</strong></a>
 						{% if item.is_draft_es %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 				</tr>
 				<tr>
-					<td>PT: <a href="#"><strong>{{ item.headline_pt }}</strong></a>
+					<td>PT: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_pt }}</strong></a>
 						{% if item.is_draft_pt %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 				</tr>
 				<tr>
-					<td>KR: <a href="#"><strong>{{ item.headline_kr }}</strong></a>
+					<td>KR: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_kr }}</strong></a>
 						{% if item.is_draft_kr %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 				</tr>

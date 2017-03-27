@@ -58,6 +58,7 @@
 {% endif %}
 
 <form id="news_item_add_form" method="post">
+	<input type="hidden" id="field_image_id" value="">
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
 		<div role="tabpanel" class="tab-pane" id="input-ja">{{ inputs_for_language('ja') }}</div>
@@ -116,7 +117,8 @@
 
 {% macro news_item_feature_image() %}
 <h2 class="page-header">Feature image</h1>
-<div id="feature_image_div"></div>
+<div id="feature_image_div">
+</div>
 <form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
 	<div class="form-group">
 		<label class="control-label">Featured image</label>
@@ -143,131 +145,5 @@
 {% block extrajs %}
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
-<script type="text/javascript">
-	// Initialize Quill editors
-	var toolbarOptions = [
-		[{ 'header': [1, 2, 3, false] }],
-		[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-		['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-		[{ 'color': [] },],          // dropdown with defaults from theme
-		['link', 'image', 'video', 'blockquote', 'code-block'],
-		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-	];
-
-	var quill_en = new Quill('#quillEditor_en' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-	var quill_ja = new Quill('#quillEditor_ja' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-	var quill_nl = new Quill('#quillEditor_nl' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-	var quill_es = new Quill('#quillEditor_es' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-	var quill_pt = new Quill('#quillEditor_pt' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-	var quill_kr = new Quill('#quillEditor_kr' , {
-		modules : {
-			toolbar: toolbarOptions
-		},
-		theme: 'snow'
-	});
-
-	// Initialize datepicker
-	$(function () {
-		$("#field_date_published").datepicker({
-			changeMonth: true,
-			changeYear: true,
-			yearRange: "2013:2020",
-			dateFormat: 'DD MM d, yy'
-		});
-		// Code here to initialize the datepicker to the date entered in the form, or today's date if not especified
-		var date = Date.now()
-		$("#field_date_published").datepicker("setDate", date);
-	});
-
-
-	// Link event to the submit button
-    $("#saveButton").click(function (e) {
-        e.preventDefault();
-        console.log("Save button pressed");
-
-		fd = new FormData(document.getElementById("#news_item_add_form"));
-		fd.append('body_en', quill_en.root.innerHTML);
-		fd.append('body_ja', quill_ja.root.innerHTML);
-		fd.append('body_nl', quill_nl.root.innerHTML);
-		fd.append('body_es', quill_es.root.innerHTML);
-		fd.append('body_pt', quill_pt.root.innerHTML);
-		fd.append('body_kr', quill_kr.root.innerHTML);
-		
-
-        $.ajax({
-            method: "POST",
-            url: "{{ url_for('page_admin_news_add') }}",
-            processData: false,
-            contenType: 'multipart/form-data',
-            data: fd,
-			success: function(data) {
-				alert(data);
-			}
-        });
-        //.done(function(result) {
-        //    window.location = result.url;
-        //});
-        quill_en.enable(false);
-        quill_ja.enable(false);
-        quill_nl.enable(false);
-        quill_es.enable(false);
-        quill_pt.enable(false);
-        quill_kr.enable(false);
-        $("#saveButton").prop("disabled", true);
-    });	
-
-	// Link event to the upload button
-	$("#uploadButton").click(function (e) {
-		e.preventDefault();
-		console.log("Upload button pressed");
-
-		var fd = new FormData(document.getElementById('feature_image_form'));
-
-		$.ajax({
-			url: '{{ url_for('ajax_admin_news_add_feature_image') }}',
-			data: fd,
-			processData: false,
-			contentType: false,
-			method: 'POST',
-			success: function(data) {
-				if (data.success == true) {
-					$("#feature_image_img").remove();
-					$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
-					console.log(JSON.stringify(data));
-				} else {
-					$("#feature_image_img").remove();
-				}
-			}
-		});
-	});
-
-</script>
+<script type="text/javascript" src="/static/js/admin/news/news-add.js"></script>
 {% endblock %}
-
-
