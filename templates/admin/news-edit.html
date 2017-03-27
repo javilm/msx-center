@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% macro news_item_data() %}
-<h1 class="page-header">News <span class="small">Add new item</span></h1>
+<h1 class="page-header">News <span class="small">Edit item</span></h1>
 <ul class="nav nav-pills" role="tablist">
 	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
 	<li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
@@ -35,7 +35,7 @@
 {% endif %}
 
 <form id="news_item_add_form" method="post">
-	<input type="hidden" id="field_image_id" value="">
+	<input type="hidden" id="field_image_id" value="{{ item.header_image_id }}">
 	<div class="tab-content">
 		{# English #}
 		<div role="tabpanel" class="tab-pane in active" id="input-en">
@@ -182,14 +182,14 @@
 			{% if staff %}
 			<optgroup label="Staff">
 				{% for author in staff %}
-					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+					<option value="{{ author.id }}"{% if item.author_id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
 				{% endfor %}
 			</optgroup>
 			{% endif %}
 			{% if superusers %}
 			<optgroup label="Superusers">
 				{% for author in superusers %}
-					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+					<option value="{{ author.id }}"{% if item.author_id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
 				{% endfor %}
 			</optgroup>
 			{% endif %}
@@ -227,6 +227,9 @@
 {% macro news_item_feature_image() %}
 <h2 class="page-header">Feature image</h1>
 <div id="feature_image_div">
+{% if item.header_image_id %}
+<img id="feature_image_img" class="img-responsive" src="/image/{{ item.header_image_id }}/feature_image">
+{% endif %}
 </div>
 <form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
 	<div class="form-group">

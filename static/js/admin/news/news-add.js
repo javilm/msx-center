@@ -105,7 +105,7 @@ $("#saveButton").click(function (e) {
 				is_draft: $('#field_is_draft_kr').is(':checked')?'on':'off'
 			},
 			author_id: $('#field_author_id').val(),
-			image_id: $('#field_image_id').val(),
+			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
@@ -141,6 +141,7 @@ $("#uploadButton").click(function (e) {
 		data: fd,
 		processData: false,
 		contentType: false,
+		url: '/admin/news/add/feature_image',
 		method: 'POST',
 		success: function(data) {
 			if (data.success == true) {

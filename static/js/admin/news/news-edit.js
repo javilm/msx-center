@@ -68,44 +68,32 @@ $("#saveButton").click(function (e) {
 		method: "POST",
 		processData: true,
 		data: {
-			'en': {
-				headline: $('#field_headline_en').val(),
-				subhead: $('#field_subhead_en').val(),
-				body: quill_en.root.innerHTML,
-				is_draft: $('#field_is_draft_en').is(':checked')?'on':'off'
-			},
-			'ja': {
-				headline: $('#field_headline_ja').val(),
-				subhead: $('#field_subhead_ja').val(),
-				body: quill_ja.root.innerHTML,
-				is_draft: $('#field_is_draft_ja').is(':checked')?'on':'off'
-			},
-			'nl': {
-				headline: $('#field_headline_nl').val(),
-				subhead: $('#field_subhead_nl').val(),
-				body: quill_nl.root.innerHTML,
-				is_draft: $('#field_is_draft_nl').is(':checked')?'on':'off'
-			},
-			'es': {
-				headline: $('#field_headline_es').val(),
-				subhead: $('#field_subhead_es').val(),
-				body: quill_es.root.innerHTML,
-				is_draft: $('#field_is_draft_es').is(':checked')?'on':'off'
-			},
-			'pt': {
-				headline: $('#field_headline_pt').val(),
-				subhead: $('#field_subhead_pt').val(),
-				body: quill_pt.root.innerHTML,
-				is_draft: $('#field_is_draft_pt').is(':checked')?'on':'off'
-			},
-			'kr': {
-				headline: $('#field_headline_kr').val(),
-				subhead: $('#field_subhead_kr').val(),
-				body: quill_kr.root.innerHTML,
-				is_draft: $('#field_is_draft_kr').is(':checked')?'on':'off'
-			},
+			headline_en: $('#field_headline_en').val(),
+			subhead_en: $('#field_subhead_en').val(),
+			body_en: quill_en.root.innerHTML,
+			is_draft_en: $('#field_is_draft_en').is(':checked')?'on':'off',
+			headline_ja: $('#field_headline_ja').val(),
+			subhead_ja: $('#field_subhead_ja').val(),
+			body_ja: quill_ja.root.innerHTML,
+			is_draft_ja: $('#field_is_draft_ja').is(':checked')?'on':'off',
+			headline_nl: $('#field_headline_nl').val(),
+			subhead_nl: $('#field_subhead_nl').val(),
+			body_nl: quill_nl.root.innerHTML,
+			is_draft_nl: $('#field_is_draft_nl').is(':checked')?'on':'off',
+			headline_es: $('#field_headline_es').val(),
+			subhead_es: $('#field_subhead_es').val(),
+			body_es: quill_es.root.innerHTML,
+			is_draft_es: $('#field_is_draft_es').is(':checked')?'on':'off',
+			headline_pt: $('#field_headline_pt').val(),
+			subhead_pt: $('#field_subhead_pt').val(),
+			body_pt: quill_pt.root.innerHTML,
+			is_draft_pt: $('#field_is_draft_pt').is(':checked')?'on':'off',
+			headline_kr: $('#field_headline_kr').val(),
+			subhead_kr: $('#field_subhead_kr').val(),
+			body_kr: quill_kr.root.innerHTML,
+			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off',
 			author_id: $('#field_author_id').val(),
-			image_id: $('#field_image_id').val(),
+			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
@@ -139,6 +127,7 @@ $("#uploadButton").click(function (e) {
 
 	$.ajax({
 		data: fd,
+		url: '/admin/news/add/feature_image',
 		processData: false,
 		contentType: false,
 		method: 'POST',
