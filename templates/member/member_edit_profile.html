@@ -90,7 +90,7 @@
 								<select class="form-control" id="from_country_field" name="from_country">
 									<option value="">(Choose below)</option>
 									{% for country in country_list %}
-										<option value="{{ country.alpha_2 }}"{% if user.from_country.lower() == country.alpha_2.lower() %} selected{% endif %}>{{ country.name }}</option>
+										<option value="{{ country.alpha_2 }}"{% if user.from_country|lower == country.alpha_2|lower %} selected{% endif %}>{{ country.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -101,7 +101,7 @@
 								<select class="form-control" id="in_country_field" name="in_country">
 									<option value="">(Choose below)</option>
 									{% for country in country_list %}
-										<option value="{{ country.alpha_2 }}"{% if user.in_country.lower() == country.alpha_2.lower() %} selected{% endif %}>{{ country.name }}</option>
+										<option value="{{ country.alpha_2 }}"{% if user.in_country|lower == country.alpha_2|lower %} selected{% endif %}>{{ country.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -123,12 +123,12 @@
 							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="language_field" class="control-label">Preferred language</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
 								<select class="form-control" id="language_field" name="language">
-									<option value="EN"{% if user.preferred_language.value.upper() == "EN" %} selected{% endif %}>English</option>
-									<option value="JA"{% if user.preferred_language.value.upper() == "JA" %} selected{% endif %}>Japanese</option>
-									<option value="ES"{% if user.preferred_language.value.upper() == "ES" %} selected{% endif %}>Spanish</option>
-									<option value="PT"{% if user.preferred_language.value.upper() == "PT" %} selected{% endif %}>Portuguese</option>
-									<option value="NL"{% if user.preferred_language.value.upper() == "NL" %} selected{% endif %}>Dutch</option>
-									<option value="KR"{% if user.preferred_language.value.upper() == "KR" %} selected{% endif %}>Korean</option>
+									<option value="EN"{% if user.preferred_language|upper == "EN" %} selected{% endif %}>English</option>
+									<option value="JA"{% if user.preferred_language|upper == "JA" %} selected{% endif %}>Japanese</option>
+									<option value="ES"{% if user.preferred_language|upper == "ES" %} selected{% endif %}>Spanish</option>
+									<option value="PT"{% if user.preferred_language|upper == "PT" %} selected{% endif %}>Portuguese</option>
+									<option value="NL"{% if user.preferred_language|upper == "NL" %} selected{% endif %}>Dutch</option>
+									<option value="KR"{% if user.preferred_language|upper == "KR" %} selected{% endif %}>Korean</option>
 								</select>
 								<p class="help-block">Setting this value will change the language of this website (as soon as web add multilanguage support).</p>
 							</div>

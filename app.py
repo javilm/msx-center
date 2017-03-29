@@ -933,7 +933,6 @@ def create_database_tables():
 
 	db.session.commit()
 
-
 #######################
 ## Support functions ##
 #######################
@@ -2035,7 +2034,14 @@ def page_admin_members():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/members.html', user=user, active='members')
+	# Get the list of members
+	members = User.query.all()
+
+	return render_template('admin/members.html', user=user, members=members, active='members')
+
+@app.route('/admin/members/<int:member_id>/edit', methods=['GET', 'POST'])
+def page_admin_members_edit(member_id):
+	return "Not implemented yet"
 
 @app.route('/admin/domains', methods=['GET'])
 def page_admin_domains():
