@@ -12,8 +12,8 @@
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th>ID</th>
 				<th>{# portrait #}</th>
+				<th>ID</th>
 				<th>Real name</th>
 				<th>Nickname</th>
 				<th>Email</th>
@@ -23,28 +23,29 @@
 				<th>Messages</th>
 				<th>Flags</th>
 				<th>Social</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for member in members %}
 				<tr>
-					<td><a href="{{ url_for('page_admin_members_edit', member_id=member.id) }}">{{ member.id }}</a></td>
-					<td><img src="{{ user.profile_photo_url(size='small') }}" width="30" height="30"></td>
-					<td><a href="{{ url_for('page_admin_members_edit', member_id=member.id) }}">{{ member.real_name }}</a></td>
-					<td><a href="{{ url_for('page_admin_members_edit', member_id=member.id) }}">{{ member.nickname }}</a></td>
-					<td><a href="{{ url_for('page_admin_members_edit', member_id=member.id) }}">{{ member.email }}</a></td>
+					<td><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a></td>
+					<td>{{ member.id }}</td>
+					<td>{{ member.real_name }}</td>
+					<td>{{ member.nickname }}</td>
+					<td>{{ member.email }}</td>
 					<td>{{ member.registration_date.strftime('%d/%b/%Y') }}</td>
 					<td>{{ member.last_active_date|pretty_date }}</td>
 					<td>{{ member.reputation }}</td>
 					<td>{{ member.num_messages }}</td>
 					<td>
-						{% if member.is_active %}<span class="label label-success">Active</span>{% endif %}
+						{% if member.is_active %}<span class="label label-success">ACTIVE</span>{% endif %}
 						{% if member.is_new %}<span class="label label-warning">NEW</span>{% endif %}
 						{% if member.is_blocked %}<span class="label label-danger">BLOCKED</span>{% endif %}
-						{% if member.is_verified %}<span class="label label-success">Verified</span>{% endif %}
+						{% if member.is_verified %}<span class="label label-success">VERIFIED</span>{% endif %}
 						{% if member.is_superuser %}<span class="label label-primary">SUPERUSER</span>{% endif %}
 						{% if member.is_staff %}<span class="label label-primary">STAFF</span>{% endif %}
-						{% if member.is_moderator %}<span class="label label-primary">Moderator</span>{% endif %}
+						{% if member.is_moderator %}<span class="label label-primary">MODERATOR</span>{% endif %}
 					</td>
 					<td>
 						{% if member.website %}<a href="http://{{ member.website }}" target="_new"><i class="fa fa-bookmark"></i></a>{% endif %}
@@ -52,6 +53,7 @@
 						{% if member.facebook %}<a href="https://www.facebook.com/{{ member.facebook }}" target="_new"><i class="fa fa-facebook"></i></a>{% endif %}
 						{% if member.linkedin %}<a href="https://www.linkedin.com/in/{{ member.linkedin }}" target="_new"><i class="fa fa-linkedin"></i></a>{% endif %}
 					</td>
+					<td><a href="{{ url_for('page_admin_members_edit', member_id=member.id) }}"><button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Edit</button></a></td>
 				</tr>
 			{% endfor %}
 		</tbody>

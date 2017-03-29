@@ -5,6 +5,7 @@ import pycountry
 import pytz
 from datetime import datetime
 from flask import Flask, request, g, render_template, flash, session, url_for, redirect, abort, session, send_file, jsonify
+from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from geoip import geolite2
@@ -25,12 +26,12 @@ app.jinja_env.auto_reload = True
 app.debug = True
 app.config.from_object(__name__)
 mail = Mail(app)
-db = SQLAlchemy(app)
 html_cleaner = Cleaner(page_structure=True, links=False)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
 	SQLALCHEMY_DATABASE_URI='postgresql://devmsx-centercom:zazuKQ9c@192.168.1.104/devmsx-centercom',
+	SQLALCHEMY_ECHO=True,
 	MAIL_SERVER='192.168.1.200',
 	DEFAULT_MAIL_SENDER='javi.lavandeira@msx-center.com',
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
@@ -38,6 +39,9 @@ app.config.update(dict(
 	MAX_CONTENT_LENGTH=8*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
+
+db = SQLAlchemy(app)
+toolbar = DebugToolbarExtension(app)
 
 # Create ordered lists of countries and timezones
 country_list = sorted(pycountry.countries, key = lambda c: c.name)
@@ -216,8 +220,8 @@ class User(db.Model):
 		mail.send(message)
 
 	def __repr__(self):
-		return "<User(real_name='%s', short_name='%s', email='%s', password_hash='%s', registration_date='%s', is_active='%s')>" % (
-			self.real_name, self.short_name, self.email, self.password_hash, self.registration_date, self.is_active)
+		return "<User(real_name='%s', nickname='%s', email='%s', password_hash='%s', registration_date='%s', is_active='%s')>" % (
+			self.real_name, self.nickname, self.email, self.password_hash, self.registration_date, self.is_active)
 
 	def profile_background_url(self):
 		return '/static/img/Backgrounds/%s' % self.standard_background_filename
@@ -717,6 +721,7 @@ class NewsItem(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	author = db.relationship("User", backref="news_items")
 	headline_en = db.Column(db.String())
 	headline_ja = db.Column(db.String())
 	headline_nl = db.Column(db.String())
@@ -1787,7 +1792,11 @@ def page_news():
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
-	return render_template('news/news-list.html', user=user)
+	# Get the news items
+	#items = db.session.query(NewsItem,User).filter(User.id == NewsItem.author_id).all()
+	items = NewsItem.query.order_by(NewsItem.date_published.desc())
+
+	return render_template('news/news-list.html', user=user, items=items)
 
 ###########################
 ## ADMINISTRATION ROUTES ##

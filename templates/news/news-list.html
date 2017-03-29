@@ -38,43 +38,42 @@
 </ul>
 {% endmacro %}
 
-{% macro news_item(category=None, image_url=None, headline=None, subhead=None, date=None, author=None, body=None, url=None, num_comments=None, is_full=False) %}
+{% macro news_item_big(item) %}
 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
 	<div class="news-item">
-		{% if category %}<h5 class="text-uppercase">{{ category }}</h5>{% endif %}
-		{% if image_url %}<img src="{{ image_url }}" class="img-responsive">{% endif %}
-		<h3>{{ headline|safe }}</h3>
-		{% if subhead %}<h4>{{ subhead|safe }}</h4>{% endif %}
-		{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ author.name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}
-		<p class="news-item-date">Posted on {{ date }} by <a href="#">{{ author }}</a></p>
-		<div class="news-item-body text-justify">{{ body|safe }}</div>
+		{% if item.category %}<h5 class="text-uppercase">{{ item.category }}</h5>{% endif %}
+		{% if item.header_image_id %}<img src="{{ url_for('send_image', image_id=item.header_image_id, dummy_filename='newsite') }}" class="img-responsive">{% endif %}
+		<h3>{{ item.headline_en|safe }}</h3>
+		{% if item.subhead_en %}<h4>{{ item.subhead_en|safe }}</h4>{% endif %}
+		{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}
+		<p class="news-item-date">Posted on {{ item.date_published.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p>
+		<div class="news-item-body text-justify">{{ item.body_en|safe }}</div>
 		<div class="news-item-comment text-right">
-		{% if is_full %}
-			{% if num_comments %}
-				<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ num_comments }})</a></span>
+		{% if item.is_full %}
+			{% if item.num_comments %}
+				<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ item.num_comments }})</a></span>
 			{% else %}
 				<span><i class="fa fa-pencil"></i> <a href="#">Write a comment</a></span>
 			{% endif %}
 		{% else %}
-			<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ num_comments }})</a></span>
+			<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ item.num_comments }})</a></span>
 		{% endif %}
 		</div>
 	</div>
 </div>
 {% endmacro %}
 
-
 {% block content %}
 <div class="row">
 	<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 		<h4 class="news-section-divider">Recent news</h4>
 		<div class="row">
-			{{ news_item(category="Events", image_url="/static/img/Articles/article4.jpg", headline="All future CES will be MSX-only", subhead="Not really, but I had to type something here", date="March 14, 2017", author="Javi Lavandeira", body="<p>And here we say something about this news item. It doesn't actually have to be true because this is just placeholder text. Yes, I know that I could just copy & paste something from lipsum.com, but I just felt like typing this nonsense.</p>", num_comments=20, is_full=False) }}
-			{{ news_item(category="Interviews", image_url="/static/img/Articles/carmack.jpg", headline="John Carmark reviews Life on Mars", subhead="Says that <em>It's a Metroid ripoff</em>", date="March 13, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=281, is_full=False) }}
+			{{ news_item_big(items[0]) }}
+			{{ news_item_big(items[1]) }}
 		</div>
 		<div class="row">
-			{{ news_item(category="Games", image_url="/static/img/Articles/article2.jpg", headline="PAC-MAN's ghosts migrate to Canada", subhead="Sick of Donald Trump", date="March 12, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=0, is_full=False) }}
-			{{ news_item(category="Drugs", image_url="/static/img/Articles/article3.jpg", headline="Super Mario Bros mushrooms give a super high", subhead=None, date="March 11, 2017", author="Javi Lavandeira", body="<p>Aenean tristique massa ut tristique blandit. Donec elit tellus, porta et suscipit sit amet, facilisis et leo. Duis id ornare metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non ligula sed odio dapibus pretium. Donec semper et diam consequat ornare. Nullam iaculis ante sit amet eros vestibulum sodales. In molestie justo risus, eget vestibulum ipsum finibus ac. </p>", num_comments=0, is_full=False) }}
+			{{ news_item_big(items[2]) }}
+			{{ news_item_big(items[3]) }}
 		</div>
 	</div>
 
