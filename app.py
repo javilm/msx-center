@@ -723,6 +723,8 @@ class NewsItem(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	author = db.relationship("User", backref="news_items")
+	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+	category = db.relationship("Category", backref="news_items")
 	headline_en = db.Column(db.String())
 	headline_ja = db.Column(db.String())
 	headline_nl = db.Column(db.String())
@@ -759,8 +761,9 @@ class NewsItem(db.Model):
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	
-	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None):
+	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None, category_id=0):
 		self.author_id = author_id
+		self.category_id = category_id
 		self.headline_en = headline_en
 		self.headline_ja = headline_ja
 		self.headline_nl = headline_nl
@@ -1931,6 +1934,7 @@ def page_admin_news_add():
 		template_options['active'] = 'news'
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
+		template_options['categories'] = Category.query.order_by(Category.id).all()
 
 		return render_template('admin/news-add.html', **template_options)
 	else:
@@ -1953,6 +1957,7 @@ def page_admin_news_add():
 			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
 
 		model_vars['author_id'] = request.form['author_id']
+		model_vars['category_id'] = request.form['category_id']
 		model_vars['header_image_id'] = request.form['header_image_id']
 		model_vars['date_published'] = request.form['date_published']
 		model_vars['is_feature'] = request.form['is_feature']
@@ -1989,6 +1994,7 @@ def page_admin_news_edit(item_id):
 		template_options['active'] = 'news'
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
+		template_options['categories'] = Category.query.order_by(Category.id).all()
 		template_options['item'] = item
 
 		return render_template('admin/news-edit.html', **template_options)
@@ -2035,6 +2041,7 @@ def page_admin_news_edit(item_id):
 		item.is_draft_kr = request.form['is_draft_kr']
 
 		item.author_id = request.form['author_id']
+		item.category_id = request.form['category_id']
 		item.header_image_id = request.form['header_image_id']
 		item.date_published = request.form['date_published']
 		item.is_feature = request.form['is_feature']

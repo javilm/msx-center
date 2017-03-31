@@ -93,6 +93,7 @@ $("#saveButton").click(function (e) {
 			body_kr: quill_kr.root.innerHTML,
 			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off',
 			author_id: $('#field_author_id').val(),
+            category_id: $('#field_category_id').val(),
 			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',

@@ -33,7 +33,7 @@
 						{% if item.is_draft_en %}<span class="label label-warning">Draft</span>{% endif %}
 					</td>
 					<td rowspan="6"><a href="#">Javi Lavandeira</a></td>
-					<td rowspan="6">Events</td>
+					<td rowspan="6">{{ item.category.name_en }}</td>
 					<td rowspan="6">{{ item.num_comments }}</td>
 					<td rowspan="6">{{ item.date_published.strftime('%d/%b/%Y') }}</td>
 				</tr>

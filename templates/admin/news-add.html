@@ -86,6 +86,14 @@
 			{% endif %}
 		</select>
 	</div>
+    <div class="form-group">
+        <label class="control-label">Category </label><i class="fa fa-exclamation-circle"></i>
+        <select id="field_category_id" class="form-control">
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name_en }}</option>
+            {% endfor %}
+        </select>
+    </div>
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">
