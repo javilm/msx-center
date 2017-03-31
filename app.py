@@ -36,6 +36,7 @@ app.config.update(dict(
 	DEFAULT_MAIL_SENDER='javi.lavandeira@msx-center.com',
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
 	SERVER_NAME='dev.msx-center.com',
+	DEBUG_TB_INTERCEPT_REDIRECTS=False,
 	MAX_CONTENT_LENGTH=8*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
@@ -697,8 +698,8 @@ class ConversationMessage(db.Model):
 
 		self.body_en = LH.tostring(root)
 
-class NewsCategory(db.Model):
-	__tablename__ = 'news_categories'
+class Category(db.Model):
+	__tablename__ = 'categories'
 
 	id = db.Column(db.Integer, primary_key=True)
 	name_en = db.Column(db.String())
@@ -709,12 +710,12 @@ class NewsCategory(db.Model):
 	name_kr = db.Column(db.String())
 
 	def __init__(self, name_en=None, name_ja=None, name_nl=None, name_es=None, name_pt=None, name_kr=None):
-		self.name_en = html_cleaner.clean_html(name_en) if name_en else None
-		self.name_ja = html_cleaner.clean_html(name_ja) if name_ja else None
-		self.name_nl = html_cleaner.clean_html(name_nl) if name_nl else None
-		self.name_es = html_cleaner.clean_html(name_es) if name_es else None
-		self.name_pt = html_cleaner.clean_html(name_pt) if name_pt else None
-		self.name_kr = html_cleaner.clean_html(name_kr) if name_kr else None
+		self.name_en = LH.document_fromstring(name_en).text_content() if name_en else ''
+		self.name_ja = LH.document_fromstring(name_ja).text_content() if name_ja else ''
+		self.name_nl = LH.document_fromstring(name_nl).text_content() if name_nl else ''
+		self.name_es = LH.document_fromstring(name_es).text_content() if name_es else ''
+		self.name_pt = LH.document_fromstring(name_pt).text_content() if name_pt else ''
+		self.name_kr = LH.document_fromstring(name_kr).text_content() if name_kr else ''
 
 class NewsItem(db.Model):
 	__tablename__ = 'news_items'
@@ -1804,7 +1805,6 @@ def page_news():
 
 @app.route('/admin', methods=['GET'])
 def page_admin():
-
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
@@ -1815,6 +1815,87 @@ def page_admin():
 			abort(401)
 
 	return render_template('admin/dashboard.html', user=user, active='dashboard')
+
+@app.route('/admin/categories', methods=['GET'])
+def page_admin_categories():
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	categories = Category.query.all()
+
+	return render_template('admin/categories.html', user=user, active='categories', categories=categories)
+
+@app.route('/admin/categories/add', methods=['GET', 'POST'])
+def page_admin_categories_add():
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	if request.method == 'GET':
+		# Method is GET
+		return render_template('admin/categories-add.html', user=user, active='categories')
+	else:
+		# Method is POST
+
+		model_vars = {}
+		model_vars['name_en'] = request.form['field_name_en']
+		model_vars['name_ja'] = request.form['field_name_ja']
+		model_vars['name_nl'] = request.form['field_name_nl']
+		model_vars['name_es'] = request.form['field_name_es']
+		model_vars['name_pt'] = request.form['field_name_pt']
+		model_vars['name_kr'] = request.form['field_name_kr']
+
+		# Create the category
+		category = Category(**model_vars)
+		db.session.add(category)
+		db.session.commit()
+
+		return redirect(url_for('page_admin_categories'))
+
+@app.route('/admin/categories/<int:category_id>/edit', methods=['GET', 'POST'])
+def page_admin_categories_edit(category_id):
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	# Try and retrieve the category from the database
+	category = Category.query.filter_by(id=category_id).first()
+	if category is None:
+		abort(404)
+
+	if request.method == 'GET':
+		# Method is GET
+		return render_template('admin/categories-edit.html', user=user, active='categories', category=category)
+	else:
+		# Method is POST
+		category.name_en = LH.document_fromstring(request.form['field_name_en']).text_content() if request.form['field_name_en'] else ''
+		category.name_ja = LH.document_fromstring(request.form['field_name_ja']).text_content() if request.form['field_name_ja'] else ''
+		category.name_nl = LH.document_fromstring(request.form['field_name_nl']).text_content() if request.form['field_name_nl'] else ''
+		category.name_es = LH.document_fromstring(request.form['field_name_es']).text_content() if request.form['field_name_es'] else ''
+		category.name_pt = LH.document_fromstring(request.form['field_name_pt']).text_content() if request.form['field_name_pt'] else ''
+		category.name_kr = LH.document_fromstring(request.form['field_name_kr']).text_content() if request.form['field_name_kr'] else ''
+
+		# Save the changes
+		db.session.add(category)
+		db.session.commit()
+
+		return redirect(url_for('page_admin_categories'))
 
 @app.route('/admin/news', methods=['GET'])
 def page_admin_news():
