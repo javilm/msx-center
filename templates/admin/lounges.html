@@ -1,7 +1,114 @@
 {% extends "layout/admin-base.html" %}
+
 {% block title %}MSX Center Administration - Lounges{% endblock %}
+
+{% macro popover_button(field, lang) %}
+{% if field %}
+	<button class="btn btn-primary btn-xs" data-toggle="popover" data-content="{{ field }}">{{ lang }}</button>
+{% else %}
+	<button class="btn btn-default btn-xs disabled">{{ lang }}</button>
+{% endif %}
+{% endmacro %}
+
+{% macro lounge_flags(lounge) %}
+{% if lounge.allows_anonymous %}
+<span class="label label-success">ANONYMOUS</span>
+{% else %}
+<span class="label label-default">Anonymous</span>
+{% endif %}
+{% if lounge.allows_nicknames %}
+<span class="label label-success">NICKNAMES</span>
+{% else %}
+<span class="label label-default">Nicknames</span>
+{% endif %}
+{% if lounge.allows_unverified %}
+<span class="label label-success">UNVERIFIED</span>
+{% else %}
+<span class="label label-default">Unverified</span>
+{% endif %}
+{% if lounge.allows_new %}
+<span class="label label-success">NEW</span>
+{% else %}
+<span class="label label-default">New</span>
+{% endif %}
+{% if lounge.allows_bad_reputation %}
+<span class="label label-success">BAD REPUTATION</span>
+{% else %}
+<span class="label label-default">Bad reputation</span>
+{% endif %}
+{% if lounge.staff_only %}
+<span class="label label-danger">STAFF ONLY</span>
+{% endif %}
+{% if lounge.is_readonly %}
+<span class="label label-warning">READ ONLY</span>
+{% endif %}
+{% if not lounge.is_visible %}
+<span class="label label-warning">HIDDEN</span>
+{% endif %}
+{% endmacro %}
+
 {% block content %}
 <h1 class="page-header">Lounges</h1>
-Something goes here
+<a href="{{ url_for('page_admin_lounges_add') }}" class="btn btn-primary btn-xs" type="button">Add new lounge</a>
+
+{% if lounges|length %}
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Slug</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Priority</th>
+				<th>Color</th>
+				<th>Flags</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for lounge in lounges %}
+				<tr>
+					<td>{{ lounge.id }}</td>
+					<td>{{ lounge.slug }}</td>
+					<td>
+						{{ popover_button(lounge.name_en, 'EN') }}
+						{{ popover_button(lounge.name_ja, 'JA') }}
+						{{ popover_button(lounge.name_nl, 'NL') }}
+						{{ popover_button(lounge.name_es, 'ES') }}
+						{{ popover_button(lounge.name_pt, 'PT') }}
+						{{ popover_button(lounge.name_kr, 'KR') }}
+					</td>
+					<td>
+						{{ popover_button(lounge.desc_en, 'EN') }}
+						{{ popover_button(lounge.desc_ja, 'JA') }}
+						{{ popover_button(lounge.desc_nl, 'NL') }}
+						{{ popover_button(lounge.desc_es, 'ES') }}
+						{{ popover_button(lounge.desc_pt, 'PT') }}
+						{{ popover_button(lounge.desc_kr, 'KR') }}
+					</td>
+					<td>{{ lounge.priority }}</td>
+					<td><div class="panel panel-{{ lounge.color_class}}"><div class="panel-heading">{{ lounge.color_class }}</div></div></td>
+					<td>{{ lounge_flags(lounge) }}</td>
+					<td>
+						<a href="{{ url_for('page_admin_lounges_edit', lounge_id=lounge.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="alert alert-danger">
+    There are no conversation lounges.
+</div>
+{% endif %}
+
 {% endblock %}
 
+{% block extrajs %}
+<script type="text/javascript">
+{# Initialize the popovers #}
+$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'hover'})
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "layout/admin-base.html" %}
+
+{% block title %}MSX Center Administration - Edit lounge{% endblock %}
+
+{% block content %}
+<h1 class="page-header">Lounges <span class="small">Edit lounge</span></h1>
+<ul class="nav nav-pills" role="tablist">
+    <li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
+    <li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
+    <li role="presentation" id="tab-nl"><a href="#input-nl" aria-controls="input-nl" role="tab" data-toggle="tab">Dutch</a></li>
+    <li role="presentation" id="tab-es"><a href="#input-es" aria-controls="input-es" role="tab" data-toggle="tab">Spanish</a></li>
+    <li role="presentation" id="tab-pt"><a href="#input-pt" aria-controls="input-pt" role="tab" data-toggle="tab">Portuguese</a></li>
+    <li role="presentation" id="tab-kr"><a href="#input-kr" aria-controls="input-kr" role="tab" data-toggle="tab">Korean</a></li>
+</ul>
+
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+    {% if errors|length > 1 %}
+        <strong>There were errors with your submission:</strong>
+    {% else %}
+        <strong>There was an error with your submission:</strong>
+    {% endif %}
+    <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form action="{{ url_for('page_admin_lounges_edit', lounge_id=lounge.id) }}" method="POST">
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane in active" id="input-en">
+			<div class="form-group">
+				<label class="control-label">Name (en)</label>
+				<input class="form-control" name="name_en" type="text" value="{{ lounge.name_en }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (en)</label>
+				<textarea class="form-control" name="desc_en" rows="5">{{ lounge.desc_en }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+        <div role="tabpanel" class="tab-pane" id="input-ja">
+			<div class="form-group">
+				<label class="control-label">Name (ja)</label>
+				<input class="form-control" name="name_ja" type="text" value="{{ lounge.name_ja }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (ja)</label>
+				<textarea class="form-control" name="desc_ja" rows="5">{{ lounge.desc_ja }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+        <div role="tabpanel" class="tab-pane" id="input-nl">
+			<div class="form-group">
+				<label class="control-label">Name (nl)</label>
+				<input class="form-control" name="name_nl" type="text" value="{{ lounge.name_nl }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (nl)</label>
+				<textarea class="form-control" name="desc_nl" rows="5">{{ lounge.desc_nl }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+        <div role="tabpanel" class="tab-pane" id="input-es">
+			<div class="form-group">
+				<label class="control-label">Name (es)</label>
+				<input class="form-control" name="name_es" type="text" value="{{ lounge.name_es }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (es)</label>
+				<textarea class="form-control" name="desc_es" rows="5">{{ lounge.desc_es }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+        <div role="tabpanel" class="tab-pane" id="input-pt">
+			<div class="form-group">
+				<label class="control-label">Name (pt)</label>
+				<input class="form-control" name="name_pt" type="text" value="{{ lounge.name_pt }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (pt)</label>
+				<textarea class="form-control" name="desc_pt" rows="5">{{ lounge.desc_pt }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+        <div role="tabpanel" class="tab-pane" id="input-kr">
+			<div class="form-group">
+				<label class="control-label">Name (kr)</label>
+				<input class="form-control" name="name_kr" type="text" value="{{ lounge.name_kr }}">
+				<p class="help-block">Short name for this lounge.</p>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Description (kr)</label>
+				<textarea class="form-control" name="desc_kr" rows="5">{{ lounge.desc_kr }}</textarea>
+				<p class="help-block">A few words describing the topic of the conversations in this lounge.</p>
+			</div>
+		</div>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Slug </label>
+		<input class="form-control" name="slug" type="text" value="{{ lounge.slug }}">
+		<p class="help-block">Lower case English words separated by hyphens. Must be unique. Identifies the lounge.</p>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Priority </label><i class="fa fa-exclamation-circle"></i>
+		<input class="form-control" name="priority" type="number" value="{{ lounge.priority }}">
+		<p class="help-block">Enter an integer number. Conversation lounges will be ordered based on this number, from lowest to highest.</p>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Color </label><i class="fa fa-exclamation-circle"></i>
+        <select name="color_class" class="form-control">
+			<option value="0"{% if lounge.color_class == 'default' %} selected{% endif %}>Default (grey)</option>
+			<option value="1"{% if lounge.color_class == 'primary' %} selected{% endif %}>Primary (blue)</option>
+			<option value="2"{% if lounge.color_class == 'success' %} selected{% endif %}>Success (green)</option>
+			<option value="3"{% if lounge.color_class == 'info' %} selected{% endif %}>Info (cyan)</option>
+			<option value="4"{% if lounge.color_class == 'warning' %} selected{% endif %}>Warning (yellow)</option>
+			<option value="5"{% if lounge.color_class == 'danger' %} selected{% endif %}>Danger (red)</option>
+        </select>
+		<p class="help-block">These color classes correspond to <a href="http://getbootstrap.com/components/#panels-alternatives" target="_new">Bootstrap's contextual classes for panels</a>.</p>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Options</label>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="allows_anonymous" type="checkbox"{% if lounge.allows_anonymous %} checked{% endif %}>Allows anonymous posts
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="allows_nicknames" type="checkbox"{% if lounge.allows_nicknames %} checked{% endif %}>Allows nicknames
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="allows_unverified" type="checkbox"{% if lounge.allows_unverified %} checked{% endif %}>Allows posts from unverified members
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="allows_new" type="checkbox"{% if lounge.allows_new %} checked{% endif %}>Allows posts from new members
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="allows_bad_reputation" type="checkbox"{% if lounge.allows_bad_reputation %} checked{% endif %}>Allows posts from members with bad reputation
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="staff_only" type="checkbox"{% if lounge.staff_only %} checked{% endif %}>Only staff can post
+            </label>
+			<p class="help-block">Others can still read posts in this lounge unless it's hidden.</p>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="is_visible" type="checkbox"{% if lounge.is_visible %} checked{% endif %}>Visible
+            </label>
+			<p class="help-block">If the lounge is not visible only staff members will be able to see and access it.</p>
+        </div>
+        <div class="checkbox">
+            <label class="control-label">
+                <input name="is_readonly" type="checkbox"{% if lounge.is_readonly %} checked{% endif %}>Read-only
+            </label>
+			<p class="help-block">If read-only then only staff members can post in the lounge.</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <button id="cancelButton" class="btn btn-default btn-sm" type="button">Cancel</button>
+        <button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>
+    </div>
+</form>
+
+{% endblock %}

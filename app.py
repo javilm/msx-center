@@ -520,37 +520,37 @@ class ConversationLounge(db.Model):
 			user_errors['bad_reputation'] = True
 		return user_errors
 
-	def __init__(self, name_en, desc_en, name_ja=None, name_es=None, name_nl=None, name_pt=None, name_kr=None, desc_ja=None, desc_es=None, desc_nl=None, desc_pt=None, desc_kr=None):
+	def __init__(self, name_en, desc_en, name_ja=None, name_es=None, name_nl=None, name_pt=None, name_kr=None, desc_ja=None, desc_es=None, desc_nl=None, desc_pt=None, desc_kr=None, allows_anonymous=False, allows_nicknames=False, allows_unverified=False, allows_new=False, allows_bad_reputation=False, staff_only=True, is_visible=True, is_readonly=False, priority=10, color_class='success', slug=None):
 
 		# Lounge name in several languages
-		self.name_en = name_en
-		self.name_ja = name_ja
-		self.name_es = name_es
-		self.name_nl = name_nl
-		self.name_pt = name_pt
-		self.name_kr = name_kr
+		self.name_en = LH.document_fromstring(name_en).text_content() if name_en else ''
+		self.name_ja = LH.document_fromstring(name_ja).text_content() if name_ja else ''
+		self.name_nl = LH.document_fromstring(name_nl).text_content() if name_nl else ''
+		self.name_es = LH.document_fromstring(name_es).text_content() if name_es else ''
+		self.name_pt = LH.document_fromstring(name_pt).text_content() if name_pt else ''
+		self.name_kr = LH.document_fromstring(name_kr).text_content() if name_kr else ''
 
 		# Lounge description in several languages
-		self.desc_en = desc_en
-		self.desc_ja = desc_ja
-		self.desc_es = desc_es
-		self.desc_nl = desc_nl
-		self.desc_pt = desc_pt
-		self.desc_kr = desc_kr
+		self.desc_en = LH.document_fromstring(desc_en).text_content() if desc_en else ''
+		self.desc_ja = LH.document_fromstring(desc_ja).text_content() if desc_ja else ''
+		self.desc_nl = LH.document_fromstring(desc_nl).text_content() if desc_nl else ''
+		self.desc_es = LH.document_fromstring(desc_es).text_content() if desc_es else ''
+		self.desc_pt = LH.document_fromstring(desc_pt).text_content() if desc_pt else ''
+		self.desc_kr = LH.document_fromstring(desc_kr).text_content() if desc_kr else ''
 
 		# Flags and metadata
-		self.allows_anonymous = False
-		self.allows_nicknames = False
-		self.allows_unverified = False
-		self.allows_new = False
-		self.allows_bad_reputation = False
-		self.staff_only = True
-		self.is_visible = True
-		self.is_readonly = False
-		self.num_threads = 99
-		self.priority = 10
-		self.color_class = 'success'
-		self.slug = slugify(unicode(name_en))
+		self.allows_anonymous = allows_anonymous
+		self.allows_nicknames = allows_nicknames
+		self.allows_unverified = allows_unverified
+		self.allows_new = allows_new
+		self.allows_bad_reputation = allows_bad_reputation
+		self.staff_only = staff_only
+		self.is_visible = is_visible
+		self.is_readonly = is_readonly
+		self.num_threads = 0
+		self.priority = priority
+		self.color_class = color_class
+		self.slug = slugify(unicode(name_en)) if name_en else ''
 
 	def add_thread(self, thread):
 		thread.lounge_id = self.id
@@ -960,6 +960,13 @@ def get_host_by_ip(ip):
 		return host
 	except Exception:
 		return None
+
+def log_form_vars(form):
+	result = 'Submitted form items:\n\n'
+
+	for var in form:
+		result += "%s = %s\n" % (var, form[var])
+	app.logger.info(result)
 
 ########################
 ## APPLICATION ROUTES ##
@@ -2107,7 +2114,6 @@ def page_admin_articles():
 
 @app.route('/admin/lounges', methods=['GET'])
 def page_admin_lounges():
-
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
@@ -2117,7 +2123,120 @@ def page_admin_lounges():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/lounges.html', user=user, active='lounges')
+	lounges = ConversationLounge.query.order_by(ConversationLounge.priority).all()
+
+	return render_template('admin/lounges.html', user=user, active='lounges', lounges=lounges)
+
+@app.route('/admin/lounges/add', methods=['GET', 'POST'])
+def page_admin_lounges_add():
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	if request.method == 'GET':
+		return render_template('admin/lounges-add.html', user=user, active='lounges')
+	else:
+		# DEBUG
+		log_form_vars(request.form)
+
+		# Method is POST
+
+		# XXX	No validation in the controller, but there's sanitation in the model constructor. At most we'll have 
+		#		conversation lounges with empty slugs, names, etc
+		color_classes = ['default', 'primary', 'success', 'info', 'warning', 'danger']
+
+		model_vars = {}
+		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
+			model_vars['name_%s' % lang] = request.form['name_%s' % lang]
+			model_vars['desc_%s' % lang] = request.form['desc_%s' % lang]
+
+		model_vars['allows_anonymous'] = request.form['allows_anonymous'] if 'allows_anonymous' in request.form else False
+		model_vars['allows_nicknames'] = request.form['allows_nicknames'] if 'allows_nicknames' in request.form else False
+		model_vars['allows_unverified'] = request.form['allows_unverified'] if 'allows_unverified' in request.form else False
+		model_vars['allows_new'] = request.form['allows_new'] if 'allows_new' in request.form else False
+		model_vars['allows_bad_reputation'] = request.form['allows_bad_reputation'] if 'allows_bad_reputation' in request.form else False
+		model_vars['staff_only'] = request.form['staff_only'] if 'staff_only' in request.form else False
+		model_vars['is_visible'] = request.form['is_visible'] if 'is_visible' in request.form else False
+		model_vars['is_readonly'] = request.form['is_readonly'] if 'is_readonly' in request.form else False
+		model_vars['priority'] = int(request.form['priority'])
+		model_vars['color_class'] = color_classes[int(request.form['color_class'])]
+		model_vars['slug'] = request.form['slug']
+
+		# Create the lounge
+		lounge = ConversationLounge(**model_vars)
+		db.session.add(lounge)
+		db.session.commit()
+
+		return redirect(url_for('page_admin_lounges'))
+
+@app.route('/admin/lounges/<int:lounge_id>/edit', methods=['GET', 'POST'])
+def page_admin_lounges_edit(lounge_id):
+	# Get the signed in User (if there's one), or None
+	user = User.get_signed_in_user()
+
+	if user is None:
+		abort(401)
+	else:
+		if not user.is_staff and not user.is_superuser:
+			abort(401)
+
+	# Try and retrieve the news item from the database
+	lounge = ConversationLounge.query.filter_by(id=lounge_id).first()
+	if lounge is None:
+		abort(404)
+
+	if request.method == 'GET':
+		template_options = {}
+		template_options['user'] = user
+		template_options['active'] = 'lounges'
+		template_options['lounge'] = lounge
+
+		return render_template('admin/lounges-edit.html', **template_options)
+
+	else:
+		# DEBUG
+		log_form_vars(request.form)
+
+		# Method is POST
+		# XXX	No validation in the controller, but there's sanitation in the model constructor. At most we'll have 
+		#		conversation lounges with empty slugs, names, etc
+		color_classes = ['default', 'primary', 'success', 'info', 'warning', 'danger']
+
+		lounge.name_en = LH.document_fromstring(request.form['name_en']).text_content() if request.form['name_en'] else ''
+		lounge.desc_en = LH.document_fromstring(request.form['desc_en']).text_content() if request.form['desc_en'] else ''
+		lounge.name_ja = LH.document_fromstring(request.form['name_ja']).text_content() if request.form['name_ja'] else ''
+		lounge.desc_ja = LH.document_fromstring(request.form['desc_ja']).text_content() if request.form['desc_ja'] else ''
+		lounge.name_nl = LH.document_fromstring(request.form['name_nl']).text_content() if request.form['name_nl'] else ''
+		lounge.desc_nl = LH.document_fromstring(request.form['desc_nl']).text_content() if request.form['desc_nl'] else ''
+		lounge.name_es = LH.document_fromstring(request.form['name_es']).text_content() if request.form['name_es'] else ''
+		lounge.desc_es = LH.document_fromstring(request.form['desc_es']).text_content() if request.form['desc_es'] else ''
+		lounge.name_pt = LH.document_fromstring(request.form['name_pt']).text_content() if request.form['name_pt'] else ''
+		lounge.desc_pt = LH.document_fromstring(request.form['desc_pt']).text_content() if request.form['desc_pt'] else ''
+		lounge.name_kr = LH.document_fromstring(request.form['name_kr']).text_content() if request.form['name_kr'] else ''
+		lounge.desc_kr = LH.document_fromstring(request.form['desc_kr']).text_content() if request.form['desc_kr'] else ''
+		lounge.allows_anonymous = request.form['allows_anonymous'] if 'allows_anonymous' in request.form else False
+		lounge.allows_nicknames = request.form['allows_nicknames'] if 'allows_nicknames' in request.form else False
+		lounge.allows_unverified = request.form['allows_unverified'] if 'allows_unverified' in request.form else False
+		lounge.allows_new = request.form['allows_new'] if 'allows_new' in request.form else False
+		lounge.allows_bad_reputation = request.form['allows_bad_reputation'] if 'allows_bad_reputation' in request.form else False
+		lounge.staff_only = request.form['staff_only'] if 'staff_only' in request.form else False
+		lounge.is_visible = request.form['is_visible'] if 'is_visible' in request.form else False
+		lounge.is_readonly = request.form['is_readonly'] if 'is_readonly' in request.form else False
+		lounge.priority = int(request.form['priority'])
+		lounge.color_class = color_classes[int(request.form['color_class'])]
+		lounge.slug = request.form['slug']
+
+		# Save the lounge
+		db.session.add(lounge)
+		db.session.commit()
+
+		return redirect(url_for('page_admin_lounges'))
+
 
 @app.route('/admin/members', methods=['GET'])
 def page_admin_members():
