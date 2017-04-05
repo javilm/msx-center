@@ -767,7 +767,7 @@ class NewsItem(db.Model):
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	
-	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None, category_id=0):
+	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None, category_id=0, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None):
 		self.author_id = author_id
 		self.category_id = category_id
 		self.headline_en = headline_en
@@ -782,6 +782,12 @@ class NewsItem(db.Model):
 		self.subhead_es = subhead_es
 		self.subhead_pt = subhead_pt
 		self.subhead_kr = subhead_kr
+		self.summary_en = summary_en
+		self.summary_ja = summary_ja
+		self.summary_nl = summary_nl
+		self.summary_es = summary_es
+		self.summary_pt = summary_pt
+		self.summary_kr = summary_kr
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
 		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
@@ -1966,6 +1972,7 @@ def page_admin_news_add():
 		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
 			model_vars['headline_%s' % lang] = request.form['%s[headline]' % lang]
 			model_vars['subhead_%s' % lang] = request.form['%s[subhead]' % lang]
+			model_vars['summary_%s' % lang] = request.form['%s[summary]' % lang]
 			model_vars['body_%s' % lang] = request.form['%s[body]' % lang]
 			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
 
@@ -2020,36 +2027,42 @@ def page_admin_news_edit(item_id):
 		# English
 		item.headline_en = request.form['headline_en']
 		item.subhead_en = request.form['subhead_en']
+		item.summary_en = request.form['summary_en']
 		item.body_en = request.form['body_en']
 		item.is_draft_en = request.form['is_draft_en']
 
 		# Japanese
 		item.headline_ja = request.form['headline_ja']
 		item.subhead_ja = request.form['subhead_ja']
+		item.summary_ja = request.form['summary_ja']
 		item.body_ja = request.form['body_ja']
 		item.is_draft_ja = request.form['is_draft_ja']
 
 		# Dutch
 		item.headline_nl = request.form['headline_nl']
 		item.subhead_nl = request.form['subhead_nl']
+		item.summary_nl = request.form['summary_nl']
 		item.body_nl = request.form['body_nl']
 		item.is_draft_nl = request.form['is_draft_nl']
 
 		# Spanish
 		item.headline_es = request.form['headline_es']
 		item.subhead_es = request.form['subhead_es']
+		item.summary_es = request.form['summary_es']
 		item.body_es = request.form['body_es']
 		item.is_draft_es = request.form['is_draft_es']
 
 		# Portuguese
 		item.headline_pt = request.form['headline_pt']
 		item.subhead_pt = request.form['subhead_pt']
+		item.summary_pt = request.form['summary_pt']
 		item.body_pt = request.form['body_pt']
 		item.is_draft_pt = request.form['is_draft_pt']
 
 		# Korean
 		item.headline_kr = request.form['headline_kr']
 		item.subhead_kr = request.form['subhead_kr']
+		item.summary_kr = request.form['summary_kr']
 		item.body_kr = request.form['body_kr']
 		item.is_draft_kr = request.form['is_draft_kr']
 
