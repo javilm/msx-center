@@ -48,6 +48,10 @@
 				<input class="form-control" id="field_subhead_en" type="text" value="{{ item.subhead_en|supress_none }}">
 			</div>
 			<div class="form-group">
+				<label class="control-label">Summary (English)</label>
+				<textarea class="form-control" id="field_summary_en" rows="5">{{ item.summary_en|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
 				<label class="control-label">Body (English)</label>
 				<div class="form-control" id="quillEditor_en">{{ item.body_en|safe }}</div>
 			</div>
@@ -69,6 +73,10 @@
 			<div class="form-group">
 				<label class="control-label">Secondary headline (Japanese)</label>
 				<input class="form-control" id="field_subhead_ja" type="text" value="{{ item.subhead_ja|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Japanese)</label>
+				<textarea class="form-control" id="field_summary_ja" rows="5">{{ item.summary_ja|supress_none }}</textarea>
 			</div>
 			<div class="form-group">
 				<label class="control-label">Body (Japanese)</label>
@@ -94,6 +102,10 @@
 				<input class="form-control" id="field_subhead_nl" type="text" value="{{ item.subhead_nl|supress_none }}">
 			</div>
 			<div class="form-group">
+				<label class="control-label">Summary (Dutch)</label>
+				<textarea class="form-control" id="field_summary_nl" rows="5">{{ item.summary_nl|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
 				<label class="control-label">Body (Dutch)</label>
 				<div class="form-control" id="quillEditor_nl">{{ item.body_nl|safe }}</div>
 			</div>
@@ -115,6 +127,10 @@
 			<div class="form-group">
 				<label class="control-label">Secondary headline (Spanish)</label>
 				<input class="form-control" id="field_subhead_es" type="text" value="{{ item.subhead_es|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Spanish)</label>
+				<textarea class="form-control" id="field_summary_es" rows="5">{{ item.summary_es|supress_none }}</textarea>
 			</div>
 			<div class="form-group">
 				<label class="control-label">Body (Spanish)</label>
@@ -140,6 +156,10 @@
 				<input class="form-control" id="field_subhead_pt" type="text" value="{{ item.subhead_pt|supress_none }}">
 			</div>
 			<div class="form-group">
+				<label class="control-label">Summary (Portuguese)</label>
+				<textarea class="form-control" id="field_summary_pt" rows="5">{{ item.summary_pt|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
 				<label class="control-label">Body (Portuguese)</label>
 				<div class="form-control" id="quillEditor_pt">{{ item.body_pt|safe }}</div>
 			</div>
@@ -161,6 +181,10 @@
 			<div class="form-group">
 				<label class="control-label">Secondary headline (Korean)</label>
 				<input class="form-control" id="field_subhead_kr" type="text" value="{{ item.subhead_kr|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Korean)</label>
+				<textarea class="form-control" id="field_summary_kr" rows="5">{{ item.summary_kr|supress_none }}</textarea>
 			</div>
 			<div class="form-group">
 				<label class="control-label">Body (Korean)</label>

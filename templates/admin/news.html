@@ -5,6 +5,14 @@
 <link rel="stylesheet" href="/static/css/font-awesome.min.css">
 {% endblock %}
 
+{% macro popover_button(field, lang) %}
+{% if field %}  
+	<button class="btn btn-primary btn-xs" data-toggle="popover" data-content="{{ field }}">{{ lang }}</button>
+{% else %}      
+	<button class="btn btn-default btn-xs disabled">{{ lang }}</button>
+{% endif %} 
+{% endmacro %}
+
 {% block content %}
 <h1 class="page-header">News</h1>
 <a href="{{ url_for('page_admin_news_add') }}" class="btn btn-primary btn-xs" type="button">Add new item</a>
@@ -17,50 +25,50 @@
 			<tr>
 				<th>ID</th>
 				<th>Headline</th>
+				<th>Draft flag</th>
+				<th>Summary</th>
 				<th>Author</th>
 				<th>Category</th>
 				<th><i class="fa fa-comment"></i></th>
 				<th>Date</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for item in news_items %}
 				<tr>
-					<td rowspan="6"><a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}">{{ item.id }}</a>
+					<td>{{ item.id }}</a>
 						{% if item.is_feature %}<div class="news-item-labels"><span class="label label-success">Feature</span></div>{% endif %}
 					</td>
-					<td>EN: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_en }}</strong></a>
-						{% if item.is_draft_en %}<span class="label label-warning">Draft</span>{% endif %}
+					<td>
+						{{ popover_button(item.headline_en, 'EN') }}
+						{{ popover_button(item.headline_ja, 'JA') }}
+						{{ popover_button(item.headline_nl, 'NL') }}
+						{{ popover_button(item.headline_es, 'ES') }}
+						{{ popover_button(item.headline_pt, 'PT') }}
+						{{ popover_button(item.headline_kr, 'KR') }}
 					</td>
-					<td rowspan="6"><a href="#">Javi Lavandeira</a></td>
-					<td rowspan="6">{{ item.category.name_en }}</td>
-					<td rowspan="6">{{ item.num_comments }}</td>
-					<td rowspan="6">{{ item.date_published.strftime('%d/%b/%Y') }}</td>
-				</tr>
-				<tr>
-					<td>JA: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_ja }}</strong></a>
-						{% if item.is_draft_ja %}<span class="label label-warning">Draft</span>{% endif %}
+					<td>
+						{% if item.is_draft_en %}<span class="label label-warning">EN</span>{% endif %}
+						{% if item.is_draft_ja %}<span class="label label-warning">JA</span>{% endif %}
+						{% if item.is_draft_nl %}<span class="label label-warning">NL</span>{% endif %}
+						{% if item.is_draft_es %}<span class="label label-warning">ES</span>{% endif %}
+						{% if item.is_draft_pt %}<span class="label label-warning">PT</span>{% endif %}
+						{% if item.is_draft_kr %}<span class="label label-warning">KR</span>{% endif %}
 					</td>
-				</tr>
-				<tr>
-					<td>NL: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_nl }}</strong></a>
-						{% if item.is_draft_nl %}<span class="label label-warning">Draft</span>{% endif %}
+					<td>
+						{{ popover_button(item.summary_en, 'EN') }}
+						{{ popover_button(item.summary_ja, 'JA') }}
+						{{ popover_button(item.summary_nl, 'NL') }}
+						{{ popover_button(item.summary_es, 'ES') }}
+						{{ popover_button(item.summary_pt, 'PT') }}
+						{{ popover_button(item.summary_kr, 'KR') }}
 					</td>
-				</tr>
-				<tr>
-					<td>ES: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_es }}</strong></a>
-						{% if item.is_draft_es %}<span class="label label-warning">Draft</span>{% endif %}
-					</td>
-				</tr>
-				<tr>
-					<td>PT: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_pt }}</strong></a>
-						{% if item.is_draft_pt %}<span class="label label-warning">Draft</span>{% endif %}
-					</td>
-				</tr>
-				<tr>
-					<td>KR: <a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><strong>{{ item.headline_kr }}</strong></a>
-						{% if item.is_draft_kr %}<span class="label label-warning">Draft</span>{% endif %}
-					</td>
+					<td><a href="#">Javi Lavandeira</a></td>
+					<td>{{ item.category.name_en }}</td>
+					<td>{{ item.num_comments }}</td>
+					<td>{{ item.date_published.strftime('%d/%b/%Y') }}</td>
+					<td><a href="{{ url_for('page_admin_news_edit', item_id=item.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a></td>
 				</tr>
 			{% endfor %}
 		</tbody>

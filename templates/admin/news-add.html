@@ -18,6 +18,11 @@
 	<input class="form-control" id="field_subhead_{{ lang }}" type="text">
 </div>
 <div class="form-group">
+	<label class="control-label">Summary ({{ lang }})</label>
+	<textarea class="form-control" id="field_summary_{{ lang }}" rows="5"></textarea>
+	<p class="help-block">This is the summary that will appear inside the news box in the news list page.</p>
+</div>
+<div class="form-group">
 	<label class="control-label">Body ({{ lang }})</label>
 	<div class="form-control" id="quillEditor_{{ lang }}"></div>
 </div>
@@ -58,7 +63,7 @@
 {% endif %}
 
 <form id="news_item_add_form" method="post">
-	<input type="hidden" id="field_image_id" value="">
+	<input type="hidden" id="field_image_id" value="0">
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
 		<div role="tabpanel" class="tab-pane" id="input-ja">{{ inputs_for_language('ja') }}</div>

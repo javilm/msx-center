@@ -731,6 +731,12 @@ class NewsItem(db.Model):
 	headline_es = db.Column(db.String())
 	headline_pt = db.Column(db.String())
 	headline_kr = db.Column(db.String())
+	summary_en = db.Column(db.String())
+	summary_ja = db.Column(db.String())
+	summary_nl = db.Column(db.String())
+	summary_es = db.Column(db.String())
+	summary_pt = db.Column(db.String())
+	summary_kr = db.Column(db.String())
 	subhead_en = db.Column(db.String())
 	subhead_ja = db.Column(db.String())
 	subhead_nl = db.Column(db.String())
@@ -1805,7 +1811,7 @@ def page_news():
 
 	# Get the news items
 	#items = db.session.query(NewsItem,User).filter(User.id == NewsItem.author_id).all()
-	items = NewsItem.query.order_by(NewsItem.date_published.desc())
+	items = NewsItem.query.order_by(NewsItem.date_published.desc()).limit(5)
 
 	return render_template('news/news-list.html', user=user, items=items)
 

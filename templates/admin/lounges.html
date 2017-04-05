@@ -57,12 +57,12 @@
 		<thead>
 			<tr>
 				<th>ID</th>
-				<th>Slug</th>
+				<th>Slug / Flags</th>
 				<th>Name</th>
 				<th>Description</th>
 				<th>Priority</th>
 				<th>Color</th>
-				<th>Flags</th>
+				<th>Threads</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -70,7 +70,10 @@
 			{% for lounge in lounges %}
 				<tr>
 					<td>{{ lounge.id }}</td>
-					<td>{{ lounge.slug }}</td>
+					<td>
+						<p>{{ lounge.slug }}</p>
+						<p>{{ lounge_flags(lounge) }}</p>
+					</td>
 					<td>
 						{{ popover_button(lounge.name_en, 'EN') }}
 						{{ popover_button(lounge.name_ja, 'JA') }}
@@ -89,7 +92,7 @@
 					</td>
 					<td>{{ lounge.priority }}</td>
 					<td><div class="panel panel-{{ lounge.color_class}}"><div class="panel-heading">{{ lounge.color_class }}</div></div></td>
-					<td>{{ lounge_flags(lounge) }}</td>
+					<td>{{ lounge.num_threads }}</td>
 					<td>
 						<a href="{{ url_for('page_admin_lounges_edit', lounge_id=lounge.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a>
 					</td>
