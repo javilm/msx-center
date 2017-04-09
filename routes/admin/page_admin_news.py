@@ -1,9 +1,10 @@
 from flask import abort, render_template
 from __main__ import app
-from . import User
+from . import NewsItem, User
 
-@app.route('/admin', methods=['GET'])
-def page_admin():
+@app.route('/admin/news', methods=['GET'])
+def page_admin_news():
+
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
@@ -13,4 +14,6 @@ def page_admin():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='dashboard')
+	news_items = NewsItem.query.all()
+
+	return render_template('admin/news.html', user=user, active='news', news_items=news_items)

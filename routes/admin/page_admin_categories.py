@@ -1,9 +1,9 @@
 from flask import abort, render_template
 from __main__ import app
-from . import User
+from . import Category, User
 
-@app.route('/admin', methods=['GET'])
-def page_admin():
+@app.route('/admin/categories', methods=['GET'])
+def page_admin_categories():
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
@@ -13,4 +13,6 @@ def page_admin():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='dashboard')
+	categories = Category.query.all()
+
+	return render_template('admin/categories.html', user=user, active='categories', categories=categories)
