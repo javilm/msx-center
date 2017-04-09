@@ -82,3 +82,9 @@
 
 {% endblock %}
 
+{% block extrajs %}
+<script type="text/javascript">
+{# Initialize the popovers #}
+$('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'hover'})
+</script>
+{% endblock %}
