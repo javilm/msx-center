@@ -11,5 +11,18 @@ from ExternalLink import ExternalLink
 from VerificationKey import VerificationKey
 from User import User
 
-__all__ = ["ActivationKey", "ArticleSeries", "Category", "ConversationThread", "ConversationLounge", "ConversationMessage", "ExternalLink", "MemberPortrait", "NewsItem", "StoredImage", "VerificationKey", "User"]
+__all__ = [
+	"ActivationKey",
+	"ArticleSeries",
+	"Category",
+	"ConversationThread",
+	"ConversationLounge",
+	"ConversationMessage",
+	"ExternalLink",
+	"MemberPortrait",
+	"NewsItem",
+	"StoredImage",
+	"VerificationKey",
+	"User"
+]
 
