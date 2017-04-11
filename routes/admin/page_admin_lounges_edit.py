@@ -1,4 +1,5 @@
 from flask import abort, redirect, render_template, request, url_for
+from __main__ import app, db
 import lxml.html as LH
 from models import ConversationLounge, User
 
