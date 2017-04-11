@@ -1,6 +1,6 @@
 import json
 from __main__ import app, db
-from flask import url_for, render_template, request, abort
+from flask import url_for, render_template, request, abort, session
 from models import User, ConversationThread, ConversationMessage
 
 @app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
