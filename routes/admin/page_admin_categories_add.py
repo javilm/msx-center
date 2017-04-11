@@ -1,6 +1,6 @@
 from flask import abort, redirect, render_template
 from __main__ import app, db
-from . import Category, User
+from models import Category, User
 
 @app.route('/admin/categories/add', methods=['GET', 'POST'])
 def page_admin_categories_add():

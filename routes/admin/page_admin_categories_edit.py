@@ -1,7 +1,7 @@
 from flask import abort, redirect, render_template, request, url_for
 import lxml.html as LH
 from __main__ import app, db
-from . import Category, User
+from models import Category, User
 
 @app.route('/admin/categories/<int:category_id>/edit', methods=['GET', 'POST'])
 def page_admin_categories_edit(category_id):

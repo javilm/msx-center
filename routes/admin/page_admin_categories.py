@@ -1,6 +1,6 @@
 from flask import abort, render_template
 from __main__ import app
-from . import Category, User
+from models import Category, User
 
 @app.route('/admin/categories', methods=['GET'])
 def page_admin_categories():

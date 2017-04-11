@@ -1,6 +1,6 @@
 from flask import abort, render_template
 from __main__ import app
-from . import User
+from models import User
 
 @app.route('/admin/domains', methods=['GET'])
 def page_admin_domains():

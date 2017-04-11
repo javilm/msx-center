@@ -1,6 +1,6 @@
 from flask import abort, redirect, render_template, request, url_for
 import lxml.html as LH
-from . import ConversationLounge, User
+from models import ConversationLounge, User
 
 @app.route('/admin/lounges/<int:lounge_id>/edit', methods=['GET', 'POST'])
 def page_admin_lounges_edit(lounge_id):
