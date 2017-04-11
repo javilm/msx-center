@@ -1,6 +1,6 @@
 from flask import abort, render_template
 from __main__ import app
-from . import User, ConversationLounge
+from models import User, ConversationLounge
 
 @app.route('/admin/lounges', methods=['GET'])
 def page_admin_lounges():
