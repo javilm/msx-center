@@ -1,6 +1,6 @@
 from flask import abort, jsonify, request
 from __main__ import app, db
-from . import StoredImage, User
+from models import StoredImage, User
 
 @app.route('/admin/news/add/feature_image', methods=['POST'])
 def ajax_admin_news_add_feature_image():
