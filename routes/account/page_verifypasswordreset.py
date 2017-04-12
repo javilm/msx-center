@@ -61,7 +61,7 @@ def page_verifypasswordreset():
 			return render_template('resetpassword-setpassword.html', num_errors=num_validation_errors, error_messages=error_messages)
 		else:
 			#  Get the User from the database
-			user = User.query..filter_by(id=key.user_id).first()
+			user = User.query.filter_by(id=key.user_id).first()
 
 			user.set_password(request.form['password'])		# Set the user password
 			user.signin()									# Sign in the user
