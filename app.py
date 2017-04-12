@@ -182,12 +182,7 @@ def page_main():
 
 	return render_template('frontpage.html', user=user)
 
-from routes.account import *	# Signin / signout / signup / reset password
-
-##########################
-## CONVERSATION LOUNGES ##
-##########################
-
+from routes.account import *
 from routes.lounges import *
 
 @app.route('/image/<int:image_id>/<string:dummy_filename>', methods=['GET'])

@@ -17,7 +17,7 @@ def page_verifypasswordreset():
 			if key is not None:
 				# GET, with a valid activation key
 				session['key_id'] = key.id
-				user = User.query..filter_by(id=key.user_id).first()
+				user = User.query.filter_by(id=key.user_id).first()
 				return render_template('resetpassword-setpassword.html', email=user.email)
 			else:
 				# GET, 'key' argument is in the URL, but not in the database
