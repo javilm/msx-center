@@ -1,4 +1,5 @@
-from __main__ import app, redirect_to_next
+from __main__ import app
+from utils import redirect_to_next
 from flask import session
 
 @app.route('/signout')

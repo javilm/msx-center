@@ -1,4 +1,3 @@
-import socket
 import jinja_filters
 import pycountry
 import pytz
@@ -7,7 +6,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from geoip import geolite2
-from io import BytesIO
 from lxml.html.clean import Cleaner
 from server import run_server
 
@@ -134,32 +132,6 @@ def create_database_tables():
 	db.session.add(l7)
 
 	db.session.commit()
-
-#######################
-## Support functions ##
-#######################
-
-def redirect_to_next():
-	if 'next' in session:
-		url = session['next']
-	else:
-		url = url_for('page_main')
-	return redirect(url)
-
-def get_host_by_ip(ip):
-	try:
-		data = socket.gethostbyaddr(ip)
-		host = repr(data[0])
-		return host
-	except Exception:
-		return None
-
-def log_form_vars(form):
-	result = 'Submitted form items:\n\n'
-
-	for var in form:
-		result += "%s = %s\n" % (var, form[var])
-	app.logger.info(result)
 
 from models import *
 from routes import *

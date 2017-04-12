@@ -1,5 +1,6 @@
 import string
-from __main__ import app, db, redirect_to_next
+from __main__ import app, db
+from utils import redirect_to_next
 from flask import request, render_template, flash
 from models import User, ActivationKey
 from validate_email import validate_email

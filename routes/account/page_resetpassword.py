@@ -1,4 +1,5 @@
-from __main__ import app, db, redirect_to_next
+from __main__ import app, db
+from utils import redirect_to_next
 from flask import request, render_template, url_for
 from models import User, VerificationKey
 
