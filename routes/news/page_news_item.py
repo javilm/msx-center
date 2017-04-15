@@ -4,7 +4,7 @@ from models import User, NewsItem
 
 @app.route('/news/<int:news_item_id>/<string:slug>', methods=['GET'])
 def page_news_item(news_item_id, slug):
-	session['next'] = url_for('page_news_item', item_id=news_item_id, slug=slug)
+	session['next'] = url_for('page_news_item', news_item_id=news_item_id, slug=slug)
 
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
