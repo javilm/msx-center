@@ -39,28 +39,30 @@
 {% endmacro %}
 
 {% macro news_item_big(item) %}
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
-	<div class="news-item">
-		{% if item.category %}<h5 class="text-uppercase">{{ item.category.name_en }}</h5>{% endif %}
-		{% if item.header_image_id %}<img src="{{ url_for('send_image', image_id=item.header_image_id, dummy_filename='newsite') }}" class="img-responsive">{% endif %}
-		<h3>{{ item.headline_en|safe }}</h3>
-		{% if item.subhead_en %}<h4>{{ item.subhead_en|safe }}</h4>{% endif %}
-		{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}
-		<p class="news-item-date">Posted on {{ item.date_published.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p>
-		<div class="news-item-body text-justify">{{ item.summary_en|supress_none }}</div>
-		<div class="news-item-comment text-right">
-		{% if item.is_full %}
-			{% if item.num_comments %}
-				<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ item.num_comments }})</a></span>
+<a href="{{ url_for('page_news_item', item_id=item/id) }}">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
+		<div class="news-item">
+			{% if item.category %}<h5 class="text-uppercase">{{ item.category.name_en }}</h5>{% endif %}
+			{% if item.header_image_id %}<img src="{{ url_for('send_image', image_id=item.header_image_id, dummy_filename='newsite') }}" class="img-responsive">{% endif %}
+			<h3>{{ item.headline_en|safe }}</h3>
+			{% if item.subhead_en %}<h4>{{ item.subhead_en|safe }}</h4>{% endif %}
+			{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}
+			<p class="news-item-date">Posted on {{ item.date_published.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p>
+			<div class="news-item-body text-justify">{{ item.summary_en|supress_none }}</div>
+			<div class="news-item-comment text-right">
+			{% if item.is_full %}
+				{% if item.num_comments %}
+					<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ item.num_comments }})</a></span>
+				{% else %}
+					<span><i class="fa fa-pencil"></i> <a href="#">Write a comment</a></span>
+				{% endif %}
 			{% else %}
-				<span><i class="fa fa-pencil"></i> <a href="#">Write a comment</a></span>
+				<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ item.num_comments }})</a></span>
 			{% endif %}
-		{% else %}
-			<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ item.num_comments }})</a></span>
-		{% endif %}
+			</div>
 		</div>
 	</div>
-</div>
+</a>
 {% endmacro %}
 
 {% block content %}
