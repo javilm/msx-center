@@ -200,8 +200,9 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="form-group">
-		<label class="control-label">Author </label><i class="fa fa-exclamation-circle"></i>
+		<label class="control-label">Author</label><i class="fa fa-exclamation-circle"></i>
 		<select id="field_author_id" class="form-control">
 			{% if staff %}
 			<optgroup label="Staff">
@@ -219,18 +220,26 @@
 			{% endif %}
 		</select>
 	</div>
+
 	<div class="form-group">
-		<label class="control-label">Author </label><i class="fa fa-exclamation-circle"></i>
+		<label class="control-label">Slug</label>
+		<input id="field_slug" class="form-control" type="text" value="{{ item.slug }}">
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Category</label><i class="fa fa-exclamation-circle"></i>
 		<select id="field_category_id" class="form-control">
 			{% for category in categories %}
 				<option value="{{ category.id }}"{% if item.category_id == category.id %} selected{% endif %}>{{ category.name_en }}</option>
 			{% endfor %}
 		</select>
 	</div>
+
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">
 	</div>
+
 	<div class="form-group">
 		<label class="control-label">Options</label>
 		<div class="checkbox">
@@ -249,6 +258,7 @@
 			</label>
 		</div>
 	</div>
+
 	<div class="form-group">
 		<button id="cancelButton" class="btn btn-default btn-sm" type="button">Cancel</button>
 		<button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>

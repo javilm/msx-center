@@ -78,6 +78,7 @@ def page_admin_news_edit(item_id):
 		item.is_draft_kr = request.form['is_draft_kr']
 
 		item.author_id = request.form['author_id']
+		item.slug = request.form['slug']
 		item.category_id = request.form['category_id']
 		item.header_image_id = request.form['header_image_id']
 		item.date_published = request.form['date_published']

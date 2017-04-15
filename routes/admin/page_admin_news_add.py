@@ -42,6 +42,7 @@ def page_admin_news_add():
 			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
 
 		model_vars['author_id'] = request.form['author_id']
+		model_vars['slug'] = request.form['slug']
 		model_vars['category_id'] = request.form['category_id']
 		model_vars['header_image_id'] = request.form['header_image_id']
 		model_vars['date_published'] = request.form['date_published']
