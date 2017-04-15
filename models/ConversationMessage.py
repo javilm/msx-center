@@ -3,9 +3,9 @@ from datetime import datetime
 from lxml import etree
 import lxml.html as LH
 from flask import request, url_for
-from utils import get_host_by_ip
 from __main__ import db
 from __main__ import html_cleaner
+from utils import get_host_by_ip 
 from . import StoredImage
 
 class ConversationMessage(db.Model):
