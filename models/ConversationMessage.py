@@ -35,6 +35,8 @@ class ConversationMessage(db.Model):
 	is_staff_favorite = db.Column(db.Boolean)	# Favorited by the staff. Highlighted.
 	remote_ip = db.Column(db.String())
 	remote_host = db.Column(db.String())
+	# The "user" attribute for every ConversationMessage is already defined in the User model as a
+	# backref in the relationship with the ConversationMessage model
 
 	def __init__(self, user, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
 		if user is None:

@@ -17,3 +17,8 @@ class ArticleSeries(db.Model):
 	desc_pt = db.Column(db.String)
 	desc_kr = db.Column(db.String)
 	is_numbered = db.Column(db.Boolean)
+	image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	image = db.relationship('StoredImage')
+	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+	category = db.relationship('Category')
+

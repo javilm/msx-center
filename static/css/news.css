@@ -1,61 +1,91 @@
-.news-item h5 {
+#news-item-full h5 {
   font-size:12px;
   margin-bottom:10px;
   color:#a0a0ff;
-  margin-top:5px;
+  margin-top:10px;
 }
 
-.news-item h3 {
-  font-size:22px;
+#news-item-full h2 {
   margin-top:15px;
   margin-bottom:5px;
 }
 
-.news-item h4 {
-  font-size:16px;
+#news-item-full h3 {
   margin-top:5px;
   color:#666;
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
 
-.news-section-divider {
-  margin-top:15px;
-  border-bottom:1px solid #eef;
-  padding-bottom:5px;
-}
-
-.news-item-date {
+#news-item-full #news-item-metadata .news-item-date {
   font-size:12px;
   color:#999;
 }
 
-.news-item-body {
-  font-size:14px;
-}
-
-.news-item {
-  border-bottom:1px solid #eef;
-  background-color:#fff;
-  box-shadow:0px 1px 2px #ddf;
+#news-item-full #news-item-metadata img {
+  border-radius:50%;
+  border:0px;
+  box-shadow:none;
+  width:36px;
+  float:left;
+  margin-right:10px;
   margin-bottom:15px;
-  padding:15px;
+}
+
+#news-item-full #news-item-metadata .news-author-name {
+  margin-bottom:0px;
+}
+
+#news-item-full #header-image img {
   border-radius:5px;
 }
 
-.news-item-comment {
-  margin-top:10px;
-  margin-bottom:10px;
+#news-item-full #header-image p {
+  text-align:center;
+  color:#999;
   font-size:small;
+  margin-top:5px;
 }
 
-.news-column {
-  padding-left:5px;
-  padding-right:5px;
+#news-item-full #news-item-body {
+  font-size:medium;
 }
 
-.news-item img {
+.news-section-divider {
+  border-bottom:1px solid #ddd;
+  padding-bottom:5px;
+  margin-top:15px;
+}
+
+#news-item-full .related-links dd {
+  margin-bottom:10px;
+}
+
+#news-item-comments .news-item-comment img {
   border-radius:5px;
-  box-shadow:0px 2px 1px #ddd;
-  border:1px solid #444;
+  border:0px;
+  box-shadow:none;
+  width:32px;
+  float:left;
+  margin-right:10px;
+  margin-bottom:10px;
+}
+
+#news-item-comments .comment-author {
+  font-size:12px;
+  color:#999;
+  margin-bottom:0px;
+}
+
+#news-item-comments .comment-date {
+  font-size:12px;
+  color:#999;
+}
+
+#news-item-comments .news-item-comment {
+  margin-bottom:20px;
+}
+
+#news-item-full #news-item-links {
+  font-size:medium;
 }
 
