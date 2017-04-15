@@ -39,7 +39,7 @@
 {% endmacro %}
 
 {% macro news_item_big(item) %}
-<a href="{{ url_for('page_news_item', item_id=item_id) }}">
+<a href="{{ url_for('page_news_item', news_item_id=item_id) }}">
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
 		<div class="news-item">
 			{% if item.category %}<h5 class="text-uppercase">{{ item.category.name_en }}</h5>{% endif %}
