@@ -15,6 +15,7 @@ $("#saveButton").click(function (e) {
 			desc_kr: $('#field_desc_kr').val(),
             url: $('#field_url').val(),
             title: $('#field_title').val(),
+            num_visits: $('#field_num_visits').val()
 		},
 		success: function(data) {
 			window.location = data.url;
