@@ -9,10 +9,10 @@
 {% macro news_item_comment(comment) %}
 <div class="news-item-comment">
     <div class="metadata">
-	    <img src="../assets/img/s-l300.jpg">{# author's profile photo #}
+	    <img src="{{ comment.user.profile_photo_url(size='small') }}" alt="{{ comment.user.real_name }}'s profile photo">
         <div>
             <div>
-                <p class="comment-author"><a href="#"><strong>{{ comment.user.real_name }}</strong></a></p>
+                <p class="comment-author"><a href="{{ url_for('page_member', member_id=comment.user.id, slug=comment.user.slug) }}"><strong>{{ comment.user.real_name }}</strong></a></p>
                 <p class="comment-date">Posted on {{ comment.date_posted.strftime('%b %-d, %Y') }}</p>
             </div>
         </div>
@@ -64,35 +64,49 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 news-item-column">
                 <div id="news-item-full">
-                    <h5 class="text-uppercase">Events </h5>
-                    <h2>All future CES will be MSX-only</h2>
-                    <h3>Not really, but I had to type something here</h3>
-                    <div id="news-item-metadata"><img src="../assets/img/javilm-avatar.jpg">
+                    <h5 class="text-uppercase">{{ news_item.category.name_en }}</h5>
+
+                    {# HEADLINES #}
+                    <h2>{{ news_item.headline_en }}</h2>
+                    {% if news_item.subhead_en %}
+	                    <h3>{{ news_item.subhead_en }}</h3>
+                    {% endif %}
+
+                    {# METADATA (Author and date) #}
+                    <div id="news-item-metadata">
+	                    <img src="{{ news_item.author.profile_photo_url(size='small') }}" alt="{{ news_item.author.real_name }}'s profile photo">
                         <div>
-                            <p class="news-author-name"><a href="#"><strong>Javi Lavandeira</strong></a> </p>
-                            <p class="news-item-date">Posted on March 14, 2017 </p>
+                            <p class="news-author-name"><a href="#"><strong>{{ news_item.author.real_name }}</strong></a> </p>
+                            <p class="news-item-date">Posted on {{ news_item.date_published.strftime('%b %-d, %Y') }}</p>
                         </div>
                     </div>
-                    <div id="header-image"><img src="../assets/img/Articles/article4.jpg" class="img-responsive">
-                        <p>This is the image caption</p>
+
+                    {# HEADER IMAGE AND CAPTION #}
+                    <div id="header-image">
+	                    <img src="{{ url_for('send_image', image_id=news_item.header_image_id, dummy_filename='header_image') }}" class="img-responsive">
+                        {% if news_item.header_image_caption %}
+                        	<p>{{ news_item.header_image_caption }}</p>
+                    	{% endif %}
                     </div>
+
+                    {# NEWS ITEM BODY #}
                     <div id="news-item-body" class="text-justify">
-                        <p>Vivamus sit amet neque gravida, cursus eros vitae, vulputate felis. Etiam a risus at lectus ornare laoreet. Aliquam efficitur, justo a aliquam suscipit, neque metus convallis augue, at molestie tellus dui et orci. Nunc
-                            a lacus consectetur, aliquam mi quis, tincidunt dolor. Nam congue, urna eu feugiat varius, urna ligula tincidunt elit, eget porta enim turpis ac arcu. Curabitur scelerisque interdum dolor, tincidunt pretium justo lobortis
-                            vel. Suspendisse porta at nunc id dignissim. In consectetur, nulla vitae sagittis tempor, sem leo convallis augue, eu dignissim ligula nibh fringilla nulla. Curabitur ultricies, dolor ac tincidunt mollis, ipsum felis
-                            facilisis massa, in maximus arcu massa sed purus. Sed pharetra mauris eu purus venenatis, quis tincidunt est facilisis. Sed in est vel augue ultricies suscipit. Phasellus ut porta sem. Aliquam pharetra vitae ligula
-                            in vestibulum. Nunc eget erat ex. Praesent at faucibus nibh. </p>
+	                    {{ news_item.body_en }}
                     </div>
+                    
+                    {# RELATED LINKS #}
                     {% if news_item.related_links %}
-                    <div id="news-item-links">
-                        <h4 class="news-section-divider">Related links</h4>
-                        <dl class="related-links">
-	                        {% for link in news_item.related_links %}
-	                        	{{ news_item_related_link(link) }}
-	                        {% endfor %}
-						</dl>
-                    </div>
+	                    <div id="news-item-links">
+	                        <h4 class="news-section-divider">Related links</h4>
+	                        <dl class="related-links">
+		                        {% for link in news_item.related_links %}
+		                        	{{ news_item_related_link(link) }}
+		                        {% endfor %}
+							</dl>
+	                    </div>
                     {% endif %}
+
+                    {# COMMENTS #}
                     <div id="news-item-comments">
                         <h4 class="news-section-divider">Comments</h4>
                         {% if news_item.comments %}
