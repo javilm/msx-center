@@ -1,0 +1,303 @@
+{% extends "layout/admin-base.html" %}
+
+{% block title %}MSX Center Administration - Edit news item{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+{% endblock %}
+
+{% macro news_item_data() %}
+<h1 class="page-header">News <span class="small">Edit item</span></h1>
+<ul class="nav nav-pills" role="tablist">
+	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
+	<li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
+	<li role="presentation" id="tab-nl"><a href="#input-nl" aria-controls="input-nl" role="tab" data-toggle="tab">Dutch</a></li>
+	<li role="presentation" id="tab-es"><a href="#input-es" aria-controls="input-es" role="tab" data-toggle="tab">Spanish</a></li>
+	<li role="presentation" id="tab-pt"><a href="#input-pt" aria-controls="input-pt" role="tab" data-toggle="tab">Portuguese</a></li>
+	<li role="presentation" id="tab-kr"><a href="#input-kr" aria-controls="input-kr" role="tab" data-toggle="tab">Korean</a></li>
+</ul>
+
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+	{% if errors|length > 1 %}
+		<strong>There were errors with your submission:</strong>
+	{% else %}
+		<strong>There was an error with your submission:</strong>
+	{% endif %}
+	<ul>
+		{% for error in errors %}
+			<li>{{ error }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+<form id="news_item_add_form" method="post">
+	<input type="hidden" id="field_image_id" value="{{ item.header_image_id }}">
+	<div class="tab-content">
+		{# English #}
+		<div role="tabpanel" class="tab-pane in active" id="input-en">
+			<div class="form-group">
+				<label class="control-label">Headline (English)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_en" type="text" value="{{ item.headline_en|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (English)</label>
+				<input class="form-control" id="field_subhead_en" type="text" value="{{ item.subhead_en|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (English)</label>
+				<textarea class="form-control" id="field_summary_en" rows="5">{{ item.summary_en|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (English)</label>
+				<div class="form-control" id="quillEditor_en">{{ item.body_en|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (English)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_en" type="checkbox"{% if item.is_draft_en %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+		{# Japanese #}
+		<div role="tabpanel" class="tab-pane" id="input-ja">
+			<div class="form-group">
+				<label class="control-label">Headline (Japanese)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_ja" type="text" value="{{ item.headline_ja|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (Japanese)</label>
+				<input class="form-control" id="field_subhead_ja" type="text" value="{{ item.subhead_ja|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Japanese)</label>
+				<textarea class="form-control" id="field_summary_ja" rows="5">{{ item.summary_ja|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Japanese)</label>
+				<div class="form-control" id="quillEditor_ja">{{ item.body_ja|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Japanese)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_ja" type="checkbox"{% if is_draft_ja %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+		{# Dutch #}
+		<div role="tabpanel" class="tab-pane" id="input-nl">
+			<div class="form-group">
+				<label class="control-label">Headline (Dutch)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_nl" type="text" value="{{ item.headline_nl|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (Dutch)</label>
+				<input class="form-control" id="field_subhead_nl" type="text" value="{{ item.subhead_nl|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Dutch)</label>
+				<textarea class="form-control" id="field_summary_nl" rows="5">{{ item.summary_nl|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Dutch)</label>
+				<div class="form-control" id="quillEditor_nl">{{ item.body_nl|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Dutch)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_nl" type="checkbox"{% if item.is_draft_nl %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+		{# Spanish #}
+		<div role="tabpanel" class="tab-pane" id="input-es">
+			<div class="form-group">
+				<label class="control-label">Headline (Spanish)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_es" type="text" value="{{ item.headline_es|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (Spanish)</label>
+				<input class="form-control" id="field_subhead_es" type="text" value="{{ item.subhead_es|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Spanish)</label>
+				<textarea class="form-control" id="field_summary_es" rows="5">{{ item.summary_es|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Spanish)</label>
+				<div class="form-control" id="quillEditor_es">{{ item.body_es|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Spanish)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_es" type="checkbox"{% if item.is_draft_es %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+		{# Portuguese #}
+		<div role="tabpanel" class="tab-pane" id="input-pt">
+			<div class="form-group">
+				<label class="control-label">Headline (Portuguese)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_pt" type="text" value="{{ item.headline_pt|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (Portuguese)</label>
+				<input class="form-control" id="field_subhead_pt" type="text" value="{{ item.subhead_pt|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Portuguese)</label>
+				<textarea class="form-control" id="field_summary_pt" rows="5">{{ item.summary_pt|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Portuguese)</label>
+				<div class="form-control" id="quillEditor_pt">{{ item.body_pt|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Portuguese)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_pt" type="checkbox"{% if item.is_draft_pt %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+		{# Korean #}
+		<div role="tabpanel" class="tab-pane" id="input-kr">
+			<div class="form-group">
+				<label class="control-label">Headline (Korean)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_headline_kr" type="text" value="{{ item.headline_kr|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Secondary headline (Korean)</label>
+				<input class="form-control" id="field_subhead_kr" type="text" value="{{ item.subhead_kr|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Korean)</label>
+				<textarea class="form-control" id="field_summary_kr" rows="5">{{ item.summary_kr|supress_none }}</textarea>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Korean)</label>
+				<div class="form-control" id="quillEditor_kr">{{ item.body_kr|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Korean)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_kr" type="checkbox"{% if item.is_draft_kr %} checked{% endif %}>Draft
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Author</label><i class="fa fa-exclamation-circle"></i>
+		<select id="field_author_id" class="form-control">
+			{% if staff %}
+			<optgroup label="Staff">
+				{% for author in staff %}
+					<option value="{{ author.id }}"{% if item.author_id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
+			</optgroup>
+			{% endif %}
+			{% if superusers %}
+			<optgroup label="Superusers">
+				{% for author in superusers %}
+					<option value="{{ author.id }}"{% if item.author_id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
+			</optgroup>
+			{% endif %}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Slug</label>
+		<input id="field_slug" class="form-control" type="text" value="{{ item.slug|supress_none }}">
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Category</label><i class="fa fa-exclamation-circle"></i>
+		<select id="field_category_id" class="form-control">
+			{% for category in categories %}
+				<option value="{{ category.id }}"{% if item.category_id == category.id %} selected{% endif %}>{{ category.name_en }}</option>
+			{% endfor %}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Publication date</label>
+		<input id="field_date_published" class="form-control" type="date">
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Options</label>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_feature" type="checkbox"{% if item.is_feature %} checked{% endif %}>Feature
+			</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_hidden" type="checkbox"{% if item.is_hidden %} checked{% endif %}>Hidden
+			</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_allows_comments" type="checkbox"{% if item.allows_comments %} checked{% endif %}>Allow comments
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<button id="cancelButton" class="btn btn-default btn-sm" type="button">Cancel</button>
+		<button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>
+	</div>
+</form>
+{% endmacro %}
+
+{% macro news_item_feature_image() %}
+<h2 class="page-header">Feature image</h1>
+<div id="feature_image_div">
+{% if item.header_image_id %}
+<img id="feature_image_img" class="img-responsive" src="/image/{{ item.header_image_id }}/feature_image">
+{% endif %}
+</div>
+<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
+	<div class="form-group">
+		<label class="control-label">Featured image</label>
+		<p class="help-block">This image will appear in the feature page and the list of news items.</p>
+		<input name="feature_image" type="file">
+	</div>
+	<div class="form-group">
+		<button id="uploadButton" class="btn btn-primary btn-sm" type="submit">Upload image</button>
+	</div>
+</form>
+{% endmacro %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		{{ news_item_data() }}
+	</div>
+	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		{{ news_item_feature_image() }}
+	</div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/admin/news/news-edit.js"></script>
+{% endblock %}
