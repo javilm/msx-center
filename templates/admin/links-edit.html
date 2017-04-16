@@ -80,17 +80,17 @@
 
 	<div class="form-group">
 		<label class="control-label">Title</label>
-		<input id="field_title" class="form-control" type="text" value="{{ item.title|supress_none }}">
+		<input id="field_title" class="form-control" type="text" value="{{ link.title|supress_none }}">
 	</div>
 
 	<div class="form-group">
 		<label class="control-label">URL</label>
-		<input id="field_url" class="form-control" type="url">
+		<input id="field_url" class="form-control" type="url" value="{{ link.url|supress_none }}">
 	</div>
 
 	<div class="form-group">
 		<label class="control-label">Number of views</label>
-		<input id="field_url" class="form-control" type="number">
+		<input id="field_url" class="form-control" type="number" value="{{ link.num_visits }}">
 	</div>
 
 	<div class="form-group">
