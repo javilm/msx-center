@@ -20,6 +20,11 @@ from page_admin_members import page_admin_members
 # up via the signup form
 from page_admin_members_edit import page_admin_members_edit
 
+# External links
+from page_admin_links import page_admin_links
+from page_admin_links_add import page_admin_links_add
+from page_admin_links_edit import page_admin_links_edit
+
 # News
 from page_admin_news import page_admin_news
 from page_admin_news_add import page_admin_news_add
@@ -42,6 +47,9 @@ __all__ = [
 	"page_admin_lounges_edit",
 	"page_admin_members",
 	"page_admin_members_edit",
+	"page_admin_links",
+	"page_admin_links_add",
+	"page_admin_links_edit",	
 	"page_admin_news",
 	"page_admin_news_add",
 	"page_admin_news_edit",
