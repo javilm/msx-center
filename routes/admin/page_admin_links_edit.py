@@ -36,6 +36,7 @@ def page_admin_links_edit(link_id):
 		link.desc_kr = request.form['desc_kr']
 		link.title = request.form['title']
 		link.url = request.form['url']
+		link.num_visits = request.form['num_visits']
 
 		# Update the news item
 		db.session.add(link)
