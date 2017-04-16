@@ -14,7 +14,7 @@ class ExternalLink(db.Model):
 	desc_kr = db.Column(db.String())
 	num_visits = db.Column(db.Integer)
 	
-	def __init__(self, url=None, title=None, desc_en=None, desc_ja=None, desc_nl=None, desc_es=None, desc_pt=None, desc_kr=None, ):
+	def __init__(self, url=None, title=None, desc_en=None, desc_ja=None, desc_nl=None, desc_es=None, desc_pt=None, desc_kr=None):
 		self.url = url
 		self.title = title
 		self.desc_en = desc_en

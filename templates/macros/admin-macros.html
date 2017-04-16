@@ -20,6 +20,7 @@
 		<li{% if active == 'categories' %} class="active"{% endif %}><a href="{{ url_for('page_admin_categories') }}">Categories</a></li>
 		<li{% if active == 'news' %} class="active"{% endif %}><a href="{{ url_for('page_admin_news') }}">News</a></li>
 		<li{% if active == 'articles' %} class="active"{% endif %}><a href="{{ url_for('page_admin_articles') }}">Articles</a></li>
+		<li{% if active == 'links' %} class="active"{% endif %}><a href="{{ url_for('page_admin_links') }}">Links</a></li>
 		<li{% if active == 'lounges' %} class="active"{% endif %}><a href="{{ url_for('page_admin_lounges') }}">Lounges</a></li>
 		<li{% if active == 'members' %} class="active"{% endif %}><a href="{{ url_for('page_admin_members') }}">Members</a></li>
 		<li{% if active == 'domains' %} class="active"{% endif %}><a href="{{ url_for('page_admin_domains') }}">Domains</a></li>
