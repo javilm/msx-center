@@ -22,10 +22,7 @@ def page_admin_links_edit(link_id):
 	if request.method == 'GET':
 		template_options = {}
 		template_options['user'] = user
-		template_options['active'] = 'news'
-		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
-		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
-		template_options['categories'] = Category.query.order_by(Category.id).all()
+		template_options['active'] = 'links'
 		template_options['link'] = link
 
 		return render_template('admin/links-edit.html', **template_options)
