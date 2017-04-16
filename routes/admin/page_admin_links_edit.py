@@ -2,7 +2,7 @@ from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
 from models import ExternalLink, User
 
-@app.route('/admin/links/<int:links_id>/edit', methods=['GET', 'POST'])
+@app.route('/admin/links/<int:link_id>/edit', methods=['GET', 'POST'])
 def page_admin_links_edit(link_id):
 
 	# Get the signed in User (if there's one), or None
