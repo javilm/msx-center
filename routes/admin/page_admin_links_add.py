@@ -24,12 +24,12 @@ def page_admin_links_add():
 		# Request is a POST
 
 		model_vars = {}
-		model_vars['desc_en' % lang] = request.form['desc_en']
-		model_vars['desc_ja' % lang] = request.form['desc_ja']
-		model_vars['desc_nl' % lang] = request.form['desc_nl']
-		model_vars['desc_es' % lang] = request.form['desc_es']
-		model_vars['desc_pt' % lang] = request.form['desc_pt']
-		model_vars['desc_kr' % lang] = request.form['desc_kr']
+		model_vars['desc_en'] = request.form['desc_en']
+		model_vars['desc_ja'] = request.form['desc_ja']
+		model_vars['desc_nl'] = request.form['desc_nl']
+		model_vars['desc_es'] = request.form['desc_es']
+		model_vars['desc_pt'] = request.form['desc_pt']
+		model_vars['desc_kr'] = request.form['desc_kr']
 		model_vars['url'] = request.form['url']
 		model_vars['title'] = request.form['title']
 
