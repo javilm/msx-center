@@ -3,11 +3,9 @@ from datetime import datetime
 from lxml import etree
 import lxml.html as LH
 from slugify import slugify
+from flask import url_for
 
-from __main__ import db
-from __main__ import html_cleaner
-from __main__ import url_for
-
+from __main__ import db, html_cleaner
 from . import StoredImage
 
 class NewsItem(db.Model):
@@ -18,6 +16,7 @@ class NewsItem(db.Model):
 	author = db.relationship("User", backref="news_items")
 	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 	category = db.relationship("Category", backref="news_items")
+	links = db.relationship("ExternalLink")
 	headline_en = db.Column(db.String())
 	headline_ja = db.Column(db.String())
 	headline_nl = db.Column(db.String())
@@ -143,3 +142,14 @@ class NewsItem(db.Model):
 			del img, tmp_img
 
 		self.body_en = LH.tostring(root)
+		
+	def add_link(self, link):
+		db.session.add(self)
+		self.links.append(link)
+		db.session.commit()
+		
+	def remove_link(self, link):
+		db.session.add(self)
+		self.links.remove(link)
+		db.session.commit()
+	

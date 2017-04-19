@@ -95,6 +95,8 @@
 		<label class="control-label">Slug</label>
 		<input id="field_slug" class="form-control" type="text">
 	</div>
+
+	{# Categories #}
     <div class="form-group">
         <label class="control-label">Category</label><i class="fa fa-exclamation-circle"></i>
         <select id="field_category_id" class="form-control">
@@ -103,6 +105,17 @@
             {% endfor %}
         </select>
     </div>
+
+	{# Related links #}
+    <div class="form-group" id="div_related_links">
+        <label class="control-label">Related links</label>
+        <select id="field_link_id" class="form-control">
+            {% for link in links %}
+                <option value="{{ link.id }}">{{ link.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">

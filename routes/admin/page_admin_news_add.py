@@ -1,6 +1,6 @@
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, NewsItem, User
+from models import Category, NewsItem, User, ExternalLink
 
 @app.route('/admin/news/add', methods=['GET', 'POST'])
 def page_admin_news_add():
@@ -21,6 +21,7 @@ def page_admin_news_add():
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
 		template_options['categories'] = Category.query.order_by(Category.id).all()
+		template_options['links'] = ExternalLink.query.order_by(ExternalLink.title).all()
 
 		return render_template('admin/news-add.html', **template_options)
 	else:
