@@ -65,13 +65,6 @@ $("#button_add_link").click(function (e) {
 	
 });
 
-function removeLink(id)
-{
-	console.log("Removing element #" + id)
-	$(id).remove();
-}
-
-
 // Link event to the submit button
 $("#saveButton").click(function (e) {
 	e.preventDefault();
