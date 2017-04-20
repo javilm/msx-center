@@ -63,6 +63,25 @@ $(function () {
 $("#button_add_link").click(function (e) {
 	e.preventDefault();
 	
+	var link_id = $('#field_link__id').val();
+	var div = "<div id='link_div_" + link_id +"'></div>";
+	var hidden_field = "<input type=hidden' name='array_related_links' value='" + link_id + "'>";
+	var link_anchor = "<a href='http://lkjfhgljhsdglhjsdfg'><strong>This is the first link</strong></a>";
+	var remove_link = " <a onclick='$(\'#link_div_" + link_id + "\').remove()'>(remove)</a>";
+
+	$(div).append(hidden_field);
+	$(div).append(link_anchor);
+	$(div).append(remove_link);	
+	
+	$('#div_related_links').append(div)
+
+// <div id="link_div_1">
+//     <input type="hidden" name="array_related_links" value="1">
+//     <a href="http://lkjfhgljhsdglhjsdfg"><strong>This is the first link</strong></a> <a onclick="$('#link_div_1').remove()">(remove)</a>
+// </div>
+
+
+	
 });
 
 // Link event to the submit button
