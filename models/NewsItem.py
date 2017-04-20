@@ -8,6 +8,12 @@ from flask import url_for
 from __main__ import db, html_cleaner
 from . import StoredImage
 
+association_table = db.Table('association_news_item_external_link',
+	db.Column('news_item_id', db.Integer, db.ForeignKey('news_items.id'), nullable=False),
+	db.Column('external_link_id', db.Integer, db.ForeignKey('external_links.id'), nullable=False),
+	db.PrimaryKeyConstraint('news_item_id', 'external_link_id')
+)
+
 class NewsItem(db.Model):
 	__tablename__ = 'news_items'
 
