@@ -22,7 +22,7 @@ class NewsItem(db.Model):
 	author = db.relationship("User", backref="news_items")
 	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 	category = db.relationship("Category", backref="news_items")
-	links = db.relationship("ExternalLink", secondary=association_table, back_populates="news_items")
+	links = db.relationship("ExternalLink", secondary=association_table)
 	headline_en = db.Column(db.String())
 	headline_ja = db.Column(db.String())
 	headline_nl = db.Column(db.String())
