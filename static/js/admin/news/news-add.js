@@ -59,10 +59,21 @@ $(function () {
 	$("#field_date_published").datepicker("setDate", date);
 });
 
+// Link event to the button to add related links
+$("#button_add_link").click(function (e) {
+	e.preventDefault();
+	
+});
+
+function removeLink(id)
+{
+	$(id).remove();
+}
+
+
 // Link event to the submit button
 $("#saveButton").click(function (e) {
 	e.preventDefault();
-	console.log("Save button pressed");
 
 	$.ajax({
 		method: "POST",
