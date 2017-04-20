@@ -109,12 +109,18 @@
 	{# Related links #}
     <div class="form-group" id="field_related_links">
         <label class="control-label">Related links</label>
-        <select id="field_link_id" class="form-control">
-            {% for link in links %}
-                <option value="{{ link.id }}">{{ link.title }}</option>
-            {% endfor %}
-        </select>
-		<button id="button_add_link" class="btn btn-primary btn-sm">Add</button>
+        <div class="row">
+	        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+		        <select id="field_link_id" class="form-control">
+		            {% for link in links %}
+		                <option value="{{ link.id }}">{{ link.title }} ({{ link.url }})</option>
+		            {% endfor %}
+		        </select>
+	        </div>
+	        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+				<button id="button_add_link" class="btn btn-primary btn-sm">Add</button>
+			</div>
+		</div>		
 	</div>
     
 	<div class="form-group">
