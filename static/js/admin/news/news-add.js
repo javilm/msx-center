@@ -63,11 +63,23 @@ $(function () {
 $("#button_add_link").click(function (e) {
 	e.preventDefault();
 	
-	var link_id = $('#field_link__id').val();
-	var div = "<div id='link_div_" + link_id +"'></div>";
-	var hidden_field = "<input type=hidden' name='array_related_links' value='" + link_id + "'>";
-	var link_anchor = "<a href='http://lkjfhgljhsdglhjsdfg'><strong>This is the first link</strong></a>";
-	var remove_link = " <a onclick='$(\'#link_div_" + link_id + "\').remove()'>(remove)</a>";
+	var link_id = $('#field_link_id').val();
+	var div = $('<div></div>', {
+		id: "link_div_" + link_id
+	});
+	var hidden_field = $('<input />', {
+		type: 'hidden',
+		name: 'array_related_links',
+		value: link_id
+	});
+	var link_anchor = $('<a></a>', {
+		href: 'http://lkjfhgljhsdglhjsdfg',
+		text: '<strong>This is the first link</strong>'
+	});
+	var remove_link = $('<a></a>', {
+		onclick: "$('#link_div_" + link_id + "').remove()",
+		text: '(remove)'
+	});
 
 	$(div).append(hidden_field);
 	$(div).append(link_anchor);
