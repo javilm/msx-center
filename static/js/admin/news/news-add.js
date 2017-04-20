@@ -67,6 +67,7 @@ $("#button_add_link").click(function (e) {
 
 function removeLink(id)
 {
+	console.log("Removing element #" + id)
 	$(id).remove();
 }
 
