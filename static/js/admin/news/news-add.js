@@ -74,7 +74,7 @@ $("#button_add_link").click(function (e) {
 	});
 	var link_anchor = $('<a></a>', {
 		href: 'http://lkjfhgljhsdglhjsdfg',
-		text: '<strong>This is the first link</strong>'
+		text: $('<strong></strong>').text('This is the first link')
 	});
 	var remove_link = $('<a></a>', {
 		onclick: "$('#link_div_" + link_id + "').remove()",
@@ -86,14 +86,6 @@ $("#button_add_link").click(function (e) {
 	$(div).append(remove_link);	
 	
 	$('#div_related_links').append(div)
-
-// <div id="link_div_1">
-//     <input type="hidden" name="array_related_links" value="1">
-//     <a href="http://lkjfhgljhsdglhjsdfg"><strong>This is the first link</strong></a> <a onclick="$('#link_div_1').remove()">(remove)</a>
-// </div>
-
-
-	
 });
 
 // Link event to the submit button
