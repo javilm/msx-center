@@ -74,8 +74,7 @@ $("#button_add_link").click(function (e) {
 	});
 	var link_anchor = $('<a></a>', {
 		href: 'http://lkjfhgljhsdglhjsdfg',
-		text: $('<strong></strong>').text('This is the first link')
-	});
+	}).append($('<strong></strong>').text('This is the first link'));
 	var remove_link = $('<a></a>', {
 		onclick: "$('#link_div_" + link_id + "').remove()",
 		text: '(remove)'
