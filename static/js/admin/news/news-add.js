@@ -78,15 +78,24 @@ $("#button_add_link").click(function (e) {
 		url: '/admin/link/' + link_id + '/info',
 		method: 'GET',
 		success: function(data, textStatus, jqXHR) {
+			
+			// Parse result data
+			var link = $.parseJSON(data);
+
+			// Container DIV
 			var div = $('<div></div>', {
 				id: "link_div_" + data.id
 			});
 
+			// Hidden INPUT field with the link value
 			var hidden_field = $('<input />', {
 				type: 'hidden',
 				name: 'array_related_links',
 				value: data.id
 			});
+			$(div).append(hidden_field);
+
+			// <a> tag to the link's URL
 			var link_anchor = $('<a></a>', {
 				href: data.url,
 				id: 'link_anchor_' + data.id
@@ -94,16 +103,17 @@ $("#button_add_link").click(function (e) {
 			var link_title = $('<strong></strong>', {
 				id: 'link_title_' + data.id
 			});
+			link_anchor.append(link_title)
+			$(div).append(link_anchor);
+			
+			// "remove" link
 			var remove_link = $('<a></a>', {
 				onclick: "$('#link_div_" + data.id + "').remove()",
 				text: '(remove)'
 			});
-
-			link_anchor.append(link_title)
-			$(div).append(hidden_field);
-			$(div).append(link_anchor);
 			$(div).append(remove_link);	
-			
+
+			// Add the Container to the document
 			$('#div_related_links').append(div);
 		}
 	})	
