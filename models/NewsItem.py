@@ -66,7 +66,7 @@ class NewsItem(db.Model):
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
 	
-	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None, category_id=0, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None):
+	def __init__(self, author_id, headline_en=None, headline_ja=None, headline_nl=None, headline_es=None, headline_pt=None, headline_kr=None, subhead_en=None, subhead_ja=None, subhead_nl=None, subhead_es=None, subhead_pt=None, subhead_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, header_image_id=None, date_published=None, is_published=False, is_hidden=False, is_feature=False, is_archived=False, allows_comments=True, url=None, category_id=0, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None, slug=None):
 		self.author_id = author_id
 		self.category_id = category_id
 		self.headline_en = headline_en
@@ -110,7 +110,7 @@ class NewsItem(db.Model):
 		self.url = url
 		self.num_comments = 0
 		self.score = 0
-		self.slug = slugify(self.headline_en)
+		self.slug = slug
 
 		self.extract_images()
 
