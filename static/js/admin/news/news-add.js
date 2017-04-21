@@ -178,7 +178,7 @@ $("#saveButton").click(function (e) {
 					.map(function() {
 						return $(this).val();
 						})
-					.get();
+					.get()
 		},
 		success: function(data) {
 			window.location = data.url;
