@@ -99,7 +99,7 @@ class NewsItem(db.Model):
 		self.is_draft_es = is_draft_es
 		self.is_draft_pt = is_draft_pt
 		self.is_draft_kr = is_draft_kr
-		self.header_image_id = header_image_id
+		self.header_image_id = header_image_id or None
 		self.date_created = datetime.utcnow()
 		self.date_published = date_published or self.date_created
 		self.is_published = is_published
