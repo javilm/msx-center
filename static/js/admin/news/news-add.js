@@ -79,12 +79,6 @@ $("#button_add_link").click(function (e) {
 		method: 'GET',
 		success: function(data, textStatus, jqXHR) {
 
-			// Debug
-			console.log("DEBUG: data = " + data);
-			
-			// Parse result data
-			var link = $.parseJSON(data);
-
 			// Container DIV
 			var div = $('<div></div>', {
 				id: "link_div_" + data.id
