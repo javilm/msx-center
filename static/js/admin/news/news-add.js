@@ -78,6 +78,9 @@ $("#button_add_link").click(function (e) {
 		url: '/admin/link/' + link_id + '/info',
 		method: 'GET',
 		success: function(data, textStatus, jqXHR) {
+
+			// Debug
+			console.log("DEBUG: data = " + data);
 			
 			// Parse result data
 			var link = $.parseJSON(data);
@@ -102,7 +105,7 @@ $("#button_add_link").click(function (e) {
 			});
 			var link_title = $('<strong></strong>', {
 				id: 'link_title_' + data.id
-			});
+			}).text(data.title);
 			link_anchor.append(link_title)
 			$(div).append(link_anchor);
 			
