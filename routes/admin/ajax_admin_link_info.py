@@ -18,9 +18,8 @@ def ajax_admin_link_info(link_id):
 
 	link = ExternalLink.query.filter_by(id=link_id).first()
 	if link is None:
-		json_results['result'] = False
+		abort(404)
 	else:
-		json_results['result'] = True
 		json_results['id'] = link_id
 		json_results['url'] = link.url
 		json_results['title'] = link.title
