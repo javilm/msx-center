@@ -120,6 +120,9 @@ $("#button_add_link").click(function (e) {
 $("#saveButton").click(function (e) {
 	e.preventDefault();
 
+	var links = $("input[name='array_related_links']").map(function() { return $(this).val(); }).get()
+	console.log("Links: " + links)
+
 	$.ajax({
 		method: "POST",
 		processData: true,
@@ -174,29 +177,15 @@ $("#saveButton").click(function (e) {
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
 			allows_comments: $('#field_allows_comments').is(':checked')?'on':'off',
-			links: $("input[name='array_related_links']")
-					.map(function() {
-						return $(this).val();
-						})
-					.get()
+			links: links
 		},
 		success: function(data) {
 			window.location = data.url;
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			alert("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
+			console.log("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
 		}
 	});
-	//.done(function(result) {
-	//    window.location = result.url;
-	//});
-	quill_en.enable(false);
-	quill_ja.enable(false);
-	quill_nl.enable(false);
-	quill_es.enable(false);
-	quill_pt.enable(false);
-	quill_kr.enable(false);
-	$("#saveButton").prop("disabled", true);
 });	
 
 // Link event to the upload button
