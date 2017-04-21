@@ -62,29 +62,51 @@ $(function () {
 // Link event to the button to add related links
 $("#button_add_link").click(function (e) {
 	e.preventDefault();
-	
-	var link_id = $('#field_link_id').val();
-	var div = $('<div></div>', {
-		id: "link_div_" + link_id
-	});
-	var hidden_field = $('<input />', {
-		type: 'hidden',
-		name: 'array_related_links',
-		value: link_id
-	});
-	var link_anchor = $('<a></a>', {
-		href: 'http://lkjfhgljhsdglhjsdfg',
-	}).append($('<strong></strong>').text('This is the first link'));
-	var remove_link = $('<a></a>', {
-		onclick: "$('#link_div_" + link_id + "').remove()",
-		text: '(remove)'
-	});
 
-	$(div).append(hidden_field);
-	$(div).append(link_anchor);
-	$(div).append(remove_link);	
-	
-	$('#div_related_links').append(div)
+	var link_id = $('#field_link_id').val();
+
+	// Make a request to the server to retrieve the link's URL and title
+	$.ajax({
+		statusCode: {
+			401: function() {
+				alert('Credentials expired. Please sign in again');
+			},
+			404: function() {
+				alert("The selected link doesn't exist. Please reload the page.");
+			}
+		},
+		url: '/admin/link/' + link_id + '/info',
+		method: 'GET',
+		success: function(data, textStatus, jqXHR) {
+			var div = $('<div></div>', {
+				id: "link_div_" + data.id
+			});
+
+			var hidden_field = $('<input />', {
+				type: 'hidden',
+				name: 'array_related_links',
+				value: data.id
+			});
+			var link_anchor = $('<a></a>', {
+				href: data.url,
+				id: 'link_anchor_' + data.id
+			});
+			var link_title = $('<strong></strong>', {
+				id: 'link_title_' + data.id
+			});
+			var remove_link = $('<a></a>', {
+				onclick: "$('#link_div_" + data.id + "').remove()",
+				text: '(remove)'
+			});
+
+			link_anchor.append(link_title)
+			$(div).append(hidden_field);
+			$(div).append(link_anchor);
+			$(div).append(remove_link);	
+			
+			$('#div_related_links').append(div);
+		}
+	})	
 });
 
 // Link event to the submit button
