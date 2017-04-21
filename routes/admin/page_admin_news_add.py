@@ -51,7 +51,7 @@ def page_admin_news_add():
 		model_vars['is_hidden'] = request.form['is_hidden']
 		model_vars['allows_comments'] = request.form['allows_comments']
 
-		for link in request.form['links']:
+		for link in request.form.getlist('links'):
 			app.logger.info("*** Related news has ExternalLink #%s" % link)
 
 		# Create the news item
