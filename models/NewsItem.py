@@ -53,7 +53,7 @@ class NewsItem(db.Model):
 	is_draft_es = db.Column(db.Boolean)
 	is_draft_pt = db.Column(db.Boolean)
 	is_draft_kr = db.Column(db.Boolean)
-	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'))
+	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
 	date_created = db.Column(db.DateTime)
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
