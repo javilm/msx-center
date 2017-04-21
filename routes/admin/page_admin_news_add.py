@@ -52,7 +52,7 @@ def page_admin_news_add():
 		model_vars['allows_comments'] = request.form['allows_comments']
 
 		app.logger.info("*** DEBUG: Length of the links array with getlist is %s" % len(request.form.getlist('links')))
-		app.logger.info("*** DEBUG: Length of the links array without getlist is %s" % len(request.form['links']))
+		app.logger.info("*** DEBUG: Length of the links array without getlist is %s" % len(request.form.get('links')))
 		for link in request.form.getlist('links'):
 			app.logger.info("*** DEBUG: Related news has ExternalLink #%s" % link)
 
