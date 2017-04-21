@@ -121,7 +121,7 @@ $("#saveButton").click(function (e) {
 	e.preventDefault();
 
 	var links = $("input[name='array_related_links']").map(function() { return $(this).val(); }).get()
-	console.log("Links: " + links)
+	alert("Links: " + links)
 
 	$.ajax({
 		method: "POST",
