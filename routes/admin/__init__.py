@@ -35,6 +35,7 @@ from page_admin_domains import page_admin_domains
 
 # AJAX backend code
 from ajax_admin_news_add_feature_image import ajax_admin_news_add_feature_image
+from ajax_admin_link_info import ajax_admin_link_info
 
 __all__ = [
 	"page_admin",
@@ -54,5 +55,6 @@ __all__ = [
 	"page_admin_news_add",
 	"page_admin_news_edit",
 	"page_admin_domains",
-	"ajax_admin_news_add_feature_image"	
+	"ajax_admin_news_add_feature_image",
+	"ajax_admin_link_info"
 ]
