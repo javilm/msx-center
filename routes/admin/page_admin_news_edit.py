@@ -96,7 +96,7 @@ def page_admin_news_edit(item_id):
 			for link_id in links:
 				link = ExternalLink.query.get(link_id)
 				if link is not None:
-					news_item.links.append(link)
+					item.links.append(link)
 
 
 		# Update the news item
