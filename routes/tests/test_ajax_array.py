@@ -8,9 +8,8 @@ def test_ajax_array():
 
 	log_form_vars(request.form)
 
-	data = json.loads(request.form['data'])
-	app.logger.info("Data: %s" % data)
-
+	items = json.loads(request.form['items'])
+	app.logger.info("Data: %s" % items)
 
 #	if data:
 #		for var in data:
