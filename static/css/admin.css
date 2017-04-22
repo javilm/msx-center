@@ -61,3 +61,10 @@ body {
   margin-right:5px;
 }
 
+.related-link {
+	margin-bottom: 5px;
+}
+
+.related-link > a {
+	font-weight: bold;
+}
