@@ -86,6 +86,18 @@ def page_admin_news_edit(item_id):
 		item.is_hidden = request.form['is_hidden']
 		item.allows_comment = request.form['allows_comments']
 
+		# Remove all existing related links and add the ones from the form
+		for link in item.links:
+			item.links.delete(link)
+		
+		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
+		if len(links):
+			for link_id in links:
+				link = ExternalLink.query.get(link_id)
+				if link is not None:
+					news_item.links.append(link)
+
+
 		# Update the news item
 		db.session.add(item)
 		db.session.commit()
