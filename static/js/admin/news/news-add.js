@@ -120,9 +120,6 @@ $("#button_add_link").click(function (e) {
 $("#saveButton").click(function (e) {
 	e.preventDefault();
 
-	var links = $("input[name='array_related_links']").map(function() { return $(this).val(); }).get()
-	alert("Links: " + links)
-
 	$.ajax({
 		method: "POST",
 		processData: true,
@@ -195,7 +192,6 @@ $("#saveButton").click(function (e) {
 // Link event to the upload button
 $("#uploadButton").click(function (e) {
 	e.preventDefault();
-	console.log("Upload button pressed");
 
 	var fd = new FormData(document.getElementById('feature_image_form'));
 
