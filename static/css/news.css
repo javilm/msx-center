@@ -93,6 +93,6 @@
 	margin-bottom: 5px;
 }
 
-.related-link span {
+.related-link span a {
 	font-weight: bold;
 }
