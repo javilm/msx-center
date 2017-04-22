@@ -5,7 +5,7 @@ from __main__ import app
 @app.route('/test/ajax/array', methods=['POST'])
 def test_ajax_array():
 
-	data = request.get_json()
+	data = json.loads(request.form['data'])
 
 	if data:
 		for var in data:
