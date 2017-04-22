@@ -235,6 +235,40 @@
 		</select>
 	</div>
 
+	{# Related links #}
+    <div class="form-group" id="field_related_links">
+        <label class="control-label">Related links</label>
+    	<p class="help-block">If you add duplicate links the backend will save only one copy.</p>
+
+        <div id="div_related_links">
+			{% if item.links|length %}
+				{% for link in item.links %}
+					<div id="link_div_{{ link.id }}" class="related-link">
+						<input type="hidden" name="array_related_links" value="{{ link.id }}">
+						<button class="btn btn-danger btn-xs" onclick="$('#link_div_{{ link.id }}').remove()">Remove</button>
+						<span>
+							<a href="{{ link.url }}" id="link_anchor_{{ link.id }}" target="_new">{{ link.title }}</a>
+						</span>
+					</div>
+				{% endfor %}
+			{% endif %}
+        </div>
+
+        <div class="row">
+	        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+		        <select id="field_link_id" class="form-control">
+		            {% for link in links %}
+		                <option value="{{ link.id }}">{{ link.title }} ({{ link.url }})</option>
+		            {% endfor %}
+		        </select>
+	        </div>
+	        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+				<button id="button_add_link" class="btn btn-primary btn-sm">Add</button>
+			</div>
+		</div>		
+	</div>
+
+
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">
