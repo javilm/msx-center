@@ -6,8 +6,11 @@ from __main__ import app
 def test_ajax_array():
 
 	data = request.get_json()
-	
-	for var in data:
-		app.logger.info("*** DEBUG: The JSON data has variable #%s" % var)
 
-	return jsonify(request.json)
+	if data:
+		for var in data:
+			app.logger.info("*** DEBUG: The JSON data has variable #%s" % var)
+	else:
+		app.logger.info("Couldn't find any JSON data")
+
+	abort(200)
