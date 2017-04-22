@@ -1,5 +1,5 @@
 import json
-from flask import jsonify, request, json
+from flask import jsonify, request, json, abort
 from utils import log_form_vars
 from __main__ import app
 
