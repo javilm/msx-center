@@ -119,16 +119,6 @@ $("#saveButton").click(function (e) {
 			alert("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
 		}
 	});
-	//.done(function(result) {
-	//    window.location = result.url;
-	//});
-	quill_en.enable(false);
-	quill_ja.enable(false);
-	quill_nl.enable(false);
-	quill_es.enable(false);
-	quill_pt.enable(false);
-	quill_kr.enable(false);
-	$("#saveButton").prop("disabled", true);
 });	
 
 // Link event to the upload button
