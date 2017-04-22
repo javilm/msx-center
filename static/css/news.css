@@ -88,11 +88,3 @@
 #news-item-full #news-item-links {
   font-size:medium;
 }
-
-.related-link {
-	margin-bottom: 5px;
-}
-
-.related-link > a {
-	font-weight: bold;
-}
