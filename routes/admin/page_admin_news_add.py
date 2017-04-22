@@ -50,15 +50,19 @@ def page_admin_news_add():
 		model_vars['is_feature'] = request.form['is_feature']
 		model_vars['is_hidden'] = request.form['is_hidden']
 		model_vars['allows_comments'] = request.form['allows_comments']
-
-		app.logger.info("*** DEBUG: Length of the links array with getlist is %s" % len(request.form.getlist('links')))
-		app.logger.info("*** DEBUG: Length of the links array without getlist is %s" % len(request.form.get('links')))
-		for link in request.form.getlist('links'):
-			app.logger.info("*** DEBUG: Related news has ExternalLink #%s" % link)
-
+		
 		# Create the news item
 		news_item = NewsItem(**model_vars)
 		db.session.add(news_item)
+		
+		# Add the related links, if there's any
+		links = json.loads(request.form['links'])
+		if len(links):
+			for link_id in links:
+				link = ExternalLink.query.get(link_id)
+				if link is not None:
+					news_item.links.append(link)
+		
 		db.session.commit()
 
 		return jsonify(url=url_for('page_admin_news'))
