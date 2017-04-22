@@ -11,10 +11,4 @@ def test_ajax_array():
 	items = json.loads(request.form['items'])
 	app.logger.info("Data: %s" % items)
 
-#	if data:
-#		for var in data:
-#			app.logger.info("*** DEBUG: The JSON data has variable #%s" % var)
-#	else:
-#		app.logger.info("Couldn't find any JSON data")
-
-	abort(200)
+	return jsonify(result = 'OK')
