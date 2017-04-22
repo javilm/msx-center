@@ -27,6 +27,7 @@ def page_admin_news_edit(item_id):
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
 		template_options['categories'] = Category.query.order_by(Category.id).all()
+		template_options['links'] = ExternalLink.query.order_by(ExternalLink.title).all()
 		template_options['item'] = item
 
 		return render_template('admin/news-edit.html', **template_options)
