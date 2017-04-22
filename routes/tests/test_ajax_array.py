@@ -8,7 +8,11 @@ def test_ajax_array():
 
 	log_form_vars(request.form)
 
-	items = json.loads(request.form['items'])
-	app.logger.info("Data: %s" % items)
+	arr = json.loads(request.form['items'])
+
+	app.logger.info("Length of the 'items' array: %s" % len(arr))
+
+	for item in arr:
+		app.logger.info("Item in 'items': %s" % item)
 
 	return jsonify(result = 'OK')
