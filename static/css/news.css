@@ -89,3 +89,10 @@
   font-size:medium;
 }
 
+.related-link {
+	margin-bottom: 5px;
+}
+
+.related-link span {
+	font-weight: bold;
+}
