@@ -108,6 +108,7 @@ $("#button_add_link").click(function (e) {
 			var link_anchor = $('<a></a>', {
 				href: data.url,
 				id: 'link_anchor_' + data.id,
+				target: '_new',
 				text: data.title
 			});
 			$(title_span).append(link_anchor)
