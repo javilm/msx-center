@@ -88,7 +88,7 @@ def page_admin_news_edit(item_id):
 
 		# Remove all existing related links and add the ones from the form
 		for link in item.links:
-			item.links.delete(link)
+			item.links.remove(link)
 		
 		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
 		if len(links):
