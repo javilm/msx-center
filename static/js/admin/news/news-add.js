@@ -79,21 +79,9 @@ $("#button_add_link").click(function (e) {
 		method: 'GET',
 		success: function(data, textStatus, jqXHR) {
 
-//			<div class="related-link">
-//				<input type="hidden" name="array_related_links" value="x">
-//				<a class="btn btn-danger btn-xs" role="button" href="#">
-//					Remove
-//				</a>
-//				<span>
-//					<a href="the URL">
-//						The title
-//					</a>
-//				</span>
-//			</div>
-
 			// Container DIV
 			var div = $('<div></div>', {
-				id: "link_div_" + data.id
+				id: "link_div_" + data.id,
 				class: 'related-link'
 			});
 
@@ -106,9 +94,8 @@ $("#button_add_link").click(function (e) {
 			$(div).append(hidden_field);
 
 			// "Remove" button
-			var remove_link = $('<a></a>', {
+			var remove_link = $('<button></button>', {
 				class: "btn btn-danger btn-xs",
-				role: "button",
 				onclick: "$('#link_div_" + data.id + "').remove()",
 				text: 'Remove'
 			});
