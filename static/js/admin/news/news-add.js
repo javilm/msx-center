@@ -105,7 +105,7 @@ $("#button_add_link").click(function (e) {
 			});
 			$(div).append(hidden_field);
 
-			// "remove" link
+			// "Remove" button
 			var remove_link = $('<a></a>', {
 				class: "btn btn-danger btn-xs",
 				role: "button",
@@ -123,7 +123,7 @@ $("#button_add_link").click(function (e) {
 				id: 'link_anchor_' + data.id,
 				text: data.title
 			});
-			title_span.append(link_anchod)
+			$(title_span).append(link_anchor)
 			$(div).append(title_span);
 			
 			// Add the Container to the document
