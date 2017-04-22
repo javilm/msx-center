@@ -79,9 +79,22 @@ $("#button_add_link").click(function (e) {
 		method: 'GET',
 		success: function(data, textStatus, jqXHR) {
 
+//			<div class="related-link">
+//				<input type="hidden" name="array_related_links" value="x">
+//				<a class="btn btn-danger btn-xs" role="button" href="#">
+//					Remove
+//				</a>
+//				<span>
+//					<a href="the URL">
+//						The title
+//					</a>
+//				</span>
+//			</div>
+
 			// Container DIV
 			var div = $('<div></div>', {
 				id: "link_div_" + data.id
+				class: 'related-link'
 			});
 
 			// Hidden INPUT field with the link value
@@ -92,24 +105,27 @@ $("#button_add_link").click(function (e) {
 			});
 			$(div).append(hidden_field);
 
-			// <a> tag to the link's URL
-			var link_anchor = $('<a></a>', {
-				href: data.url,
-				id: 'link_anchor_' + data.id
-			});
-			var link_title = $('<strong></strong>', {
-				id: 'link_title_' + data.id
-			}).text(data.title);
-			link_anchor.append(link_title)
-			$(div).append(link_anchor);
-			
 			// "remove" link
 			var remove_link = $('<a></a>', {
+				class: "btn btn-danger btn-xs",
+				role: "button",
 				onclick: "$('#link_div_" + data.id + "').remove()",
-				text: '(remove)'
+				text: 'Remove'
 			});
 			$(div).append(remove_link);	
 
+			// <span> for the title
+			var title_span = $('<span></span>');
+
+			// <a> tag to the link's URL
+			var link_anchor = $('<a></a>', {
+				href: data.url,
+				id: 'link_anchor_' + data.id,
+				text: data.title
+			});
+			title_span.append(link_anchod)
+			$(div).append(title_span);
+			
 			// Add the Container to the document
 			$('#div_related_links').append(div);
 		}
