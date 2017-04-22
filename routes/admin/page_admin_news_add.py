@@ -57,7 +57,7 @@ def page_admin_news_add():
 		db.session.add(news_item)
 		
 		# Add the related links, if there's any
-		links = json.loads(request.form['links'])
+		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
 		if len(links):
 			for link_id in links:
 				link = ExternalLink.query.get(link_id)
