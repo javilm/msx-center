@@ -1,9 +1,9 @@
 from flask import abort, redirect, render_template
 from __main__ import app, db
-from models import Category, User
+from models import ArticleSeries, User
 
-@app.route('/admin/categories/add', methods=['GET', 'POST'])
-def page_admin_categories_add():
+@app.route('/admin/series/add', methods=['GET', 'POST'])
+def page_admin_series_add():
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
@@ -15,7 +15,7 @@ def page_admin_categories_add():
 
 	if request.method == 'GET':
 		# Method is GET
-		return render_template('admin/categories-add.html', user=user, active='categories')
+		return render_template('admin/series-add.html', user=user, active='series')
 	else:
 		# Method is POST
 
@@ -28,8 +28,8 @@ def page_admin_categories_add():
 		model_vars['name_kr'] = request.form['field_name_kr']
 
 		# Create the category
-		category = Category(**model_vars)
-		db.session.add(category)
+		series = ArticleSeries(**model_vars)
+		db.session.add(series)
 		db.session.commit()
 
-		return redirect(url_for('page_admin_categories'))
+		return redirect(url_for('page_admin_series'))

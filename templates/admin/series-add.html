@@ -1,0 +1,192 @@
+{% extends "layout/admin-base.html" %}
+
+{% block title %}MSX Center Administration - Add news item{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+{% endblock %}
+
+{% macro inputs_for_language(lang) %}
+<div class="form-group">
+	<label class="control-label">Headline ({{ lang }})</label><i class="fa fa-exclamation-circle"></i>
+	<input class="form-control" id="field_headline_{{ lang }}" type="text">
+</div>
+<div class="form-group">
+	<label class="control-label">Secondary headline ({{ lang }})</label>
+	<input class="form-control" id="field_subhead_{{ lang }}" type="text">
+</div>
+<div class="form-group">
+	<label class="control-label">Summary ({{ lang }})</label>
+	<textarea class="form-control" id="field_summary_{{ lang }}" rows="5"></textarea>
+	<p class="help-block">This is the summary that will appear inside the news box in the news list page.</p>
+</div>
+<div class="form-group">
+	<label class="control-label">Body ({{ lang }})</label>
+	<div class="form-control" id="quillEditor_{{ lang }}"></div>
+</div>
+<div class="form-group">
+	<label class="control-label">Draft status ({{ lang }})</label>
+	<div class="checkbox">
+		<label class="control-label">
+			<input id="field_is_draft_{{ lang }}" type="checkbox" checked>Draft
+		</label>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro news_item_data() %}
+<h1 class="page-header">News <span class="small">Add new item</span></h1>
+<ul class="nav nav-pills" role="tablist">
+	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
+	<li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
+	<li role="presentation" id="tab-nl"><a href="#input-nl" aria-controls="input-nl" role="tab" data-toggle="tab">Dutch</a></li>
+	<li role="presentation" id="tab-es"><a href="#input-es" aria-controls="input-es" role="tab" data-toggle="tab">Spanish</a></li>
+	<li role="presentation" id="tab-pt"><a href="#input-pt" aria-controls="input-pt" role="tab" data-toggle="tab">Portuguese</a></li>
+	<li role="presentation" id="tab-kr"><a href="#input-kr" aria-controls="input-kr" role="tab" data-toggle="tab">Korean</a></li>
+</ul>
+
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+	{% if errors|length > 1 %}
+		<strong>There were errors with your submission:</strong>
+	{% else %}
+		<strong>There was an error with your submission:</strong>
+	{% endif %}
+	<ul>
+		{% for error in errors %}
+			<li>{{ error }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+<form id="news_item_add_form" method="post">
+	<input type="hidden" id="field_image_id" value="0">
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-ja">{{ inputs_for_language('ja') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-nl">{{ inputs_for_language('nl') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-es">{{ inputs_for_language('es') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-pt">{{ inputs_for_language('pt') }}</div>
+		<div role="tabpanel" class="tab-pane" id="input-kr">{{ inputs_for_language('kr') }}</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label">Author </label><i class="fa fa-exclamation-circle"></i>
+		<select id="field_author_id" class="form-control">
+			{% if staff %}
+			<optgroup label="Staff">
+				{% for author in staff %}
+					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
+			</optgroup>
+			{% endif %}
+			{% if superusers %}
+			<optgroup label="Superusers">
+				{% for author in superusers %}
+					<option value="{{ author.id }}"{% if user.id == author.id %} selected{% endif %}>{{ author.real_name }} ({{ author.email }})</option>
+				{% endfor %}
+			</optgroup>
+			{% endif %}
+		</select>
+	</div>
+	<div class="form-group">
+		<label class="control-label">Slug</label>
+		<input id="field_slug" class="form-control" type="text">
+	</div>
+
+	{# Categories #}
+    <div class="form-group">
+        <label class="control-label">Category</label><i class="fa fa-exclamation-circle"></i>
+        <select id="field_category_id" class="form-control">
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name_en }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+	{# Related links #}
+    <div class="form-group" id="field_related_links">
+        <label class="control-label">Related links</label>
+    	<p class="help-block">If you add duplicate links the backend will save only one copy.</p>
+
+        <div id="div_related_links">
+        </div>
+
+        <div class="row">
+	        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+		        <select id="field_link_id" class="form-control">
+		            {% for link in links %}
+		                <option value="{{ link.id }}">{{ link.title }} ({{ link.url }})</option>
+		            {% endfor %}
+		        </select>
+	        </div>
+	        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+				<button id="button_add_link" class="btn btn-primary btn-sm">Add</button>
+			</div>
+		</div>		
+	</div>
+    
+	<div class="form-group">
+		<label class="control-label">Publication date</label>
+		<input id="field_date_published" class="form-control" type="date">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Options</label>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_feature" type="checkbox">Feature
+			</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_hidden" type="checkbox">Hidden
+			</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_allows_comments" type="checkbox">Allow comments
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<button id="cancelButton" class="btn btn-default btn-sm" type="button">Cancel</button>
+		<button id="saveButton" class="btn btn-primary btn-sm" type="submit">Save</button>
+	</div>
+</form>
+{% endmacro %}
+
+{% macro news_item_feature_image() %}
+<h2 class="page-header">Feature image</h1>
+<div id="feature_image_div">
+</div>
+<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
+	<div class="form-group">
+		<label class="control-label">Featured image</label>
+		<p class="help-block">This image will appear in the feature page and the list of news items.</p>
+		<input name="feature_image" type="file">
+	</div>
+	<div class="form-group">
+		<button id="uploadButton" class="btn btn-primary btn-sm" type="submit">Upload image</button>
+	</div>
+</form>
+{% endmacro %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+		{{ news_item_data() }}
+	</div>
+	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		{{ news_item_feature_image() }}
+	</div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/admin/news/news-add.js"></script>
+<script type="text/javascript" src="/static/js/admin/links/ajax-links-info.js"></script>
+{% endblock %}

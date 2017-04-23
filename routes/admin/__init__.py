@@ -6,6 +6,8 @@ from page_admin_articles import page_admin_articles
 
 # Article series
 from page_admin_series import page_admin_series
+from page_admin_series_add import page_admin_series_add
+from page_admin_series_edit import page_admin_series_edit
 
 # Article/news items categories
 from page_admin_categories import page_admin_categories
