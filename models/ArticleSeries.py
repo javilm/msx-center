@@ -23,4 +23,3 @@ class ArticleSeries(db.Model):
 	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 	category = db.relationship('Category')
 	slug = db.Column(db.String())
-	articles = db.relationship('Article')
