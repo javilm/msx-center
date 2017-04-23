@@ -61,10 +61,39 @@ body {
   margin-right:5px;
 }
 
-.related-link {
+.admin-content .series-slug {
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.series-title-header {
+	margin-right: 10px;
+	font-size: medium;
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+.admin-series-column {
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+
+.admin-series-image {
+	border-radius: 4px;
 	margin-bottom: 5px;
 }
 
-.related-link span a {
-	font-weight: bold;
+.admin-series-field-column {
+	margin-bottom: 10px;
 }
+
+.admin-series-col-image {
+	padding: 5px;
+}
+
+.admin-series-lang-buttons-div {
+	margin-bottom: 5px;
+}
+

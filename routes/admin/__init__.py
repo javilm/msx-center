@@ -4,7 +4,10 @@ from page_admin import page_admin
 # Articles
 from page_admin_articles import page_admin_articles
 
-# Article categories
+# Article series
+from page_admin_series import page_admin_series
+
+# Article/news items categories
 from page_admin_categories import page_admin_categories
 from page_admin_categories_add import page_admin_categories_add
 from page_admin_categories_edit import page_admin_categories_edit
@@ -40,6 +43,7 @@ from ajax_admin_link_info import ajax_admin_link_info
 __all__ = [
 	"page_admin",
 	"page_admin_articles",
+	"page_admin_series",
 	"page_admin_categories",
 	"page_admin_categories_add",
 	"page_admin_categories_edit",
