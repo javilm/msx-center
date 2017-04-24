@@ -26,13 +26,9 @@ $("#saveButton").click(function (e) {
 		},
 		success: function(data) {
 			window.location = data.url;
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			alert("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
 		}
 	})
 	.done(function(result) {
 	    window.location = result.url;
 	});
-	$("#saveButton").prop("disabled", true);
 });
