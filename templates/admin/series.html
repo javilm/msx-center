@@ -63,7 +63,7 @@
 					</td>
 					<td>{% if item.is_numbered %}Yes{% else %}No{% endif %}</td>
 					<td>{% if item.is_hidden %}Yes{% else %}No{% endif %}</td>
-					<td><a href="{{ url_for('page_admin_series_edit', item_id=item.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a></td>
+					<td><a href="{{ url_for('page_admin_series_edit', series_id=item.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a></td>
 				</tr>
 			{% endfor %}
 		</tbody>
