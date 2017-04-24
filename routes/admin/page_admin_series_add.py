@@ -1,6 +1,6 @@
-from flask import abort, redirect, render_template
+from flask import abort, redirect, render_template, request, url_for
 from __main__ import app, db
-from models import ArticleSeries, User
+from models import ArticleSeries, User, Category
 
 @app.route('/admin/series/add', methods=['GET', 'POST'])
 def page_admin_series_add():
@@ -15,8 +15,11 @@ def page_admin_series_add():
 
 	if request.method == 'GET':
 
+		template_options = {}
 		template_options['categories'] = Category.query.order_by(Category.id).all()
-		return render_template('admin/series-add.html', user=user, active='series', categories=categories)
+		template_options['user'] = user
+		template_options['active'] = 'series'
+		return render_template('admin/series-add.html', **template_options)
 
 	else:
 
