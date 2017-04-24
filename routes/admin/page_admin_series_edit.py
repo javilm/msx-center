@@ -1,4 +1,4 @@
-from flask import abort, redirect, render_template, request, url_for
+from flask import abort, redirect, render_template, request, url_for, jsonify
 import lxml.html as LH
 from __main__ import app, db
 from models import ArticleSeries, User, Category
