@@ -1,7 +1,7 @@
 from flask import abort, redirect, render_template, request, url_for
 import lxml.html as LH
 from __main__ import app, db
-from models import ArticleSeries, User
+from models import ArticleSeries, User, Category
 
 @app.route('/admin/series/<int:series_id>/edit', methods=['GET', 'POST'])
 def page_admin_series_edit(series_id):
@@ -20,7 +20,12 @@ def page_admin_series_edit(series_id):
 		abort(404)
 
 	if request.method == 'GET':
-		return render_template('admin/series-edit.html', user=user, active='series', series=series)
+		template_options = {}
+		template_options['categories'] = Category.query.order_by(Category.id).all()
+		template_options['user'] = user
+		template_options['series'] = series
+		template_options['active'] = 'series'
+		return render_template('admin/series-edit.html', **template_options)
 	else:
 		series.title_en = request.form['title_en']
 		series.title_ja = request.form['title_ja']
