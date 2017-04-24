@@ -14,20 +14,22 @@ def page_admin_series_add():
 			abort(401)
 
 	if request.method == 'GET':
-		# Method is GET
-		return render_template('admin/series-add.html', user=user, active='series')
+
+		template_options['categories'] = Category.query.order_by(Category.id).all()
+		return render_template('admin/series-add.html', user=user, active='series', categories=categories)
+
 	else:
-		# Method is POST
 
 		model_vars = {}
-		model_vars['name_en'] = request.form['field_name_en']
-		model_vars['name_ja'] = request.form['field_name_ja']
-		model_vars['name_nl'] = request.form['field_name_nl']
-		model_vars['name_es'] = request.form['field_name_es']
-		model_vars['name_pt'] = request.form['field_name_pt']
-		model_vars['name_kr'] = request.form['field_name_kr']
+		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
+			model_vars['title_%s' % lang] = request.form['title_%s' % lang]
+			model_vars['desc_%s' % lang] = request.form['desc_%s' % lang]
+		model_vars['is_hidden'] = request.form['is_hidden']
+		model_vars['is_numbered'] = request.form['is_numbered']
+		model_vars['slug'] = request.form['slug']
+		model_vars['category_id'] = request.form['category_id']
 
-		# Create the category
+		# Create the series
 		series = ArticleSeries(**model_vars)
 		db.session.add(series)
 		db.session.commit()
