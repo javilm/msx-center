@@ -37,4 +37,4 @@ def page_admin_series_add():
 		db.session.add(series)
 		db.session.commit()
 
-		return redirect(url_for('page_admin_series'))
+		return jsonify(url=url_for('page_admin_series'))

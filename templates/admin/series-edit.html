@@ -37,60 +37,96 @@
 		{# English #}
 		<div role="tabpanel" class="tab-pane in active" id="input-en">
 			<div class="form-group">
+				<label class="control-label">Title (English)</label>
+				<input class="form-control" id="field_title_en" type="text" value="{{ series.title_en|supress_none }}">
+			</div>
+			<div class="form-group">
 				<label class="control-label">Description (English)</label>
-				<input class="form-control" id="field_desc_en" type="text" value="{{ link.desc_en|supress_none }}">
+				<input class="form-control" id="field_desc_en" type="text" value="{{ series.desc_en|supress_none }}">
 			</div>
 		</div>
 		{# Japanese #}
-		<div role="tabpanel" class="tab-pane" id="input-ja">
+		<div role="tabpanel" class="tab-pane in active" id="input-ja">
+			<div class="form-group">
+				<label class="control-label">Title (Japanese)</label>
+				<input class="form-control" id="field_title_ja" type="text" value="{{ series.title_ja|supress_none }}">
+			</div>
 			<div class="form-group">
 				<label class="control-label">Description (Japanese)</label>
-				<input class="form-control" id="field_desc_ja" type="text" value="{{ link.desc_ja|supress_none }}">
+				<input class="form-control" id="field_desc_ja" type="text" value="{{ series.desc_ja|supress_none }}">
 			</div>
 		</div>
 		{# Dutch #}
-		<div role="tabpanel" class="tab-pane" id="input-nl">
+		<div role="tabpanel" class="tab-pane in active" id="input-nl">
+			<div class="form-group">
+				<label class="control-label">Title (Dutch)</label>
+				<input class="form-control" id="field_title_nl" type="text" value="{{ series.title_nl|supress_none }}">
+			</div>
 			<div class="form-group">
 				<label class="control-label">Description (Dutch)</label>
-				<input class="form-control" id="field_desc_nl" type="text" value="{{ link.desc_nl|supress_none }}">
+				<input class="form-control" id="field_desc_nl" type="text" value="{{ series.desc_nl|supress_none }}">
 			</div>
 		</div>
 		{# Spanish #}
-		<div role="tabpanel" class="tab-pane" id="input-es">
+		<div role="tabpanel" class="tab-pane in active" id="input-es">
+			<div class="form-group">
+				<label class="control-label">Title (Spanish)</label>
+				<input class="form-control" id="field_title_es" type="text" value="{{ series.title_es|supress_none }}">
+			</div>
 			<div class="form-group">
 				<label class="control-label">Description (Spanish)</label>
-				<input class="form-control" id="field_desc_es" type="text" value="{{ link.desc_es|supress_none }}">
+				<input class="form-control" id="field_desc_es" type="text" value="{{ series.desc_es|supress_none }}">
 			</div>
 		</div>
 		{# Portuguese #}
-		<div role="tabpanel" class="tab-pane" id="input-pt">
+		<div role="tabpanel" class="tab-pane in active" id="input-pt">
+			<div class="form-group">
+				<label class="control-label">Title (Portuguese)</label>
+				<input class="form-control" id="field_title_pt" type="text" value="{{ series.title_pt|supress_none }}">
+			</div>
 			<div class="form-group">
 				<label class="control-label">Description (Portuguese)</label>
-				<input class="form-control" id="field_desc_pt" type="text" value="{{ link.desc_pt|supress_none }}">
+				<input class="form-control" id="field_desc_pt" type="text" value="{{ series.desc_pt|supress_none }}">
 			</div>
 		</div>
 		{# Korean #}
-		<div role="tabpanel" class="tab-pane" id="input-kr">
+		<div role="tabpanel" class="tab-pane in active" id="input-kr">
+			<div class="form-group">
+				<label class="control-label">Title (Korean)</label>
+				<input class="form-control" id="field_title_kr" type="text" value="{{ series.title_kr|supress_none }}">
+			</div>
 			<div class="form-group">
 				<label class="control-label">Description (Korean)</label>
-				<input class="form-control" id="field_desc_kr" type="text" value="{{ link.desc_kr|supress_none }}">
+				<input class="form-control" id="field_desc_kr" type="text" value="{{ series.desc_kr|supress_none }}">
 			</div>
 		</div>
 	</div>
 
+    <div class="form-group">
+        <label class="control-label">Category</label><i class="fa fa-exclamation-circle"></i>
+        <select id="field_category_id" class="form-control">
+            {% for category in categories %}
+                <option value="{{ category.id }}"{% if series.category_id == category.id %} selected{% endif %}>{{ category.name_en }}</option>
+            {% endfor %}
+        </select>
+    </div>
 	<div class="form-group">
-		<label class="control-label">Title</label>
-		<input id="field_title" class="form-control" type="text" value="{{ link.title|supress_none }}">
+		<label class="control-label">Slug</label>
+		<input id="field_slug" class="form-control" type="text" value="{{ series.slug }}">
 	</div>
-
 	<div class="form-group">
-		<label class="control-label">URL</label>
-		<input id="field_url" class="form-control" type="url" value="{{ link.url|supress_none }}">
-	</div>
-
-	<div class="form-group">
-		<label class="control-label">Number of visits</label>
-		<input id="field_num_visits" class="form-control" type="number" value="{{ link.num_visits }}">
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_hidden" type="checkbox"{% if series.is_hidden %} checked{% endif %}>Hidden
+			</label>
+			<p class="help-block">Series that are hidden are not shown in the list of article series. The articles belonging to the series can be accessed by entering the URL directly.</p>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_numbered" type="checkbox"{% if series.is_numbered %} checked{% endif %}>Numbered
+			</label>
+			<p class="help-block">Numbered series are those where the articles are best understood in order (such as a programming course). Non-numbered series contain standalone articles (such as hardware reviews or interviews).</p>
+		</div>				
 	</div>
 
 	<div class="form-group">
@@ -101,5 +137,5 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript" src="/static/js/admin/links/links-edit.js"></script>
+<script type="text/javascript" src="/static/js/admin/series/series-submit.js"></script>
 {% endblock %}
