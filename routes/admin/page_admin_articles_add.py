@@ -36,7 +36,7 @@ def page_admin_articles_add():
 			model_vars['title_%s' % lang] = request.form['title_%s' % lang]
 			model_vars['summary_%s' % lang] = request.form['summary_%s' % lang]
 			model_vars['body_%s' % lang] = request.form['body_%s' % lang]
-			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
+			model_vars['is_draft_%s' % lang] = request.form['is_draft_%s' % lang]
 
 		model_vars['author_id'] = request.form['author_id']
 		model_vars['category_id'] = request.form['category_id']
@@ -67,4 +67,4 @@ def page_admin_articles_add():
 		
 		db.session.commit()
 
-		return jsonify(url=url_for('page_admin_articles'))
+			return jsonify(url=url_for('page_admin_articles'))
