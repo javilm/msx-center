@@ -38,43 +38,37 @@ def page_admin_articles_edit(article_id):
 		#					authentication.
 
 		# English
-		article.headline_en = request.form['headline_en']
-		article.subhead_en = request.form['subhead_en']
+		article.title_en = request.form['title_en']
 		article.summary_en = request.form['summary_en']
 		article.body_en = request.form['body_en']
 		article.is_draft_en = request.form['is_draft_en']
 
 		# Japanese
-		article.headline_ja = request.form['headline_ja']
-		article.subhead_ja = request.form['subhead_ja']
+		article.title_ja = request.form['title_ja']
 		article.summary_ja = request.form['summary_ja']
 		article.body_ja = request.form['body_ja']
 		article.is_draft_ja = request.form['is_draft_ja']
 
 		# Dutch
-		article.headline_nl = request.form['headline_nl']
-		article.subhead_nl = request.form['subhead_nl']
+		article.title_nl = request.form['title_nl']
 		article.summary_nl = request.form['summary_nl']
 		article.body_nl = request.form['body_nl']
 		article.is_draft_nl = request.form['is_draft_nl']
 
 		# Spanish
-		article.headline_es = request.form['headline_es']
-		article.subhead_es = request.form['subhead_es']
+		article.title_es = request.form['title_es']
 		article.summary_es = request.form['summary_es']
 		article.body_es = request.form['body_es']
 		article.is_draft_es = request.form['is_draft_es']
 
 		# Portuguese
-		article.headline_pt = request.form['headline_pt']
-		article.subhead_pt = request.form['subhead_pt']
+		article.title_pt = request.form['title_pt']
 		article.summary_pt = request.form['summary_pt']
 		article.body_pt = request.form['body_pt']
 		article.is_draft_pt = request.form['is_draft_pt']
 
 		# Korean
-		article.headline_kr = request.form['headline_kr']
-		article.subhead_kr = request.form['subhead_kr']
+		article.title_kr = request.form['title_kr']
 		article.summary_kr = request.form['summary_kr']
 		article.body_kr = request.form['body_kr']
 		article.is_draft_kr = request.form['is_draft_kr']
@@ -105,7 +99,6 @@ def page_admin_articles_edit(article_id):
 				link = ExternalLink.query.get(link_id)
 				if link is not None:
 					article.links.append(link)
-
 
 		# Update the news item
 		db.session.add(article)
