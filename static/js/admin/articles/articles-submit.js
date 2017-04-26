@@ -106,9 +106,9 @@ $("#saveButton").click(function (e) {
 			slug: $('#field_slug').val(),
 			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
-			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
 			is_published: $('#field_is_published').is(':checked')?'on':'off',
+			is_pinned: $('#field_is_pinned').is(':checked')?'on':'off',
 			is_archived: $('#field_is_archived').is(':checked')?'on':'off',
 			allows_comments: $('#field_allows_comments').is(':checked')?'on':'off',
 			links: JSON.stringify($("input[name='array_related_links']")
