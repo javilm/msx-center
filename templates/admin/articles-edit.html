@@ -223,7 +223,7 @@
         <label class="control-label">Series</label><i class="fa fa-exclamation-circle"></i>
         <select id="field_series_id" class="form-control">
             {% for serie in series %}
-                <option value="{{ series.id }}"{% if article.series_id == serie.id %} selected{% endif %}>{{ serie.title_en }}</option>
+                <option value="{{ serie.id }}"{% if article.series_id == serie.id %} selected{% endif %}>{{ serie.title_en }}</option>
             {% endfor %}
         </select>
     </div>
