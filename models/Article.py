@@ -55,7 +55,7 @@ class Article(db.Model):
 	date_created = db.Column(db.DateTime)
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
-	is_hidden = db.Column(db.Boolean)
+  	is_hidden = db.Column(db.Boolean)
 	is_pinned = db.Column(db.Boolean)
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
@@ -63,11 +63,14 @@ class Article(db.Model):
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
 	
-	def __init__(self, chapter=0, priority=0, level=0, header_image_id=None, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, date_published=None, is_published=False, is_hidden=False, is_pinned=False, is_archived=False, allows_comments=True, slug=None):
+	def __init__(self, chapter=0, priority=0, level=0, header_image_id=None, series_id=None, author_id=None, category_id=None, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, date_published=None, is_published=False, is_hidden=False, is_pinned=False, is_archived=False, allows_comments=True, slug=None):
 		self.chapter = chapter
 		self.priority = priority
 		self.level = level
 		self.header_image_id = header_image_id
+		self.series_id = series_id
+		self.author_id = author_id
+		self.category_id = category_id
 		self.title_en = title_en
 		self.title_ja = title_ja
 		self.title_nl = title_nl
