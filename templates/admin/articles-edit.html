@@ -39,134 +39,146 @@
 	<div class="tab-content">
 
 		{# English #}
-		<div class="form-group">
-			<label class="control-label">Title (English)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_en" type="text" value="{{ article.title_en|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (English)</label>
-			<input class="form-control" id="field_summary_en" type="text" value="{{ article.summary_en|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (English)</label>
-			<div class="form-control" id="quillEditor_en">{{ article.body_en|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (English)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_en" type="checkbox"{% if article.is_draft_en %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane in active" id="input-en">
+			<div class="form-group">
+				<label class="control-label">Title (English)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_en" type="text" value="{{ article.title_en|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (English)</label>
+				<input class="form-control" id="field_summary_en" type="text" value="{{ article.summary_en|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (English)</label>
+				<div class="form-control" id="quillEditor_en">{{ article.body_en|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (English)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_en" type="checkbox"{% if article.is_draft_en %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
 		{# Japanese #}
-		<div class="form-group">
-			<label class="control-label">Title (Japanese)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_ja" type="text" value="{{ article.title_ja|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (Japanese)</label>
-			<input class="form-control" id="field_summary_ja" type="text" value="{{ article.summary_ja|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (Japanese)</label>
-			<div class="form-control" id="quillEditor_ja">{{ article.body_ja|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (Japanese)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_ja" type="checkbox"{% if article.is_draft_ja %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane" id="input-ja">
+			<div class="form-group">
+				<label class="control-label">Title (Japanese)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_ja" type="text" value="{{ article.title_ja|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Japanese)</label>
+				<input class="form-control" id="field_summary_ja" type="text" value="{{ article.summary_ja|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Japanese)</label>
+				<div class="form-control" id="quillEditor_ja">{{ article.body_ja|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Japanese)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_ja" type="checkbox"{% if article.is_draft_ja %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
 		{# Dutch #}
-		<div class="form-group">
-			<label class="control-label">Title (Dutch)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_nl" type="text" value="{{ article.title_nl|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (Dutch)</label>
-			<input class="form-control" id="field_summary_nl" type="text" value="{{ article.summary_nl|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (Dutch)</label>
-			<div class="form-control" id="quillEditor_nl">{{ article.body_nl|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (Dutch)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_nl" type="checkbox"{% if article.is_draft_nl %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane" id="input-nl">
+			<div class="form-group">
+				<label class="control-label">Title (Dutch)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_nl" type="text" value="{{ article.title_nl|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Dutch)</label>
+				<input class="form-control" id="field_summary_nl" type="text" value="{{ article.summary_nl|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Dutch)</label>
+				<div class="form-control" id="quillEditor_nl">{{ article.body_nl|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Dutch)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_nl" type="checkbox"{% if article.is_draft_nl %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
 		{# Spanish #}
-		<div class="form-group">
-			<label class="control-label">Title (Spanish)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_es" type="text" value="{{ article.title_es|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (Spanish)</label>
-			<input class="form-control" id="field_summary_es" type="text" value="{{ article.summary_es|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (Spanish)</label>
-			<div class="form-control" id="quillEditor_es">{{ article.body_es|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (Spanish)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_es" type="checkbox"{% if article.is_draft_es %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane" id="input-es">
+			<div class="form-group">
+				<label class="control-label">Title (Spanish)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_es" type="text" value="{{ article.title_es|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Spanish)</label>
+				<input class="form-control" id="field_summary_es" type="text" value="{{ article.summary_es|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Spanish)</label>
+				<div class="form-control" id="quillEditor_es">{{ article.body_es|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Spanish)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_es" type="checkbox"{% if article.is_draft_es %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
 		{# Portuguese #}
-		<div class="form-group">
-			<label class="control-label">Title (Portuguese)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_pt" type="text" value="{{ article.title_pt|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (Portuguese)</label>
-			<input class="form-control" id="field_summary_pt" type="text" value="{{ article.summary_pt|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (Portuguese)</label>
-			<div class="form-control" id="quillEditor_pt">{{ article.body_pt|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (Portuguese)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_pt" type="checkbox"{% if article.is_draft_pt %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane" id="input-pt">
+			<div class="form-group">
+				<label class="control-label">Title (Portuguese)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_pt" type="text" value="{{ article.title_pt|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Portuguese)</label>
+				<input class="form-control" id="field_summary_pt" type="text" value="{{ article.summary_pt|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Portuguese)</label>
+				<div class="form-control" id="quillEditor_pt">{{ article.body_pt|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Portuguese)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_pt" type="checkbox"{% if article.is_draft_pt %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
 		{# Korean #}
-		<div class="form-group">
-			<label class="control-label">Title (Korean)</label><i class="fa fa-exclamation-circle"></i>
-			<input class="form-control" id="field_title_kr" type="text" value="{{ article.title_kr|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Summary (Korean)</label>
-			<input class="form-control" id="field_summary_kr" type="text" value="{{ article.summary_kr|supress_none }}">
-		</div>
-		<div class="form-group">
-			<label class="control-label">Body (Korean)</label>
-			<div class="form-control" id="quillEditor_kr">{{ article.body_kr|safe }}</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">Draft status (Korean)</label>
-			<div class="checkbox">
-				<label class="control-label">
-					<input id="field_is_draft_kr" type="checkbox"{% if article.is_draft_kr %} checked{% endif %}>Draft
-				</label>
+		<div role="tabpanel" class="tab-pane" id="input-kr">
+			<div class="form-group">
+				<label class="control-label">Title (Korean)</label><i class="fa fa-exclamation-circle"></i>
+				<input class="form-control" id="field_title_kr" type="text" value="{{ article.title_kr|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Summary (Korean)</label>
+				<input class="form-control" id="field_summary_kr" type="text" value="{{ article.summary_kr|supress_none }}">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Body (Korean)</label>
+				<div class="form-control" id="quillEditor_kr">{{ article.body_kr|safe }}</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Draft status (Korean)</label>
+				<div class="checkbox">
+					<label class="control-label">
+						<input id="field_is_draft_kr" type="checkbox"{% if article.is_draft_kr %} checked{% endif %}>Draft
+					</label>
+				</div>
 			</div>
 		</div>
 
