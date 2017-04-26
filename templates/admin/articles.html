@@ -24,6 +24,7 @@
 		<thead>
 			<tr>
 				<th>ID</th>
+				<th>Slug</th>
 				<th>Title</th>
 				<th>Summary</th>
 				<th>Draft?</th>
@@ -43,6 +44,7 @@
 						{% if article.is_pinned %}<div class="articles-labels"><span class="label label-success">Pinned</span></div>{% endif %}
 						{% if article.is_published %}<div class="articles-labels"><span class="label label-success">Published</span></div>{% endif %}
 					</td>
+					<td>{{ article.slug }}</td>
 					<td>
 						{{ popover_button(article.title_en, 'EN') }}
 						{{ popover_button(article.title_ja, 'JA') }}
