@@ -67,7 +67,7 @@
 						{% if article.is_draft_pt %}<span class="label label-warning">PT</span>{% endif %}
 						{% if article.is_draft_kr %}<span class="label label-warning">KR</span>{% endif %}
 					</td>
-					<td><a href="{{ url_for('page_member', member_id=article.author.id) }}">{{ article.author.real_name }}</a></td>
+					<td><a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a></td>
 					<td>{{ article.category.name_en }}</td>
 					<td>{{ article.num_comments }}</td>
 					<td>{{ article.date_published.strftime('%d/%b/%Y') }}</td>
