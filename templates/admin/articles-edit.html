@@ -330,7 +330,7 @@
 <img id="feature_image_img" class="img-responsive" src="/image/{{ article.header_image_id }}/feature_image">
 {% endif %}
 </div>
-<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_article_add_feature_image') }}">
+<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_articles_add_feature_image') }}">
 	<div class="form-group">
 		<label class="control-label">Featured image</label>
 		<p class="help-block">This image will appear in the list of articles.</p>
