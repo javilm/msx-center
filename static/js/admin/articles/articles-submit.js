@@ -70,27 +70,27 @@ $("#saveButton").click(function (e) {
 			title_en: $('#field_title_en').val(),
 			summary_en: $('#field_summary_en').val(),
 			body_en: quill_en.root.innerHTML,
-			is_draft_en: $('#field_is_draft_en').is(':checked')?'on':'off'
+			is_draft_en: $('#field_is_draft_en').is(':checked')?'on':'off',
 			title_ja: $('#field_title_ja').val(),
 			summary_ja: $('#field_summary_ja').val(),
 			body_ja: quill_ja.root.innerHTML,
-			is_draft_ja: $('#field_is_draft_ja').is(':checked')?'on':'off'
+			is_draft_ja: $('#field_is_draft_ja').is(':checked')?'on':'off',
 			title_nl: $('#field_title_nl').val(),
 			summary_nl: $('#field_summary_nl').val(),
 			body_nl: quill_nl.root.innerHTML,
-			is_draft_nl: $('#field_is_draft_nl').is(':checked')?'on':'off'
+			is_draft_nl: $('#field_is_draft_nl').is(':checked')?'on':'off',
 			title_es: $('#field_title_es').val(),
 			summary_es: $('#field_summary_es').val(),
 			body_es: quill_es.root.innerHTML,
-			is_draft_es: $('#field_is_draft_es').is(':checked')?'on':'off'
+			is_draft_es: $('#field_is_draft_es').is(':checked')?'on':'off',
 			title_pt: $('#field_title_pt').val(),
 			summary_pt: $('#field_summary_pt').val(),
 			body_pt: quill_pt.root.innerHTML,
-			is_draft_pt: $('#field_is_draft_pt').is(':checked')?'on':'off'
+			is_draft_pt: $('#field_is_draft_pt').is(':checked')?'on':'off',
 			title_kr: $('#field_title_kr').val(),
 			summary_kr: $('#field_summary_kr').val(),
 			body_kr: quill_kr.root.innerHTML,
-			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off'
+			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off',
 			author_id: $('#field_author_id').val(),
 			category_id: $('#field_category_id').val(),
 			series_id: $('#field_series_id').val(),
