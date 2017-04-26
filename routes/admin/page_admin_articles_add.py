@@ -73,4 +73,4 @@ def page_admin_articles_add():
 		
 		db.session.commit()
 
-			return jsonify(url=url_for('page_admin_articles'))
+		return jsonify(url=url_for('page_admin_articles'))
