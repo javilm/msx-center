@@ -3,6 +3,9 @@ from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
 from models import Category, Article, User, ExternalLink, ArticleSeries
 
+# DEBUG
+from utils import log_form_vars
+
 @app.route('/admin/articles/add', methods=['GET', 'POST'])
 def page_admin_articles_add():
 
@@ -30,6 +33,9 @@ def page_admin_articles_add():
 		# XXX Security risk	Not validating the author_id to check that it is one of the presented values, or even that
 		# 					the user actually exists. This risk is mitigated by the fact that POSTing to this URL requires
 		#					authentication.
+
+		# DEBUG
+		log_form_vars(request.form)
 
 		model_vars = {}
 		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
