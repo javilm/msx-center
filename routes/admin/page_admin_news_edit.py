@@ -84,6 +84,8 @@ def page_admin_news_edit(item_id):
 		item.category_id = request.form['category_id']
 		item.header_image_id = request.form['header_image_id']
 		item.date_published = request.form['date_published']
+		item.is_published = request.form['is_published']
+		item.is_archived = request.form['is_archived']
 		item.is_feature = request.form['is_feature']
 		item.is_hidden = request.form['is_hidden']
 		item.allows_comment = request.form['allows_comments']

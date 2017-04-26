@@ -23,7 +23,9 @@ class Article(db.Model):
 	category = db.relationship('Category', backref='articles')
 	series_id = db.Column(db.Integer, db.ForeignKey('article_series.id'))
 	series = db.relationship('ArticleSeries', backref='articles')
-	chapter = db.Column(db.Integer)
+	chapter = db.Column(db.Integer)		# The chapter number, if belonging to a series
+	priority = db.Column(db.Integer)	# The order in which articles are listed, if not belonging to a series
+	level = db.Column(db.Integer)		# A difficulty level from 1 (beginner) to 5 (expert)
 	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
 	links = db.relationship('ExternalLink', secondary=association_table)
 	title_en = db.Column(db.String())
@@ -54,14 +56,17 @@ class Article(db.Model):
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
 	is_hidden = db.Column(db.Boolean)
+	is_pinned = db.Column(db.Boolean)
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
 	
-	def __init__(self, chapter=0, header_image_id=None, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, date_published=None, is_published=False, is_hidden=False, is_archived=False, allows_comments=True, slug=None):
+	def __init__(self, chapter=0, priority=0, level=0, header_image_id=None, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None, summary_en=None, summary_ja=None, summary_nl=None, summary_es=None, summary_pt=None, summary_kr=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, is_draft_en=True, is_draft_ja=True, is_draft_nl=True, is_draft_es=True, is_draft_pt=True, is_draft_kr=True, date_published=None, is_published=False, is_hidden=False, is_pinned=False, is_archived=False, allows_comments=True, slug=None):
 		self.chapter = chapter
+		self.priority = priority
+		self.level = level
 		self.header_image_id = header_image_id
 		self.title_en = title_en
 		self.title_ja = title_ja
@@ -91,6 +96,7 @@ class Article(db.Model):
 		self.date_published = date_published or self.date_created
 		self.is_published = is_published
 		self.is_hidden = is_hidden
+		self.is_pinned = is_pinned
 		self.is_archived = is_archived
 		self.allows_comments = allows_comments
 		self.num_comments = 0

@@ -1,10 +1,10 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, NewsItem, User, ExternalLink
+from models import Category, Article, User, ExternalLink
 
-@app.route('/admin/news/add', methods=['GET', 'POST'])
-def page_admin_news_add():
+@app.route('/admin/articles/add', methods=['GET', 'POST'])
+def page_admin_articles_add():
 
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
@@ -24,34 +24,32 @@ def page_admin_news_add():
 		template_options['categories'] = Category.query.order_by(Category.id).all()
 		template_options['links'] = ExternalLink.query.order_by(ExternalLink.title).all()
 
-		return render_template('admin/news-add.html', **template_options)
+		return render_template('admin/articles-add.html', **template_options)
 	else:
-		# Request is a POST
-
-		# For each language, if the news item is a draft (which it is, by default) then validation isn't strict. If
-		# the item isn't a draft then it will require a proper headline and body.
-
 		# XXX Security risk	Not validating the author_id to check that it is one of the presented values, or even that
 		# 					the user actually exists. This risk is mitigated by the fact that POSTing to this URL requires
 		#					authentication.
 
 		model_vars = {}
 		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
-			model_vars['headline_%s' % lang] = request.form['%s[headline]' % lang]
-			model_vars['subhead_%s' % lang] = request.form['%s[subhead]' % lang]
-			model_vars['summary_%s' % lang] = request.form['%s[summary]' % lang]
-			model_vars['body_%s' % lang] = request.form['%s[body]' % lang]
+			model_vars['title_%s' % lang] = request.form['title_%s' % lang]
+			model_vars['summary_%s' % lang] = request.form['summary_%s' % lang]
+			model_vars['body_%s' % lang] = request.form['body_%s' % lang]
 			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
 
 		model_vars['author_id'] = request.form['author_id']
-		model_vars['slug'] = request.form['slug']
 		model_vars['category_id'] = request.form['category_id']
+		model_vars['series_id'] = request.form['series_id']
+		model_vars['chapter'] = request.form['chapter']
+		model_vars['priority'] = request.form['priority']
+		model_vars['level'] = request.form['level']
 		model_vars['header_image_id'] = request.form['header_image_id']
+		model_vars['slug'] = request.form['slug']
 		model_vars['date_published'] = request.form['date_published']
 		model_vars['is_published'] = request.form['is_published']
-		model_vars['is_archived'] = request.form['is_archived']
-		model_vars['is_feature'] = request.form['is_feature']
 		model_vars['is_hidden'] = request.form['is_hidden']
+		model_vars['is_archived'] = request.form['is_archived']
+		model_vars['is_pinned'] = request.form['is_pinned']
 		model_vars['allows_comments'] = request.form['allows_comments']
 		
 		# Create the news item

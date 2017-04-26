@@ -271,11 +271,16 @@
 
 	<div class="form-group">
 		<label class="control-label">Publication date</label>
-		<input id="field_date_published" class="form-control" type="date">
+		<input id="field_date_published" class="form-control" type="date" value="{{ item.date_published }}">
 	</div>
 
 	<div class="form-group">
 		<label class="control-label">Options</label>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_published" type="checkbox"{% if item.is_published %} checked{% endif %}>Published
+			</label>
+		</div>
 		<div class="checkbox">
 			<label class="control-label">
 				<input id="field_is_feature" type="checkbox"{% if item.is_feature %} checked{% endif %}>Feature
@@ -284,6 +289,11 @@
 		<div class="checkbox">
 			<label class="control-label">
 				<input id="field_is_hidden" type="checkbox"{% if item.is_hidden %} checked{% endif %}>Hidden
+			</label>
+		</div>
+		<div class="checkbox">
+			<label class="control-label">
+				<input id="field_is_archived" type="checkbox"{% if item.is_archived %} checked{% endif %}>Archived
 			</label>
 		</div>
 		<div class="checkbox">

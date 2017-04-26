@@ -62,45 +62,42 @@ $(function () {
 // Link event to the submit button
 $("#saveButton").click(function (e) {
 	e.preventDefault();
-	console.log("Save button pressed");
 
 	$.ajax({
 		method: "POST",
 		processData: true,
 		data: {
-			headline_en: $('#field_headline_en').val(),
-			subhead_en: $('#field_subhead_en').val(),
+			title_en: $('#field_title_en').val(),
 			summary_en: $('#field_summary_en').val(),
 			body_en: quill_en.root.innerHTML,
-			is_draft_en: $('#field_is_draft_en').is(':checked')?'on':'off',
-			headline_ja: $('#field_headline_ja').val(),
-			subhead_ja: $('#field_subhead_ja').val(),
+			is_draft_en: $('#field_is_draft_en').is(':checked')?'on':'off'
+			title_ja: $('#field_title_ja').val(),
 			summary_ja: $('#field_summary_ja').val(),
 			body_ja: quill_ja.root.innerHTML,
-			is_draft_ja: $('#field_is_draft_ja').is(':checked')?'on':'off',
-			headline_nl: $('#field_headline_nl').val(),
-			subhead_nl: $('#field_subhead_nl').val(),
+			is_draft_ja: $('#field_is_draft_ja').is(':checked')?'on':'off'
+			title_nl: $('#field_title_nl').val(),
 			summary_nl: $('#field_summary_nl').val(),
 			body_nl: quill_nl.root.innerHTML,
-			is_draft_nl: $('#field_is_draft_nl').is(':checked')?'on':'off',
-			headline_es: $('#field_headline_es').val(),
-			subhead_es: $('#field_subhead_es').val(),
+			is_draft_nl: $('#field_is_draft_nl').is(':checked')?'on':'off'
+			title_es: $('#field_title_es').val(),
 			summary_es: $('#field_summary_es').val(),
 			body_es: quill_es.root.innerHTML,
-			is_draft_es: $('#field_is_draft_es').is(':checked')?'on':'off',
-			headline_pt: $('#field_headline_pt').val(),
-			subhead_pt: $('#field_subhead_pt').val(),
+			is_draft_es: $('#field_is_draft_es').is(':checked')?'on':'off'
+			title_pt: $('#field_title_pt').val(),
 			summary_pt: $('#field_summary_pt').val(),
 			body_pt: quill_pt.root.innerHTML,
-			is_draft_pt: $('#field_is_draft_pt').is(':checked')?'on':'off',
-			headline_kr: $('#field_headline_kr').val(),
-			subhead_kr: $('#field_subhead_kr').val(),
+			is_draft_pt: $('#field_is_draft_pt').is(':checked')?'on':'off'
+			title_kr: $('#field_title_kr').val(),
 			summary_kr: $('#field_summary_kr').val(),
 			body_kr: quill_kr.root.innerHTML,
-			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off',
+			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off'
 			author_id: $('#field_author_id').val(),
-            slug: $('#field_slug').val(),
-            category_id: $('#field_category_id').val(),
+			category_id: $('#field_category_id').val(),
+			series_id: $('#field_series_id').val(),
+			chapter: $('#field_chapter').val(),
+			priority: $('#field_priority').val(),
+			level: $('#field_level').val(),
+			slug: $('#field_slug').val(),
 			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
@@ -109,16 +106,16 @@ $("#saveButton").click(function (e) {
 			is_archived: $('#field_is_archived').is(':checked')?'on':'off',
 			allows_comments: $('#field_allows_comments').is(':checked')?'on':'off',
 			links: JSON.stringify($("input[name='array_related_links']")
-				.map(function() {
-					return $(this).val();
-				})
-				.get())
+					.map(function() {
+						return $(this).val();
+					})
+					.get())
 		},
 		success: function(data) {
 			window.location = data.url;
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			alert("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
+			console.log("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
 		}
 	});
 });	
@@ -126,15 +123,14 @@ $("#saveButton").click(function (e) {
 // Link event to the upload button
 $("#uploadButton").click(function (e) {
 	e.preventDefault();
-	console.log("Upload button pressed");
 
 	var fd = new FormData(document.getElementById('feature_image_form'));
 
 	$.ajax({
 		data: fd,
-		url: '/admin/news/add/feature_image',
 		processData: false,
 		contentType: false,
+		url: '/admin/articles/add/feature_image',
 		method: 'POST',
 		success: function(data) {
 			if (data.success == true) {

@@ -1,6 +1,6 @@
 {% extends "layout/admin-base.html" %}
 
-{% block title %}MSX Center Administration - Add news item{% endblock %}
+{% block title %}MSX Center Administration - Add article{% endblock %}
 
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/font-awesome.min.css">
@@ -10,17 +10,12 @@
 
 {% macro inputs_for_language(lang) %}
 <div class="form-group">
-	<label class="control-label">Headline ({{ lang }})</label><i class="fa fa-exclamation-circle"></i>
-	<input class="form-control" id="field_headline_{{ lang }}" type="text">
-</div>
-<div class="form-group">
-	<label class="control-label">Secondary headline ({{ lang }})</label>
-	<input class="form-control" id="field_subhead_{{ lang }}" type="text">
+	<label class="control-label">Title ({{ lang }})</label><i class="fa fa-exclamation-circle"></i>
+	<input class="form-control" id="field_title_{{ lang }}" type="text">
 </div>
 <div class="form-group">
 	<label class="control-label">Summary ({{ lang }})</label>
-	<textarea class="form-control" id="field_summary_{{ lang }}" rows="5"></textarea>
-	<p class="help-block">This is the summary that will appear inside the news box in the news list page.</p>
+	<input class="form-control" id="field_summary_{{ lang }}" type="text">
 </div>
 <div class="form-group">
 	<label class="control-label">Body ({{ lang }})</label>
@@ -36,8 +31,8 @@
 </div>
 {% endmacro %}
 
-{% macro news_item_data() %}
-<h1 class="page-header">News <span class="small">Add new item</span></h1>
+{% macro article_data() %}
+<h1 class="page-header">Articles <span class="small">Add new article</span></h1>
 <ul class="nav nav-pills" role="tablist">
 	<li role="presentation" id="tab-en" class="active"><a href="#input-en" aria-controls="input-en" role="tab" data-toggle="tab">English</a></li>
 	<li role="presentation" id="tab-ja"><a href="#input-ja" aria-controls="input-ja" role="tab" data-toggle="tab">Japanese</a></li>
@@ -62,7 +57,7 @@
 </div>
 {% endif %}
 
-<form id="news_item_add_form" method="post">
+<form id="article_add_form" method="post">
 	<input type="hidden" id="field_image_id" value="0">
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane in active" id="input-en">{{ inputs_for_language('en') }}</div>
@@ -106,6 +101,16 @@
         </select>
     </div>
 
+	{# Series #}
+    <div class="form-group">
+        <label class="control-label">Series</label><i class="fa fa-exclamation-circle"></i>
+        <select id="field_series_id" class="form-control">
+            {% for serie in series %}
+                <option value="{{ series.id }}">{{ serie.title_en }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
 	{# Related links #}
     <div class="form-group" id="field_related_links">
         <label class="control-label">Related links</label>
@@ -132,6 +137,28 @@
 		<label class="control-label">Publication date</label>
 		<input id="field_date_published" class="form-control" type="date">
 	</div>
+
+	<div class="form-group">
+		<label class="control-label">Chapter number</label>
+		<input id="field_chapter" class="form-control" type="number">
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Priority</label>
+		<input id="field_priority" class="form-control" type="number">
+	</div>
+
+	<div class="form-group">
+		<label class="control-label">Difficulty level</label>
+        <select id="field_level" class="form-control">
+            <option value="1">Beginner</option>
+            <option value="2">Easy</option>
+            <option value="3">Intermediate</option>
+            <option value="4">Advanced</option>
+            <option value="5">Expert</option>
+        </select>
+	</div>
+
 	<div class="form-group">
 		<label class="control-label">Options</label>
 		<div class="checkbox">
@@ -141,12 +168,12 @@
 		</div>
 		<div class="checkbox">
 			<label class="control-label">
-				<input id="field_is_feature" type="checkbox">Feature
+				<input id="field_is_hidden" type="checkbox">Hidden
 			</label>
 		</div>
 		<div class="checkbox">
 			<label class="control-label">
-				<input id="field_is_hidden" type="checkbox">Hidden
+				<input id="field_is_pinned" type="checkbox">Pinned
 			</label>
 		</div>
 		<div class="checkbox">
@@ -167,14 +194,14 @@
 </form>
 {% endmacro %}
 
-{% macro news_item_feature_image() %}
+{% macro article_feature_image() %}
 <h2 class="page-header">Feature image</h1>
 <div id="feature_image_div">
 </div>
-<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_news_add_feature_image') }}">
+<form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_articles_add_feature_image') }}">
 	<div class="form-group">
 		<label class="control-label">Featured image</label>
-		<p class="help-block">This image will appear in the feature page and the list of news items.</p>
+		<p class="help-block">This image will appear in the list of articles.</p>
 		<input name="feature_image" type="file">
 	</div>
 	<div class="form-group">
@@ -186,10 +213,10 @@
 {% block content %}
 <div class="row">
 	<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-		{{ news_item_data() }}
+		{{ article_data() }}
 	</div>
 	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-		{{ news_item_feature_image() }}
+		{{ article_feature_image() }}
 	</div>
 </div>
 {% endblock %}
@@ -197,6 +224,6 @@
 {% block extrajs %}
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/static/js/admin/news/news-add.js"></script>
+<script type="text/javascript" src="/static/js/admin/articles/articles-submit.js"></script>
 <script type="text/javascript" src="/static/js/admin/links/ajax-links-info.js"></script>
 {% endblock %}

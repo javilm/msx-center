@@ -3,6 +3,9 @@ from page_admin import page_admin
 
 # Articles
 from page_admin_articles import page_admin_articles
+from page_admin_articles_add import page_admin_articles_add
+from page_admin_articles_edit import page_admin_articles_edit
+from ajax_admin_articles_add_feature_image import ajax_admin_articles_add_feature_image
 
 # Article series
 from page_admin_series import page_admin_series
@@ -34,12 +37,12 @@ from page_admin_links_edit import page_admin_links_edit
 from page_admin_news import page_admin_news
 from page_admin_news_add import page_admin_news_add
 from page_admin_news_edit import page_admin_news_edit
+from ajax_admin_news_add_feature_image import ajax_admin_news_add_feature_image
 
 # Domains
 from page_admin_domains import page_admin_domains
 
 # AJAX backend code
-from ajax_admin_news_add_feature_image import ajax_admin_news_add_feature_image
 from ajax_admin_link_info import ajax_admin_link_info
 
 __all__ = [
