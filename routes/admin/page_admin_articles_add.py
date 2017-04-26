@@ -1,7 +1,7 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, Article, User, ExternalLink
+from models import Category, Article, User, ExternalLink, ArticleSeries
 
 @app.route('/admin/articles/add', methods=['GET', 'POST'])
 def page_admin_articles_add():
@@ -22,6 +22,7 @@ def page_admin_articles_add():
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
 		template_options['categories'] = Category.query.order_by(Category.id).all()
+		template_options['series'] = ArticleSeries.query.order_by(ArticleSeries.id).all()
 		template_options['links'] = ExternalLink.query.order_by(ExternalLink.title).all()
 
 		return render_template('admin/articles-add.html', **template_options)
