@@ -127,7 +127,7 @@ class Article(db.Model):
 				img = tmp_img
 
 			# Modify the attributes in the copy of the <img...> tag
-			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
+			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.jpg' % img.id)
 			tmp_element.attrib['class'] = 'img-responsive'
 
 			# Create a new <A ...> element that will contain the modified <IMG ...> tag
