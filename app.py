@@ -28,7 +28,7 @@ app.config.update(dict(
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
 	SERVER_NAME='dev.msx-center.com',
 	DEBUG_TB_INTERCEPT_REDIRECTS=False,
-	MAX_CONTENT_LENGTH=8*1024*1024
+	MAX_CONTENT_LENGTH=32*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
 
