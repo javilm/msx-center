@@ -34,9 +34,6 @@ def page_admin_articles_add():
 		# 					the user actually exists. This risk is mitigated by the fact that POSTing to this URL requires
 		#					authentication.
 
-		# DEBUG
-		log_form_vars(request.form)
-
 		model_vars = {}
 		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
 			model_vars['title_%s' % lang] = request.form['title_%s' % lang]
