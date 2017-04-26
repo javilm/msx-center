@@ -60,8 +60,8 @@ def page_admin_articles_add():
 		model_vars['allows_comments'] = request.form['allows_comments']
 		
 		# Create the news item
-		news_item = NewsItem(**model_vars)
-		db.session.add(news_item)
+		article = Article(**model_vars)
+		db.session.add(article)
 		
 		# Add the related links, if there's any
 		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
@@ -69,7 +69,7 @@ def page_admin_articles_add():
 			for link_id in links:
 				link = ExternalLink.query.get(link_id)
 				if link is not None:
-					news_item.links.append(link)
+					article.links.append(link)
 		
 		db.session.commit()
 
