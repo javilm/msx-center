@@ -88,7 +88,7 @@ def page_admin_articles_edit(article_id):
 		article.is_pinned = request.form['is_pinned']
 		article.is_published = request.form['is_published']
 		article.is_archived = request.form['is_archived']
-		article.allows_comment = request.form['allows_comments']
+		article.allows_comments = request.form['allows_comments']
 
 		# Remove all existing related links and add the ones from the form
 		for link in article.links:
