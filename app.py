@@ -54,6 +54,7 @@ from routes.account import *
 from routes.lounges import *
 from routes.member import *
 from routes.news import *
+from routes.articles import *
 from routes.admin import *
 # from routes.tests import *
 
