@@ -6,10 +6,12 @@ from models import User, NewsItem
 def page_news():
 	session['next'] = url_for('page_news')
 
+	template_options = {}
+
 	# Get the signed in User (if there's one), or None
-	user = User.get_signed_in_user()
+	template_options['user'] = User.get_signed_in_user()
 
 	# Get the news items
-	items = NewsItem.query.order_by(NewsItem.date_published.desc()).limit(5)
+	template_options['items' = NewsItem.query.order_by(NewsItem.date_published.desc()).limit(5)
 
-	return render_template('news/news-list.html', user=user, items=items)
+	return render_template('news/news-list.html', **template_options)
