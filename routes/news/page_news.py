@@ -10,7 +10,6 @@ def page_news():
 	user = User.get_signed_in_user()
 
 	# Get the news items
-	#items = db.session.query(NewsItem,User).filter(User.id == NewsItem.author_id).all()
 	items = NewsItem.query.order_by(NewsItem.date_published.desc()).limit(5)
 
 	return render_template('news/news-list.html', user=user, items=items)
