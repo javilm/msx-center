@@ -66,41 +66,45 @@
 {% endmacro %}
 
 {% block content %}
-<div class="row">
-	<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-		<h4 class="news-section-divider">Recent news</h4>
+	{% if items|length %}
 		<div class="row">
-			{{ news_item_big(items[0]) }}
-			{{ news_item_big(items[1]) }}
+			<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+				<h4 class="news-section-divider">Recent news</h4>
+				<div class="row">
+					{{ news_item_big(items[0]) }}
+					{{ news_item_big(items[1]) }}
+				</div>
+				<div class="row">
+					{{ news_item_big(items[2]) }}
+					{{ news_item_big(items[3]) }}
+				</div>
+			</div>
+		
+			{# sidebar #} 
+			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+				{{ news_sidebar_sponsor() }}
+				{{ news_sidebar_most_popular() }}
+				{{ news_sidebar_archive() }}
+			</div>
 		</div>
-		<div class="row">
-			{{ news_item_big(items[2]) }}
-			{{ news_item_big(items[3]) }}
+	{% else %}
+		<div class="panel panel-danger">There aren't enough news items</div>
+	{% endif %}
+
+	{# pagination #}
+	<div class="row">
+		<div class="col-md-12">
+			<nav>
+				<ul class="pagination">
+					<li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+					<li><a>1</a></li>
+					<li><a>2</a></li>
+					<li><a>3</a></li>
+					<li><a>4</a></li>
+					<li><a>5</a></li>
+					<li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
+				</ul>
+			</nav>
 		</div>
 	</div>
-
-	{# sidebar #} 
-	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		{{ news_sidebar_sponsor() }}
-		{{ news_sidebar_most_popular() }}
-		{{ news_sidebar_archive() }}
-	</div>
-</div>
-
-{# pagination #}
-<div class="row">
-	<div class="col-md-12">
-		<nav>
-			<ul class="pagination">
-				<li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-				<li><a>1</a></li>
-				<li><a>2</a></li>
-				<li><a>3</a></li>
-				<li><a>4</a></li>
-				<li><a>5</a></li>
-				<li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
-			</ul>
-		</nav>
-	</div>
-</div>
 {% endblock %}
