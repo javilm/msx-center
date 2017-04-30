@@ -34,8 +34,8 @@
 					{{ user_pulldown(user) }}
                 {% else %}
                     <form class="navbar-form navbar-right">
-                        <button class="navbar-link btn btn-default login" href="{{ url_for('page_signin') }}">Sign in</button>
-						<button class="btn btn-default btn-success" role="button" href="{{ url_for('page_createaccount') }}">Create account</button>
+                        <a class="navbar-link btn btn-default login" href="{{ url_for('page_signin') }}">Sign in</a>
+						<a class="btn btn-default btn-success" role="button" href="{{ url_for('page_createaccount') }}">Create account</a>
                     </form>
                 {% endif %}
             </div>
