@@ -1,0 +1,96 @@
+.articles-content-heading {
+  border-bottom:1px solid #ddd;
+}
+
+.articles-section-first-article {
+  position:relative;
+}
+
+.articles-section-first-article-background {
+  filter:blur(2px) brightness(50%);
+  background-image:url(../../assets/img/sony.jpg);
+  height:200px;
+  background-position:center;
+  background-size:cover;
+  border-radius:5px;
+  position:absolute;
+  left:0;
+  right:0;
+  display:block;
+  z-index:-1;
+}
+
+.articles-section-first-article-meta {
+  height:200px;
+  position:absolute;
+  left:0;
+  right:0;
+  z-index:0;
+  margin-top:0;
+  margin-left:20px;
+}
+
+.articles-section-first-article-meta-content {
+  margin-top:10px;
+  text-shadow:2px 2px #444;
+  position:absolute;
+  margin-bottom:20px;
+  margin-left:20px;
+  margin-top:40px;
+}
+
+.articles-section-first-article-meta-content-chapter-number {
+  font-size:64px;
+  margin:0;
+  padding:0;
+  color:#fff;
+  display:inline;
+}
+
+.articles-section-first-article-meta-content-title {
+  margin-top:5px;
+  color:#eee;
+}
+
+.articles-section-second-article {
+  margin-top:205px;
+}
+
+.articles-feature-image img {
+  border-radius:5px;
+}
+
+h1.articles-meta-chapter {
+  color:#aaa;
+  font-size:small;
+  text-transform:uppercase;
+  margin-top:5px;
+  margin-bottom:5px;
+  font-weight:bold;
+}
+
+.articles-meta-title {
+  font-size:x-large;
+  margin-top:5px;
+}
+
+.articles-series-row {
+  margin-bottom:15px;
+}
+
+.articles-meta-date {
+  font-size:small;
+  color:#aaa;
+  margin-bottom:5px;
+  margin-top:5px;
+}
+
+h1.articles-meta-chapter-big {
+  color:#aaa;
+  text-transform:uppercase;
+  margin-top:10px;
+  margin-bottom:0px;
+  font-size:medium;
+  font-weight:bold;
+}
+
