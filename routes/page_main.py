@@ -1,6 +1,6 @@
 from __main__ import app
 from flask import session, url_for, render_template
-from models import User
+from models import User, ArticleSeries
 
 @app.route('/')
 def page_main():
