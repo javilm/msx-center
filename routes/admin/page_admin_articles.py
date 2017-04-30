@@ -17,6 +17,6 @@ def page_admin_articles():
 	template_options = {}
 	template_options['user'] = user
 	template_options['active'] = 'articles'
-	template_options['articles' = Article.query.order_by(Article.id).all()
+	template_options['articles'] = Article.query.order_by(Article.id).all()
 
 	return render_template('admin/articles.html', **template_options)
