@@ -21,7 +21,7 @@
 						{% if navbar_series|length %}
 	                    	<ul class="dropdown-menu">
 		                    	{% for series in navbar_series %}
-			                    	<li><a href="{{ url_for('page_series_articles', series_id=serie.id, slug=serie.slug) }}">{{ serie.title_en }}</a></li>
+			                    	<li><a href="{{ url_for('page_series_articles', series_id=series.id, slug=series.slug) }}">{{ series.title_en }}</a></li>
 		                    	{% endfor %}
 	                    	</ul>
 	                    {% endif %}
