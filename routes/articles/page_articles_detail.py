@@ -15,7 +15,7 @@ def page_articles_detail(article_id, slug):
 	template_options['series'] = ArticleSeries.query.filter_by(id=series_id).first()
 
 	# Get all the articles in this series
-	template_options['article'] = Article.query.filter_by(id=article_id)first()
+	template_options['article'] = Article.query.filter_by(id=article_id).first()
 
 	# XXX Create this template
 	return render_template('articles/article-detail.html', **template_options)
