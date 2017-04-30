@@ -10,8 +10,11 @@ def page_articles():
 
 	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
+	
+	# List of article series for the navbar
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 
 	# Get all the article series
-	tmeplate_options['series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	tmeplate_options['series'] = template_options['navbar_series']
 
 	return render_template('articles/articles.html', **template_options)
