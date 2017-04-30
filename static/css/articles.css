@@ -94,3 +94,9 @@ h1.articles-meta-chapter-big {
   font-weight:bold;
 }
 
+.difficulty-label .fa {
+  color:yellow;
+  text-shadow:0px 1px 1px black;
+}
+
+
