@@ -25,6 +25,20 @@
 
 {% macro difficulty_label(level) %}
 	{% if level == 1 %}
+		<span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span>
+	{% elif level == 2 %}
+		<span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span>
+	{% elif level == 3 %}
+		<span class="label label-warning text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Intermediate</span>
+	{% elif level == 4 %}
+		<span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i> Difficult</span>
+	{% elif level == 5 %}
+		<span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Expert</span>
+	{% endif %}
+{% endmacro %}
+
+{% macro difficulty_label_old(level) %}
+	{% if level == 1 %}
 		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span></p>
 	{% elif level == 2 %}
 		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span></p>
@@ -50,7 +64,6 @@
         <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
 		{% if article.level %}{{ difficulty_label(article.level) }}{% endif %} <span class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</span>
         <p>{{ article.summary_en }}</p>
-        {% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
         <a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
     </div>
 </div>
