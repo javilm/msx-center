@@ -42,7 +42,7 @@ def page_thread(thread_id, slug):
 			'thread': thread,
 			'lounge': thread.lounge,
 			'errors': user_errors,
-			'navbar_series' = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+			'navbar_series': ArticleSeries.query.order_by(ArticleSeries.priority).all()
 		}
 
 		return render_template('lounges/lounges-thread.html', **template_options)
