@@ -48,9 +48,10 @@
         <div class="hidden-xs articles-feature-image"><img src="{{ url_for('send_image', image_id=article.header_image_id, dummy_filename='header_image') }}" class="img-responsive"></div>
 		{% if article.chapter %}<h1 class="articles-meta-chapter-big">Chapter {{ article.chapter }}</h1>{% endif %}
         <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
-        <p class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</p>
+		{% if article.level %}{{ difficulty_label(article.level) }}{% endif %} <span class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</span>
         <p>{{ article.summary_en }}</p>
         {% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
+        <a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
     </div>
 </div>
 {% endmacro %}
@@ -64,9 +65,9 @@
         <div>
 			{% if article.chapter %}<h1 class="articles-meta-chapter">Chapter {{ article.chapter }}</h1>{% endif %}
             <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
-            <p class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</p>
+            {% if article.level %}{{ difficulty_label(article.level) }}{% endif %} <span class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</span>
 			<p>{{ article.summary_en }}</p>
-			{% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
+			<a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
         </div>
     </div>
 </div>
