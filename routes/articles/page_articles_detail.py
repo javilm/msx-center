@@ -2,7 +2,7 @@ from __main__ import app
 from flask import url_for, render_template, session
 from models import User, ArticleSeries, Article
 
-@app.route('/articles/<int:article_id_id>/<string:slug>', methods=['GET'])
+@app.route('/articles/<int:article_id>/<string:slug>', methods=['GET'])
 def page_articles_detail(article_id, slug):
 	session['next'] = url_for('page_articles_detail', article_id=article_id, slug=slug)
 
