@@ -25,15 +25,15 @@
 
 {% macro difficulty_label(level) %}
 	{% if level == 1 %}
-		<p><span class="label label-success text-uppercase"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span></p>
+		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span></p>
 	{% elif level == 2 %}
-		<p><span class="label label-success text-uppercase"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span></p>
+		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span></p>
 	{% elif level == 3 %}
-		<p><span class="label label-warning text-uppercase"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Intermediate</span></p>
+		<p><span class="label label-warning text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Intermediate</span></p>
 	{% elif level == 4 %}
-		<p><span class="label label-danger text-uppercase"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i> Difficult</span></p>
+		<p><span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i> Difficult</span></p>
 	{% elif level == 5 %}
-		<p><span class="label label-danger text-uppercase"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Expert</span></p>
+		<p><span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Expert</span></p>
 	{% endif %}
 {% endmacro %}
 
