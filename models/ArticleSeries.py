@@ -22,3 +22,6 @@ class ArticleSeries(db.Model):
 	category = db.relationship('Category')
 	slug = db.Column(db.String())
 	priority = db.Column(db.Integer)
+	num_articles = db.Column(db.Integer)
+	date_newest_article = db.Column(db.DateTime)
+
