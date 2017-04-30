@@ -17,5 +17,4 @@ def page_series_articles(series_id, slug):
 	# Get all the articles in this series
 	template_options['articles'] = Article.query.filter_by(series_id=series_id).order_by(Article.date_published).all()
 
-	# XXX Create this template
-	return render_template('articles/articles.html', **template_options)
+	return render_template('articles/articles-series-detail.html', **template_options)
