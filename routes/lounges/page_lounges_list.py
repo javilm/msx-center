@@ -13,7 +13,7 @@ def page_lounges_list():
 
 	# Get the latest 5 threads for each lounge
 	threads = {}
-	for lounge in lounges:
+	for lounge in template_options['lounges']:
 		threads[lounge.id] = ConversationThread.query.filter(ConversationThread.lounge_id == lounge.id).order_by(ConversationThread.last_post_date).limit(5).all()
 
 	template_options['threads'] = threads
