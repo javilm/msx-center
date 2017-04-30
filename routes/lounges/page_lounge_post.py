@@ -24,7 +24,7 @@ def page_lounge_post(lounge_id):
 			'lounge': lounge,
 			'user': user,
 			'errors': ConversationLounge.get_permission_errors(user, lounge),
-			'navbar_series' = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+			'navbar_series': ArticleSeries.query.order_by(ArticleSeries.priority).all()
 		}
 
 		return render_template('lounges/lounges-startconversation.html', **template_options)
