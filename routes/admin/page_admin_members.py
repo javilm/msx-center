@@ -14,7 +14,12 @@ def page_admin_members():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	# Get the list of members
-	members = User.query.all()
 
-	return render_template('admin/members.html', user=user, members=members, active='members')
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'members'
+
+	# Get the list of members
+	template_options['members'] = User.query.all()
+
+	return render_template('admin/members.html', **template_options)

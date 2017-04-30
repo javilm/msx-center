@@ -7,10 +7,9 @@ def page_articles():
 	session['next'] = url_for('page_articles')
 
 	template_options = {}
-
-	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
-	
+	template_options['active'] = 'articles'
+
 	# List of article series for the navbar
 	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 

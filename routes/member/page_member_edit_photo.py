@@ -1,6 +1,6 @@
 from __main__ import app, db
 from flask import abort, request, render_template, redirect, url_for
-from models import User, MemberPortrait
+from models import User, MemberPortrait, ArticleSeries
 
 @app.route('/member/edit/photo', methods=['GET', 'POST'])
 def page_member_edit_photo():
@@ -9,11 +9,19 @@ def page_member_edit_photo():
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
 
+	template_options = {}
+
 	if user is None:
 		abort(401)
 
+	template_options['user'] = user
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+
 	if request.method == 'GET':
-		return render_template('member/member_edit_photo.html', user=user, errors=None)
+	
+		template_options['errors'] = None
+		
+		return render_template('member/member_edit_photo.html', **template_options)
 	else:
 		# Request method is POST
 
@@ -26,6 +34,7 @@ def page_member_edit_photo():
 			user.member_portrait_id = int(request.form['member_portrait_number'])
 		else:
 			user.member_portrait_id = None
+
 		db.session.add(user)
 
 		# Then process the upload, if there is one
@@ -41,15 +50,16 @@ def page_member_edit_photo():
 					user.member_portrait_id = portrait.id
 					upload_handled = True
 				else:
-					errors = "The file you uploaded doesn't seem to be a valid image. Please try a different file."
-					return render_template('member/member_edit_photo.html', user=user, errors=errors)
+					template_options['errors'] = "The file you uploaded doesn't seem to be a valid image. Please try a different file."
+					return render_template('member/member_edit_photo.html', **template_options)
 			# else there was no file upload
 
 		# Save the changes in the database
 		db.session.commit()
 
 		# Finally, redirect the user back to his profile view (if there were no uploads) or back to the portrait page (if there were)
-		if upload_handled:
-			return render_template('member/member_edit_photo.html', user=user, errors=None)
+		if upload_handled:	
+			template_options['errors'] = None
+			return render_template('member/member_edit_photo.html', **template_options)
 		else:
 			return redirect(url_for('page_member', member_id=user.id, slug=user.slug))

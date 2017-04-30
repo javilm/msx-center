@@ -7,10 +7,9 @@ def page_articles_detail(article_id, slug):
 	session['next'] = url_for('page_articles_detail', article_id=article_id, slug=slug)
 
 	template_options = {}
-
-	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
-
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	
 	# Get the details for this series
 	template_options['series'] = ArticleSeries.query.filter_by(id=series_id).first()
 

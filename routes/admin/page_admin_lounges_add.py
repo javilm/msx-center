@@ -15,11 +15,13 @@ def page_admin_lounges_add():
 			abort(401)
 
 	if request.method == 'GET':
-		return render_template('admin/lounges-add.html', user=user, active='lounges')
-	else:
-		# DEBUG
-		log_form_vars(request.form)
 
+		template_options = {}
+		template_options['user'] = user
+		template_options['active'] = 'lounges'
+
+		return render_template('admin/lounges-add.html', **template_options)
+	else:
 		# Method is POST
 
 		# XXX	No validation in the controller, but there's sanitation in the model constructor. At most we'll have 

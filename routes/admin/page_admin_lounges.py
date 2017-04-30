@@ -13,6 +13,9 @@ def page_admin_lounges():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	lounges = ConversationLounge.query.order_by(ConversationLounge.priority).all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'lounges'
+	template_options['lounges'] = ConversationLounge.query.order_by(ConversationLounge.priority).all()
 
-	return render_template('admin/lounges.html', user=user, active='lounges', lounges=lounges)
+	return render_template('admin/lounges.html', **template_options)

@@ -14,6 +14,9 @@ def page_admin_articles():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 			
-	articles = Article.query.order_by(Article.id).all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'articles'
+	template_options['articles' = Article.query.order_by(Article.id).all()
 
-	return render_template('admin/articles.html', user=user, active='articles', articles=articles)
+	return render_template('admin/articles.html', **template_options)

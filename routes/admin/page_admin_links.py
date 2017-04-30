@@ -14,6 +14,9 @@ def page_admin_links():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	links = ExternalLink.query.all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'links'
+	template_options['links'] = ExternalLink.query.all()
 
-	return render_template('admin/links.html', user=user, active='links', links=links)
+	return render_template('admin/links.html', **template_options)

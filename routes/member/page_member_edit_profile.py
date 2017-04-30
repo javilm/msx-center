@@ -1,20 +1,25 @@
 from __main__ import app, db
 from flask import abort, request, render_template, redirect, url_for
 from slugify import slugify
-from models import User
+from models import User, ArticleSeries
 
 @app.route('/member/edit/profile', methods=['GET', 'POST'])
 def page_member_edit_profile():
 	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
 	
-	# Get the signed in User (if there's one), or None
+	template_options = {}
 	user = User.get_signed_in_user()
 
 	if user is None:
 		abort(401)
 
+	template_options['user'] = user
+	template_options['country_list'] = country_list
+	template_options['timezone_list'] = timezone_list
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+
 	if request.method == 'GET':
-		return render_template('member/member_edit_profile.html', user=user, country_list=country_list, timezone_list=timezone_list)
+		return render_template('member/member_edit_profile.html', **template_options)
 	else:
 		# Method is POST, user trying to change the passwordd
 		num_validation_errors = 0

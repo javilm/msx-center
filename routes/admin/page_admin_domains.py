@@ -14,4 +14,8 @@ def page_admin_domains():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/domains.html', user=user, active='domains')
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'domains'
+
+	return render_template('admin/domains.html', **template_options)

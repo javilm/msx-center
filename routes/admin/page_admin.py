@@ -13,4 +13,8 @@ def page_admin():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	return render_template('admin/dashboard.html', user=user, active='dashboard')
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'dashboard'
+	
+	return render_template('admin/dashboard.html', **template_options)

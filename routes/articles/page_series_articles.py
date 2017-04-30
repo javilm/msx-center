@@ -10,8 +10,9 @@ def page_series_articles(series_id, slug):
 
 	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
+	template_options['active'] = 'articles'
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 
-	# Get the details for this series
 	template_options['series'] = ArticleSeries.query.filter_by(id=series_id).first()
 
 	# Get all the articles in this series

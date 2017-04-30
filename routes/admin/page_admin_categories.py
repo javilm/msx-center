@@ -13,6 +13,9 @@ def page_admin_categories():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	categories = Category.query.all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'categories'
+	template_options['categories'] = Category.query.all()
 
-	return render_template('admin/categories.html', user=user, active='categories', categories=categories)
+	return render_template('admin/categories.html', **template_options)

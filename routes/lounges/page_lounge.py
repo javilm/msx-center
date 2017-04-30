@@ -1,6 +1,6 @@
 from __main__ import app
 from flask import url_for, render_template, abort
-from models import User, ConversationLounge
+from models import User, ConversationLounge, ArticleSeries
 
 @app.route('/lounges/<int:lounge_id>/<string:slug>/list', methods=['GET'])
 def page_lounge(lounge_id, slug):
@@ -19,7 +19,9 @@ def page_lounge(lounge_id, slug):
 	# Render the template
 	template_options = {
 		'user': user,
-		'lounge': lounge
+		'lounge': lounge,
+		'series': ArticleSeries.query.order_by(ArticleSeries.priority).all()
+
 	}
 
 	return render_template('lounges/lounge-thread-list.html', **template_options)

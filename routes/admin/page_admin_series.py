@@ -13,6 +13,9 @@ def page_admin_series():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	series = ArticleSeries.query.all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'series'
+	template_options['series'] = ArticleSeries.query.all()
 
-	return render_template('admin/series.html', user=user, active='series', series=series)
+	return render_template('admin/series.html', **template_options)

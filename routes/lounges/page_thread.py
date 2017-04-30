@@ -1,7 +1,7 @@
 import json
 from __main__ import app, db
 from flask import url_for, render_template, request, abort, session
-from models import User, ConversationThread, ConversationMessage
+from models import User, ConversationThread, ConversationMessage, ArticleSeries
 
 @app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
 def page_thread(thread_id, slug):
@@ -41,7 +41,8 @@ def page_thread(thread_id, slug):
 			'user': user,
 			'thread': thread,
 			'lounge': thread.lounge,
-			'errors': user_errors
+			'errors': user_errors,
+			'navbar_series' = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 		}
 
 		return render_template('lounges/lounges-thread.html', **template_options)

@@ -14,6 +14,9 @@ def page_admin_news():
 		if not user.is_staff and not user.is_superuser:
 			abort(401)
 
-	news_items = NewsItem.query.all()
+	template_options = {}
+	template_options['user'] = user
+	template_options['active'] = 'news'
+	template_options['news_items'] = NewsItem.query.all()
 
-	return render_template('admin/news.html', user=user, active='news', news_items=news_items)
+	return render_template('admin/news.html', **template_options)

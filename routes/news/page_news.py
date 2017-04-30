@@ -1,6 +1,6 @@
 from __main__ import app
 from flask import url_for, session, render_template
-from models import User, NewsItem
+from models import User, NewsItem, ArticleSeries
 
 @app.route('/news', methods=['GET'])
 def page_news():
@@ -12,7 +12,8 @@ def page_news():
 	template_options['user'] = User.get_signed_in_user()
 
 	# Get the news items
-#	template_options['items'] = NewsItem.query.order_by(NewsItem.date_published.desc()).limit(5)
 	template_options['items'] = NewsItem.query.all()
+
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 
 	return render_template('news/news-list.html', **template_options)

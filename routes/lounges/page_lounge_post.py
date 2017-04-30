@@ -1,7 +1,7 @@
 import json
 from __main__ import app
 from flask import url_for, request, abort, render_template, session
-from models import User, ConversationLounge, ConversationThread, ConversationMessage
+from models import User, ConversationLounge, ConversationThread, ConversationMessage, ArticleSeries
 
 @app.route('/lounge/<int:lounge_id>/new', methods=['GET', 'POST'])
 def page_lounge_post(lounge_id):
@@ -20,14 +20,11 @@ def page_lounge_post(lounge_id):
 		if lounge is None:
 			abort(404)
 
-		# Validate the user's permissions (the user may be denied posting based on more than one criteria, but
-		# the template will only display the first that matches)
-		user_errors = ConversationLounge.get_permission_errors(user, lounge)
-
 		template_options = {
 			'lounge': lounge,
 			'user': user,
-			'errors': user_errors
+			'errors': ConversationLounge.get_permission_errors(user, lounge),
+			'navbar_series' = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 		}
 
 		return render_template('lounges/lounges-startconversation.html', **template_options)

@@ -1,10 +1,12 @@
 from __main__ import app, db
 from flask import abort, render_template, redirect, url_for
-from models import User
+from models import User, ArticleSeries
 
 @app.route('/member/edit/password', methods=['GET', 'POST'])
 def page_member_edit_password():
 	# No 'next' value in session because anonymous users won't be coming here. Therefore, no sense in redirecting here after signing in.
+
+	template_options = {}
 	
 	# Get the signed in User (if there's one), or None
 	user = User.get_signed_in_user()
@@ -12,8 +14,14 @@ def page_member_edit_password():
 	if user is None:
 		abort(401)
 
+	template_options['user'] = user
+	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+
 	if request.method == 'GET':
-		return render_template('member/member_edit_password.html', user=user, errors=None)
+
+		template_options['errors'] = None
+		return render_template('member/member_edit_password.html', **template_options)
+
 	else:
 		# Method is POST, user trying to change the passwordd
 		num_validation_errors = 0
@@ -39,8 +47,10 @@ def page_member_edit_password():
 			num_validation_errors += 1
 			error_messages.append("The current password that you entered isn't the one on record.")
 
+		template_options['errors'] = error_messages
+
 		if num_validation_errors:
-			return render_template('member/member_edit_password.html', user=user, errors=error_messages)
+			return render_template('member/member_edit_password.html', **template_options)
 		else:
 			user.set_password(request.form['new_pass'])
 			db.session.add(user)

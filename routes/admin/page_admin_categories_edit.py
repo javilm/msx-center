@@ -20,8 +20,13 @@ def page_admin_categories_edit(category_id):
 		abort(404)
 
 	if request.method == 'GET':
-		# Method is GET
-		return render_template('admin/categories-edit.html', user=user, active='categories', category=category)
+
+		template_options = {}
+		template_options['user'] = user
+		template_options['active'] = 'categories'
+		template_options['category'] = category
+		
+		return render_template('admin/categories-edit.html', **template_options)
 	else:
 		# Method is POST
 		category.name_en = LH.document_fromstring(request.form['field_name_en']).text_content() if request.form['field_name_en'] else ''

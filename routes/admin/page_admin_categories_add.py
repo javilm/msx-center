@@ -15,7 +15,12 @@ def page_admin_categories_add():
 
 	if request.method == 'GET':
 		# Method is GET
-		return render_template('admin/categories-add.html', user=user, active='categories')
+		
+		template_options = {}
+		template_options['user'] = user
+		template_options['active'] = 'categories'
+		
+		return render_template('admin/categories-add.html', **template_options)
 	else:
 		# Method is POST
 

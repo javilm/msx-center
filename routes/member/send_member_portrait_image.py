@@ -3,7 +3,7 @@ from __main__ import app
 from flask import abort, send_file
 from models import MemberPortrait, StoredImage
 
-@app.route('/member/portrait/<int:portrait_id>/<string:size>')
+@app.route('/member/portrait/<int:portrait_id>/<string:size>', methods=['GET'])
 def send_member_portrait_image(portrait_id, size):
 	# If "size" isn't either 'standard' or 'small' then return a 404
 	if size != 'standard' and size != 'small':
