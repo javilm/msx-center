@@ -66,7 +66,7 @@
 			<span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
 		</p>
         <p>{{ article.summary_en }}</p>
-        {% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
+		{% if article.level %}<p>{{ difficulty_label(article.level) }}</p>{% endif %}
         <a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
     </div>
 </div>
@@ -85,8 +85,8 @@
 	            <span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
             </p>
 			<p>{{ article.summary_en }}</p>
-			{% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
-			<a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
+			{% if article.level %}<p>{{ difficulty_label(article.level) }}</p>{% endif %}
+			<a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
         </div>
     </div>
 </div>
