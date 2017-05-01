@@ -63,10 +63,11 @@
 		{% if article.chapter %}<h1 class="articles-meta-chapter-big">Chapter {{ article.chapter }}</h1>{% endif %}
         <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
 		<p>
-			{% if article.level %}{{ difficulty_label(article.level) }}{% endif %} <span class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</span>
+			<span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
 		</p>
         <p>{{ article.summary_en }}</p>
-        <a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
+        {% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
+        <a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
     </div>
 </div>
 {% endmacro %}
@@ -81,9 +82,10 @@
 			{% if article.chapter %}<h1 class="articles-meta-chapter">Chapter {{ article.chapter }}</h1>{% endif %}
             <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
 			<p>
-	            {% if article.level %}{{ difficulty_label(article.level) }}{% endif %} <span class="articles-meta-date">{{ article.date_published.strftime('%b %-d, %Y') }}</span>
+	            <span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
             </p>
 			<p>{{ article.summary_en }}</p>
+			{% if article.level %}{{ difficulty_label(article.level) }}{% endif %}
 			<a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
         </div>
     </div>
