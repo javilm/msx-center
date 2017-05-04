@@ -20,6 +20,5 @@ def page_articles_detail(article_id, slug):
 	# the series this article belongs to	
 	template_options['series'] = ArticleSeries.query.filter_by(id=article.series_id).first()
 
-
 	# XXX Create this template
 	return render_template('articles/article-detail.html', **template_options)

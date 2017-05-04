@@ -44,31 +44,31 @@
 {% endmacro %}
 
 {% block content %}
-	<div class="row">
-	    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-	        <h1 class="articles-content-heading">{{ series.title_en }} <span class="small text-uppercase">{{ series.num_articles }} articles</span></h1>
-	        <p class="lead">{{ series.desc_en }}</p>
-	    </div>
+<div class="row">
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <h1 class="articles-content-heading">{{ series.title_en }} <span class="small text-uppercase">{{ series.num_articles }} articles</span></h1>
+        <p class="lead">{{ series.desc_en }}</p>
+    </div>
+</div>
+
+{% if series.num_articles == 0 %}
+	{# Print a warning if there are no articles in this series #}
+	<div class="panel panel-danger">
+		<div class="panel-body">This series has no articles.</div>
 	</div>
-	
-	{% if series.num_articles == 0 %}
-		{# Print a warning if there are no articles in this series #}
-		<div class="panel panel-danger">
-			<div class="panel-body">This series has no articles.</div>
-		</div>
-	{% elif series.num_articles > 2 %}
-		{# If there are at least 3 articles print the first two with big header images and fonts, and the rest in smaller, single-article rows #}
-		<div class="row articles-series-row">
-			{{ article_big(articles[0]) }}
-			{{ article_big(articles[1]) }}	
-		</div>
-		{% for article in articles[2:] %}
-			{{ article_standard(article) }}	
-		{% endfor %}
-	{% else %}
-		{# If there's at most two articles then print them in single-article rows #}
-		{% for article in articles %}
-			{{ article_standard(article) }}	
-		{% endfor %}
-	{% endif %}
+{% elif series.num_articles > 2 %}
+	{# If there are at least 3 articles print the first two with big header images and fonts, and the rest in smaller, single-article rows #}
+	<div class="row articles-series-row">
+		{{ article_big(articles[0]) }}
+		{{ article_big(articles[1]) }}	
+	</div>
+	{% for article in articles[2:] %}
+		{{ article_standard(article) }}	
+	{% endfor %}
+{% else %}
+	{# If there's at most two articles then print them in single-article rows #}
+	{% for article in articles %}
+		{{ article_standard(article) }}	
+	{% endfor %}
+{% endif %}
 {% endblock %}
