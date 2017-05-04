@@ -5,7 +5,7 @@ import lxml.html as LH
 from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
-from . import StoredImage
+from . import StoredImage, ArticleComment
 
 association_table = db.Table('association_article_external_link',
 	db.Column('article_id', db.Integer, db.ForeignKey('articles.id'), nullable=False),
@@ -59,6 +59,7 @@ class Article(db.Model):
 	is_pinned = db.Column(db.Boolean)
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
+	comments = db.relationship("ArticleComment", backref="article")
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
@@ -142,3 +143,11 @@ class Article(db.Model):
 			del img, tmp_img
 
 		self.body_en = LH.tostring(root)
+				
+	def add_comment(self, comment):
+		if comment is not None:
+			db.session.add(self)
+			self.comments.append(comment)
+			self.num_comments = len(self.comments)
+			db.session.commit()
+

@@ -1,0 +1,108 @@
+{% extends "layout/template-base.html" %}
+{% import 'macros/article-macros.html' as article-macros %}
+{% import 'macros/sidebar-macros.html' as sidebar-macros %}
+{% import 'macros/comments-macros.html' as comments-macros %}
+
+{% block title %}MSX Center - {{ series.title_en }} - {{ article.title_en}}{% endblock %}
+
+{% block extracss %}
+    <link rel="stylesheet" href="/static/css/articles.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <div id="article-full">
+	        {{ article-macros.breadcrumbs(series, article) }}
+            <h2>{{ article.title_en }}</h2>
+            <div id="article-metadata"><img src="{{ article.author.profile_photo_url(size='small') }}">
+                <div>
+                    <p class="article-author-name"><a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}"><strong>{{ article.author.real_name }}</strong></a> </p>
+                    <p class="article-date">Posted on {{ article.date_published.strftime('%b %-d, %Y') }}</p>
+                </div>
+            </div>
+            
+            {# header image #}
+            <div id="header-image">
+	            <img src="{{ url_for('send_image', image_id=article.header_image_id, dummy_filename='article_header_%s' % article.id) }}" class="img-responsive">
+            </div>
+
+			{# article body #}
+            <div id="article-body" class="text-justify">
+                <p>{{ article.body_en }}</p>
+            </div>
+
+			{# related links #}
+			{% if article.links|length %}
+	            <div id="article-links">
+	                <h3 class="article-section-divider">Relevant links</h3>
+	                <dl class="related-links">
+						{% for link in article.links %}
+						    <dt><a href="{{ link.url }}"><span class="fa fa-external-link"></span> {{ link.title_en }}</a></dt>
+						    <dd>{{ link.desc_en }}</dd>
+					    {% endfor %}
+					</dl>
+	            </div>
+			{% endif %}
+
+            <div id="article-comments">
+                <h3 class="article-section-divider">Comments </h3>
+ 
+                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="label label-warning"><i class="fa fa-star"></i></span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
+                        <div class="panel-body"><span>WHATEVER </span></div>
+                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
+                    </div>
+                </div>
+ 
+                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="label label-primary">AUTHOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
+                        <div class="panel-body"><span>WHATEVER </span></div>
+                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
+                    </div>
+                </div>
+ 
+                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="label label-danger">MODERATOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
+                        <div class="panel-body"><span>WHATEVER </span></div>
+                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
+                    </div>
+                </div>
+ 
+                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
+                    <form id="user-reply">
+                        <div class="form-group">
+                            <textarea class="form-control" placeholder="Place Quill here"></textarea>
+                        </div>
+                    </form>
+                    <div class="user-reply-buttons">
+                        <button class="btn btn-success btn-sm" type="submit">Post reply</button>
+                        <button class="btn btn-default btn-sm" type="reset">Cancel </button>
+                    </div>
+                </div>
+ 
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+		{{ sidebar-macros.sidebar_sponsor() }}
+		{{ sidebar-macros.sidebar_most_popular() }}
+        <h4 class="news-section-divider">News archive </h4>
+        <ul>
+            <li><a href="#">March 2017 (12 items)</a></li>
+            <li><a href="#">February 2017 (8 items)</a></li>
+            <li><a href="#">January 2017 (1 item)</a></li>
+            <li><a href="#">December 2016 (15 items)</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

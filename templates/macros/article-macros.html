@@ -1,0 +1,51 @@
+{% macro difficulty_label(level) %}
+	{% if level == 1 %}
+		<span class="label label-success text-uppercase difficulty-label">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i> Beginner
+		</span>
+	{% elif level == 2 %}
+		<span class="label label-success text-uppercase difficulty-label">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i> Easy
+		</span>
+	{% elif level == 3 %}
+		<span class="label label-warning text-uppercase difficulty-label">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i> Intermediate
+		</span>
+	{% elif level == 4 %}
+		<span class="label label-danger text-uppercase difficulty-label">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star-o"></i> Difficult
+		</span>
+	{% elif level == 5 %}
+		<span class="label label-danger text-uppercase difficulty-label">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star-o"></i>
+			<i class="fa fa-star-o"></i> Expert
+		</span>
+	{% endif %}
+{% endmacro %}
+
+{% macro breadcrumbs(series, article) %}
+<p class="article-breadcrumbs">
+	<strong>Articles</strong>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
+	<a href="{{ url_for('page_series_articles', series_id=series.id, slug=series.slug) }}">{{ series.title_en }}</a>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
+	{{ article.title_en }}
+</p>
+{% endmacro %}

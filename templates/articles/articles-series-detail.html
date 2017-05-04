@@ -1,60 +1,11 @@
 {% extends "layout/template-base.html" %}
+{% import 'macros/article-macros.html' as article-macros %}
 
 {% block title %}MSX Center - Articles in {{ series.title_en }}{% endblock %}
 
 {% block extracss %}
     <link rel="stylesheet" href="/static/css/articles.css">
 {% endblock %}
-
-{% macro news_sidebar_most_popular() %}
-<h4 class="news-section-divider">Most popular</h4>
-<p class="text-muted">The most visited articles of the last 90 days:</p>
-<ol>
-	<li><a href="#">Something happened in that user meeting</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
-	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
-</ol>
-{% endmacro %}
-
-{% macro difficulty_label(level) %}
-	{% if level == 1 %}
-		<span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span>
-	{% elif level == 2 %}
-		<span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span>
-	{% elif level == 3 %}
-		<span class="label label-warning text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Intermediate</span>
-	{% elif level == 4 %}
-		<span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i> Difficult</span>
-	{% elif level == 5 %}
-		<span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Expert</span>
-	{% endif %}
-{% endmacro %}
-
-{% macro difficulty_label_old(level) %}
-	{% if level == 1 %}
-		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Beginner</span></p>
-	{% elif level == 2 %}
-		<p><span class="label label-success text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Easy</span></p>
-	{% elif level == 3 %}
-		<p><span class="label label-warning text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Intermediate</span></p>
-	{% elif level == 4 %}
-		<p><span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i> Difficult</span></p>
-	{% elif level == 5 %}
-		<p><span class="label label-danger text-uppercase difficulty-label"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i> Expert</span></p>
-	{% endif %}
-{% endmacro %}
-
-{% macro news_sidebar_sponsor() %}
-<h4 class="news-section-divider">Sponsor</h4>
-<div class="text-center"><img src="/static/img/Ads/googleads-200x200.png"></div>
-{% endmacro %}
 
 {% macro article_big(article) %}
 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -66,7 +17,7 @@
 			<span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
 		</p>
         <p>{{ article.summary_en }}</p>
-		{% if article.level %}<p>{{ difficulty_label(article.level) }}</p>{% endif %}
+		{% if article.level %}<p>{{ article-macros.difficulty_label(article.level) }}</p>{% endif %}
         <a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
     </div>
 </div>
@@ -85,7 +36,7 @@
 	            <span class="articles-meta-date">By <a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a>, {{ article.date_published.strftime('%b %-d, %Y') }}</span>
             </p>
 			<p>{{ article.summary_en }}</p>
-			{% if article.level %}<p>{{ difficulty_label(article.level) }}</p>{% endif %}
+			{% if article.level %}<p>{{ article-macros.difficulty_label(article.level) }}</p>{% endif %}
 			<a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
         </div>
     </div>
