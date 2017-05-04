@@ -13,7 +13,8 @@ class ArticleComment(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	article_id = db.Column(db.Integer, db.ForeignKey('articles.id'))
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	author = db.relationship('User', backref='article_comments')
 	body_en = db.Column(db.String())
 	body_ja = db.Column(db.String())
 	body_nl = db.Column(db.String())
@@ -21,7 +22,6 @@ class ArticleComment(db.Model):
 	body_pt = db.Column(db.String())
 	body_kr = db.Column(db.String())
 	score = db.Column(db.Integer)				# Message score. Calculated from the likes and dislikes
-	post_as = db.Column(db.Enum(PostAsType))
 	date_posted = db.Column(db.DateTime)
 	is_reported = db.Column(db.Boolean)			# Reported for moderation
 	is_hidden = db.Column(db.Boolean)			# Hidden by administration for any motive
@@ -30,14 +30,12 @@ class ArticleComment(db.Model):
 	is_staff_favorite = db.Column(db.Boolean)	# Favorited by the staff. Highlighted.
 	remote_ip = db.Column(db.String())
 	remote_host = db.Column(db.String())
-	# The "user" attribute for every ConversationMessage is already defined in the User model as a
-	# backref in the relationship with the ConversationMessage model
 
-	def __init__(self, user, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
-		if user is None:
-			self.user_id = None
+	def __init__(self, author=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+		if author is None:
+			self.author_id = None
 		else:
-			self.user_id = user.id
+			self.author_id = user.id
 		self.thread_id = None
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
@@ -46,7 +44,6 @@ class ArticleComment(db.Model):
 		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
 		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
 		self.score = 0
-		self.post_as = post_as	# ANON, REALNAME or NICKNAME
 		self.date_posted = datetime.utcnow()
 		self.is_reported = False
 		self.is_hidden = False
