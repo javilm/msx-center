@@ -90,6 +90,9 @@ def page_admin_articles_edit(article_id):
 		article.is_archived = request.form['is_archived']
 		article.allows_comments = request.form['allows_comments']
 
+		# Re-process the body's HTML code in case new images are uploaded
+		article.html_extract_images()
+
 		# Remove all existing related links and add the ones from the form
 		for link in article.links:
 			article.links.remove(link)

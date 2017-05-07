@@ -1,10 +1,8 @@
-import copy
 from datetime import datetime
-from lxml import etree
-import lxml.html as LH
 from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
+from utils import html_image_extractor
 from . import StoredImage, ArticleComment
 
 association_table = db.Table('association_article_external_link',
@@ -15,6 +13,11 @@ association_table = db.Table('association_article_external_link',
 
 class Article(db.Model):
 	__tablename__ = 'articles'
+
+	model_config = {
+		'image_max_width': 1200		# Maximum width of images imported into an article. If bigger, images
+									# will be resized.
+	}
 
 	id = db.Column(db.Integer, primary_key=True)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -107,43 +110,23 @@ class Article(db.Model):
 		self.score = 0
 		self.slug = slug
 
-		self.extract_images()
+		self.html_extract_images()
 
-	def extract_images(self):
-		root = LH.fromstring(self.body_en)
+	def html_extract_images(self):
 
-		for element in root.iter('img'):
-			# Make a copy of the original HTML element
-			tmp_element = copy.copy(element)
+		# Extract images embedded in the HTML
+		params = {
+			'add_classes': ['img-responsive'],
+			'image_max_dimension': 1200,
+			'lightbox_format_string': 'Images for article %s&'
+		}
+		self.body_en = html_image_extractor(self.body_en, **params)
+		self.body_ja = html_image_extractor(self.body_ja, **params)
+		self.body_nl = html_image_extractor(self.body_nl, **params)
+		self.body_es = html_image_extractor(self.body_es, **params)
+		self.body_pt = html_image_extractor(self.body_pt, **params)
+		self.body_kr = html_image_extractor(self.body_kr, **params)
 
-			# Generate an image by decoding the Base64 content of the src attribute
-			img = StoredImage.from_datauri(element.attrib['src'])
-
-			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
-			tmp_img = StoredImage.query.filter_by(md5_hash=img.md5_hash).first()
-			if tmp_img is None:
-				db.session.add(img)
-				db.session.commit()
-			else:
-				img = tmp_img
-
-			# Modify the attributes in the copy of the <img...> tag
-			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.jpg' % img.id)
-			tmp_element.attrib['class'] = 'img-responsive'
-
-			# Create a new <A ...> element that will contain the modified <IMG ...> tag
-			new = etree.Element("a", href=tmp_element.attrib['src'])
-			new.attrib['data-lightbox'] = 'Images for comment %s' % self.id
-			# Add the <img> tag inside the new <a> element
-			new.append(tmp_element)
-
-			# Replace the <img ...> tag in the HTML code with the new <a ...><img ...></a>
-			element.getparent().replace(element, new)
-
-			del img, tmp_img
-
-		self.body_en = LH.tostring(root)
-				
 	def add_comment(self, comment):
 		if comment is not None:
 			db.session.add(self)

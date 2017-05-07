@@ -1,7 +1,7 @@
 {% extends "layout/template-base.html" %}
-{% import 'macros/article-macros.html' as article-macros %}
-{% import 'macros/sidebar-macros.html' as sidebar-macros %}
-{% import 'macros/comments-macros.html' as comments-macros %}
+{% import 'macros/article-macros.html' as article_macros %}
+{% import 'macros/sidebar-macros.html' as sidebar_macros %}
+{% import 'macros/comments-macros.html' as comments_macros %}
 
 {% block title %}MSX Center - {{ series.title_en }} - {{ article.title_en}}{% endblock %}
 
@@ -14,7 +14,7 @@
 	
     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
         <div id="article-full">
-	        {{ article-macros.breadcrumbs(series, article) }}
+	        {{ article_macros.breadcrumbs(series, article) }}
             <h2>{{ article.title_en }}</h2>
             <div id="article-metadata"><img src="{{ article.author.profile_photo_url(size='small') }}">
                 <div>
@@ -30,7 +30,7 @@
 
 			{# article body #}
             <div id="article-body" class="text-justify">
-                <p>{{ article.body_en }}</p>
+                {{ article.body_en|safe }}
             </div>
 
 			{# related links #}
@@ -39,13 +39,14 @@
 	                <h3 class="article-section-divider">Relevant links</h3>
 	                <dl class="related-links">
 						{% for link in article.links %}
-						    <dt><a href="{{ link.url }}"><span class="fa fa-external-link"></span> {{ link.title_en }}</a></dt>
+						    <dt><a href="{{ link.url }}"><span class="fa fa-external-link"></span> {{ link.title }}</a></dt>
 						    <dd>{{ link.desc_en }}</dd>
 					    {% endfor %}
 					</dl>
 	            </div>
 			{% endif %}
 
+			{% if false %} 
             <div id="article-comments">
                 <h3 class="article-section-divider">Comments </h3>
  
@@ -89,12 +90,13 @@
                 </div>
  
             </div>
+			{% endif %}
         </div>
     </div>
 
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		{{ sidebar-macros.sidebar_sponsor() }}
-		{{ sidebar-macros.sidebar_most_popular() }}
+		{{ sidebar_macros.sidebar_sponsor() }}
+		{{ sidebar_macros.sidebar_most_popular() }}
         <h4 class="news-section-divider">News archive </h4>
         <ul>
             <li><a href="#">March 2017 (12 items)</a></li>

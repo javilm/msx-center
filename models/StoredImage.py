@@ -1,5 +1,6 @@
 from datetime import datetime
 import hashlib
+import string
 from io import BytesIO
 from PIL import Image
 from werkzeug.datastructures import FileStorage

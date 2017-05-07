@@ -99,4 +99,129 @@ h1.articles-meta-chapter-big {
   text-shadow:0px 1px 1px black;
 }
 
+.article-breadcrumbs {
+  margin-top:15px;
+  margin-bottom:10px;
+  padding:5px 10px;
+  background-color:#eef;
+  border-radius:5px;
+}
+
+#article-full h2 {
+  margin-top:15px;
+  margin-bottom:7px;
+}
+
+#article-full #article-full-metadata .article-date {
+  font-size:12px;
+  color:#999;
+}
+
+#article-full #article-metadata img {
+  border-radius:50%;
+  border:0px;
+  box-shadow:none;
+  width:36px;
+  float:left;
+  margin-right:10px;
+  margin-bottom:15px;
+}
+
+#article-full #article-metadata .article-author-name {
+  margin-bottom:2px;
+}
+
+#article-full #header-image img {
+  border-radius:5px;
+}
+
+#article-full #header-image p {
+  text-align:center;
+  color:#999;
+  font-size:small;
+  margin-top:5px;
+}
+
+#article-full #article-body {
+  font-size:medium;
+}
+
+#article-body img {
+	display:block;
+	max-width:100%;
+	height:auto;
+}
+
+.article-section-divider {
+  border-bottom:1px solid #ddd;
+  padding-bottom:5px;
+  margin-top:25px;
+  margin-bottom:20px;
+}
+
+#article-full .related-links dd {
+  margin-bottom:10px;
+}
+
+.article-comment img {
+  border-radius:5px;
+  border:0px;
+  box-shadow:none;
+  width:32px;
+  float:left;
+  margin-right:10px;
+  margin-bottom:10px;
+}
+
+#article-comments .comment-author {
+  font-size:12px;
+  color:#999;
+  margin-bottom:0px;
+}
+
+#article-comments .comment-date {
+  font-size:12px;
+  color:#999;
+}
+
+#article-full #article-links {
+  font-size:medium;
+}
+
+.article-breadcrumbs .fa {
+  color:#f00;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.article-comment .panel, #user-reply, .user-reply-buttons {
+  margin-left:42px;
+}
+
+.article-comment .panel .panel-footer .fa {
+  margin-right:5px;
+}
+
+.article-comment .panel .panel-footer .upvote {
+  color:#44f;
+}
+
+.article-comment .panel .panel-footer .comment-score {
+  margin-right:10px;
+}
+
+.article-comment .panel .panel-footer .downvote {
+  color:#f44;
+}
+
+.panel-title .label {
+  margin-right:10px;
+  top:-2px;
+  position:relative;
+}
+
+.panel-title .label .fa {
+  text-shadow:0px 1px 2px #000;
+  color:yellow;
+}
 
