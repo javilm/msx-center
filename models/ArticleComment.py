@@ -5,7 +5,7 @@ import lxml.html as LH
 from flask import request, url_for
 from __main__ import db
 from __main__ import html_cleaner
-from utils import get_host_by_ip 
+from utils import get_host_by_ip, html_image_extractor
 from . import StoredImage
 
 class ArticleComment(db.Model):
@@ -53,41 +53,19 @@ class ArticleComment(db.Model):
 		self.remote_ip = remote_ip or request.headers['X-Real-Ip']
 		self.remote_host = get_host_by_ip(self.remote_ip)
 
-		self.extract_images()
+		self.html_extract_images()
 
-	def extract_images(self):
-		root = LH.fromstring(self.body_en)
+	def html_extract_images(self):
 
-		for element in root.iter('img'):
-			# Make a copy of the original HTML element
-			tmp_element = copy.copy(element)
-
-			# Generate an image by decoding the Base64 content of the src attribute
-			img = StoredImage.from_datauri(element.attrib['src'])
-
-			# Check based on the MD5 hash whether the image was already in the database, save it if it wasn't
-			tmp_img = StoredImage.query.filter_by(md5_hash=img.md5_hash).first()
-			if tmp_img is None:
-				db.session.add(img)
-				db.session.commit()
-			else:
-				img = tmp_img
-
-			# Modify the attributes in the copy of the <img...> tag
-			tmp_element.attrib['src'] = url_for('send_image', image_id=img.id, dummy_filename='msx-center_image_%s.%s' % (img.id, img._ext()))
-			tmp_element.attrib['class'] = 'img-responsive'
-
-			# Create a new <A ...> element that will contain the modified <IMG ...> tag
-			new = etree.Element("a", href=tmp_element.attrib['src'])
-			new.attrib['data-lightbox'] = 'Images for message %s' % self.id
-			# Add the <img> tag inside the new <a> element
-			new.append(tmp_element)
-
-			# Replace the <img ...> tag in the HTML code with the new <a ...><img ...></a>
-			element.getparent().replace(element, new)
-
-			del img, tmp_img
-
-		self.body_en = LH.tostring(root)
-
-
+		# Extract images embedded in the HTML
+		params = {
+			'add_classes': ['img-responsive'],
+			'image_max_dimension': 1200,
+			'lightbox_format_string': 'Images for comment'
+		}
+		self.body_en = html_image_extractor(self.body_en, **params)
+		self.body_ja = html_image_extractor(self.body_ja, **params)
+		self.body_nl = html_image_extractor(self.body_nl, **params)
+		self.body_es = html_image_extractor(self.body_es, **params)
+		self.body_pt = html_image_extractor(self.body_pt, **params)
+		self.body_kr = html_image_extractor(self.body_kr, **params)
