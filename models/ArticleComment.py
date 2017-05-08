@@ -1,11 +1,7 @@
-import copy, enum
 from datetime import datetime
-from lxml import etree
-import lxml.html as LH
 from flask import request, url_for
-from __main__ import db
-from __main__ import html_cleaner
-from utils import get_host_by_ip, html_image_extractor
+from __main__ import db, html_cleaner
+from utils import get_host_by_ip, html_image_extractor, format_datetime
 from . import StoredImage
 
 class ArticleComment(db.Model):
@@ -21,7 +17,9 @@ class ArticleComment(db.Model):
 	body_es = db.Column(db.String())
 	body_pt = db.Column(db.String())
 	body_kr = db.Column(db.String())
-	score = db.Column(db.Integer)				# Message score. Calculated from the likes and dislikes
+	score = db.Column(db.Integer)				# Message score. Calculated from the upvotes and downvotes
+	num_upvotes = db.Column(db.Integer)			# Total upvotes 
+	num_downvotes = db.Column(db.Integer)		# Total downvotes
 	date_posted = db.Column(db.DateTime)
 	is_reported = db.Column(db.Boolean)			# Reported for moderation
 	is_hidden = db.Column(db.Boolean)			# Hidden by administration for any motive
@@ -35,8 +33,9 @@ class ArticleComment(db.Model):
 		if author is None:
 			self.author_id = None
 		else:
-			self.author_id = user.id
-		self.thread_id = None
+			self.author_id = author.id
+		self.author = author
+		self.article_id = None
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
 		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
@@ -44,6 +43,8 @@ class ArticleComment(db.Model):
 		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
 		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
 		self.score = 0
+		self.num_upvotes = 0
+		self.num_downvotes = 0
 		self.date_posted = datetime.utcnow()
 		self.is_reported = False
 		self.is_hidden = False
@@ -69,3 +70,6 @@ class ArticleComment(db.Model):
 		self.body_es = html_image_extractor(self.body_es, **params)
 		self.body_pt = html_image_extractor(self.body_pt, **params)
 		self.body_kr = html_image_extractor(self.body_kr, **params)
+
+	def formatted_datetime(self):
+		return format_datetime(self.date_posted)

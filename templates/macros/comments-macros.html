@@ -1,26 +1,27 @@
-{% macro comment(comment) %}
-<div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-    <div class="panel panel-default">
+{% macro comment(parent, comment) %}
+<div class="article-comment">
+	<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}">
+		<img src="{{ comment.author.profile_photo_url(size='small') }}" class="author-avatar">
+	</a>
+	{% if parent.author_id == comment.author_id %}
+		<div class="panel panel-success">
+	{% elif comment.author.is_moderator %}
+		<div class="panel panel-warning">
+	{% else %}
+		<div class="panel panel-default">
+	{% endif %}
         <div class="panel-heading">
-            <h3 class="panel-title"><span class="label label-warning"><i class="fa fa-star"></i></span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-        <div class="panel-body"><span>WHATEVER </span></div>
-        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
-    </div>
-</div>
-<div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <h3 class="panel-title"><span class="label label-primary">AUTHOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-        <div class="panel-body"><span>WHATEVER </span></div>
-        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
-    </div>
-</div>
-<div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-    <div class="panel panel-warning">
-        <div class="panel-heading">
-            <h3 class="panel-title"><span class="label label-danger">MODERATOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-        <div class="panel-body"><span>WHATEVER </span></div>
-        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
+            <h3 class="panel-title">
+				{% if parent.author_id == comment.author_id %}<span class="label label-primary">AUTHOR</span>{% endif %}
+				<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a> commented on {{ comment.formatted_datetime() }}</h3></div>
+        <div class="panel-body">{{ comment.body_en|safe }}</div>
+        <div class="panel-footer">
+			<strong>Score:</strong> <span class="comment-score">{{comment.score }}</span>
+			<i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">{{ comment.num_upvotes }}</span>
+			<i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">{{ comment.num_downvotes }}</span>
+		</div>
     </div>
 </div>
 {% endmacro %}
+
+

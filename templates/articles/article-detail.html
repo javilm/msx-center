@@ -6,7 +6,9 @@
 {% block title %}MSX Center - {{ series.title_en }} - {{ article.title_en}}{% endblock %}
 
 {% block extracss %}
-    <link rel="stylesheet" href="/static/css/articles.css">
+<link rel="stylesheet" href="/static/css/articles.css">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 {% endblock %}
 
 {% block content %}
@@ -46,51 +48,37 @@
 	            </div>
 			{% endif %}
 
-			{% if false %} 
             <div id="article-comments">
+
+			{% if article.comments|length %} 
                 <h3 class="article-section-divider">Comments </h3>
+				{% for comment in article.comments %}
+					{{ comments_macros.comment(article, comment) }}
+				{% endfor %} 
+			{% endif %}
+
+                <h3 class="article-section-divider">Post a comment</h3>
  
-                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><span class="label label-warning"><i class="fa fa-star"></i></span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-                        <div class="panel-body"><span>WHATEVER </span></div>
-                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
-                    </div>
-                </div>
- 
-                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><span class="label label-primary">AUTHOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-                        <div class="panel-body"><span>WHATEVER </span></div>
-                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
-                    </div>
-                </div>
- 
-                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><span class="label label-danger">MODERATOR </span><a href="#"><strong>Javi Lavandeira</strong></a> commented on May 1st 2017 at 23:32 JST</h3></div>
-                        <div class="panel-body"><span>WHATEVER </span></div>
-                        <div class="panel-footer"><i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">65 </span><i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">65 </span></div>
-                    </div>
-                </div>
- 
-                <div class="article-comment"><img src="../assets/img/Profile/standard_profile_6_64x64.png" class="author-avatar">
-                    <form id="user-reply">
-                        <div class="form-group">
-                            <textarea class="form-control" placeholder="Place Quill here"></textarea>
-                        </div>
-                    </form>
-                    <div class="user-reply-buttons">
-                        <button class="btn btn-success btn-sm" type="submit">Post reply</button>
-                        <button class="btn btn-default btn-sm" type="reset">Cancel </button>
-                    </div>
-                </div>
+				{% if user %}
+					<div class="article-comment">
+						<img src="{{ article.author.profile_photo_url(size='small') }}" class="author-avatar">
+						<form id="user-reply">
+							<div class="form-group">
+								<div class="form-control" id="reply_editor"></div>
+							</div>
+						</form>
+						<div class="user-reply-buttons">
+							<button class="btn btn-success btn-sm" type="submit" id="submit_button">Post comment</button>
+							<button class="btn btn-default btn-sm" type="reset" id="cancel_button">Cancel</button>
+						</div>
+					</div>
+				{% else %}
+					<div class="alert alert-warning">
+						You need to <a href="{{ url_for('page_signin') }}">sign in</a> in order to comment.
+					</div>
+				{% endif %}
  
             </div>
-			{% endif %}
         </div>
     </div>
 
@@ -107,4 +95,10 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/articles/articles-comment-submit.js"></script>
 {% endblock %}

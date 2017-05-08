@@ -1,5 +1,5 @@
 from __main__ import app
-from flask import url_for, render_template, abort
+from flask import url_for, render_template, abort, session
 from models import User, ConversationLounge, ArticleSeries
 
 @app.route('/lounges/<int:lounge_id>/<string:slug>/list', methods=['GET'])

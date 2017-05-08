@@ -84,3 +84,6 @@ def html_image_extractor(code, image_max_dimension=1200, add_classes=None, light
 			del img, tmp_img
 
 	return LH.tostring(root)
+
+def format_datetime(datetime):
+	return datetime.strftime('%d/%b/%Y %H:%M:%S')

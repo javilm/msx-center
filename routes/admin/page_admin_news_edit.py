@@ -91,7 +91,7 @@ def page_admin_news_edit(item_id):
 		item.allows_comment = request.form['allows_comments']
 
 		# Reprocess the body's HTML code in case new images were added
-		self.html_extract_images()
+		item.html_extract_images()
 
 		# Remove all existing related links and add the ones from the form
 		for link in item.links:

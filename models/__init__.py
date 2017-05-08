@@ -3,6 +3,7 @@ from StoredImage import StoredImage
 from MemberPortrait import MemberPortrait
 from ActivationKey import ActivationKey
 from Article import Article
+from ArticleComment import ArticleComment
 from ArticleSeries import ArticleSeries
 from Category import Category
 from ConversationMessage import ConversationMessage
@@ -15,6 +16,7 @@ from User import User
 __all__ = [
 	"ActivationKey",
 	"Article",
+	"ArticleComment",
 	"ArticleSeries",
 	"Category",
 	"ConversationThread",

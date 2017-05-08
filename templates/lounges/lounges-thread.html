@@ -54,36 +54,44 @@
 	</div>
 </div>
 
+{# REPLIES, if any #}
 {% if thread.messages|length > 1 %}
-<div class="row"><div class="col-md-8 col-md-offset-2"><h3>Replies </h3></div></div>
-{% endif %}
-
-{# Replies come here #}
-{% for message in thread.messages[1:] %}
-<div class="row">
-	<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
-		<div class="panel panel-success">
-			<div class="panel-heading"><img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
-				{% if message.post_as == message.PostAsType.REALNAME %}
-					<h3 class="panel-title">{{ message.user.real_name }}</h3>
-				{% elif message.post_as == message.PostAsType.NICKNAME %}
-					<h3 class="panel-title">{{ message.user.nickname }}</h3>
-				{% else %}
-					{# Anonymous #}
-					<h3 class="panel-title">Anonymous</h3>
-				{% endif %}
-				<div class="message-date"><span>Posted on {{ message.date_posted.strftime('%d/%b/%Y %H:%M:%S') }}</span></div>
-			</div>
-			<div class="panel-body">{{ message.body_en|safe }}</div>
-			<div class="panel-footer">
-				<div class="message-score"><span><strong>Standing:</strong> Good</span></div>
-				<div class="message-controls"><i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-down"></i><i class="glyphicon glyphicon-flag"></i></div>
-			</div>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<h3>Replies</h3>
 		</div>
 	</div>
-</div>
-{% endfor %}
+	{% for message in thread.messages[1:] %}
+		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
+				<div class="panel panel-success">
+					<div class="panel-heading"><img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
+						{% if message.post_as == message.PostAsType.REALNAME %}
+							<h3 class="panel-title">{{ message.user.real_name }}</h3>
+						{% elif message.post_as == message.PostAsType.NICKNAME %}
+							<h3 class="panel-title">{{ message.user.nickname }}</h3>
+						{% else %}
+							{# Anonymous #}
+							<h3 class="panel-title">Anonymous</h3>
+						{% endif %}
+						<div class="message-date"><span>Posted on {{ message.date_posted.strftime('%d/%b/%Y %H:%M:%S') }}</span></div>
+					</div>
+					<div class="panel-body">{{ message.body_en|safe }}</div>
+					<div class="panel-footer">
+						<div class="message-score"><span><strong>Standing:</strong> Good</span></div>
+						<div class="message-controls">
+							<i class="glyphicon glyphicon-thumbs-up"></i>
+							<i class="glyphicon glyphicon-thumbs-down"></i>
+							<i class="glyphicon glyphicon-flag"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+{% endif %}
 
+{# SEPARATOR #}
 <div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12"><hr></div></div>
 
 <div class="row">
@@ -98,7 +106,9 @@
 	</div>
 </div>
 
+{# SEPARATOR #}
 <div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12"><hr></div></div>
+
 {% endblock %}
 
 {% block extrajs %}
