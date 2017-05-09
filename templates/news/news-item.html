@@ -3,21 +3,23 @@
 {% block title %}MSX Center - News{% endblock %}
 
 {% block extracss %}
-    <link rel="stylesheet" href="/static/css/news.css">
+<link rel="stylesheet" href="/static/css/news.css">
+<link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 {% endblock %}
 
 {% macro news_item_comment(comment) %}
 <div class="news-item-comment">
     <div class="metadata">
-	    <img src="{{ comment.user.profile_photo_url(size='small') }}" alt="{{ comment.user.real_name }}'s profile photo">
+	    <img src="{{ comment.author.profile_photo_url(size='small') }}" alt="{{ comment.author.real_name }}'s profile photo">
         <div>
             <div>
-                <p class="comment-author"><a href="{{ url_for('page_member', member_id=comment.user.id, slug=comment.user.slug) }}"><strong>{{ comment.user.real_name }}</strong></a></p>
+                <p class="comment-author"><a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a></p>
                 <p class="comment-date">Posted on {{ comment.date_posted.strftime('%b %-d, %Y') }}</p>
             </div>
         </div>
     </div>
-    <div class="comment-body">{{ comment.body_en }}</div>
+    <div class="comment-body">{{ comment.body_en|safe }}</div>
 </div>
 {% endmacro %}
 
@@ -119,24 +121,41 @@
                         	</div>
                         {% endif %}
                         <hr>
-                        <div id="post-comment-form">
-	                        {% if user %}
-	                            <form id="form_news_item_post_comment">
-	                                <div class="form-group">
-	                                    <p class="help-block">Post a reply below.</p>
-										<div class="form-control" id="quillEditor"></div>
-	                                </div>
-	                                <div class="form-group">
-	                                    <button id="submit_button" class="btn btn-primary btn-xs" type="submit">Post comment</button>
-	                                    <button id="reset_button" class="btn btn-default btn-xs" type="reset">Cancel</button>
-	                                </div>
-	                            </form>
-                            {% else %}
-                            	<div class="alert alert-warning">
-	                            	You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to comment.
-                            	</div>
-                            {% endif %}
-                        </div>
+
+						{% if news_item.allows_comments %}
+							<div id="post-comment-form">
+								{% if user %}
+									{% if user.is_blocked %}
+										<div class="alert alert-danger">
+											You can't comment because your account is blocked.
+										</div>
+									{% else %}
+										<img src="{{ user.profile_photo_url(size='small') }}" class="author-avatar">
+										<form id="user-reply">
+											<div class="form-group">
+												<div class="form-control" id="reply_editor"></div>
+											</div>
+											<div class="form-group">
+												<button id="submit_button" class="btn btn-primary btn-xs" type="submit">Post comment</button>
+												<button id="cancel_button" class="btn btn-default btn-xs" type="reset">Cancel</button>
+											</div>
+										</form>
+									{% endif %}
+								{% else %}
+									<div class="alert alert-warning">
+										You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to comment.
+									</div>
+								{% endif %}
+							</div>
+						{% else %}
+							<div class="alert alert-warning">
+								{% if news_item.comments|length %}
+									This item does not accept any more comments.
+								{% else %}
+									This item does not accept comments.
+								{% endif %}
+							</div>
+						{% endif %}
                     </div>
                 </div>
             </div>
@@ -147,4 +166,10 @@
 		{{ news_sidebar_archive() }}
     </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/js/quill.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/news/news-item-comment-submit.js"></script>
 {% endblock %}

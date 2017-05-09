@@ -7,6 +7,7 @@
 
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/articles.css">
+<link rel="stylesheet" href="/static/css/breadcrumbs.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 {% endblock %}
@@ -57,24 +58,40 @@
 				{% endfor %} 
 			{% endif %}
 
-                <h3 class="article-section-divider">Post a comment</h3>
- 
-				{% if user %}
-					<div class="article-comment">
-						<img src="{{ article.author.profile_photo_url(size='small') }}" class="author-avatar">
-						<form id="user-reply">
-							<div class="form-group">
-								<div class="form-control" id="reply_editor"></div>
+				{% if article.allows_comments %}
+					<h3 class="article-section-divider">Post a comment</h3>
+	 
+					{% if user %}
+						{% if user.is_blocked %}
+							<div class="alert alert-danger">
+								You can't comment because your account is blocked.
 							</div>
-						</form>
-						<div class="user-reply-buttons">
-							<button class="btn btn-success btn-sm" type="submit" id="submit_button">Post comment</button>
-							<button class="btn btn-default btn-sm" type="reset" id="cancel_button">Cancel</button>
+						{% else %}
+							<div class="article-comment">
+								<img src="{{ user.profile_photo_url(size='small') }}" class="author-avatar">
+								<form id="user-reply">
+									<div class="form-group">
+										<div class="form-control" id="reply_editor"></div>
+									</div>
+									<div class="form-group">
+										<button class="btn btn-success btn-sm" type="submit" id="submit_button">Post comment</button>
+										<button class="btn btn-default btn-sm" type="reset" id="cancel_button">Cancel</button>
+									</div>
+								</form>
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="alert alert-warning">
+							You need to <a class="alert-link" href="{{ url_for('page_signin') }}">sign in</a> in order to comment.
 						</div>
-					</div>
+					{% endif %}
 				{% else %}
 					<div class="alert alert-warning">
-						You need to <a href="{{ url_for('page_signin') }}">sign in</a> in order to comment.
+						{% if article.comments|length %}
+							This article does not accept any more comments.
+						{% else %}
+							This article does not accept comments.
+						{% endif %}
 					</div>
 				{% endif %}
  

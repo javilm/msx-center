@@ -12,7 +12,7 @@ def page_news():
 	template_options['user'] = User.get_signed_in_user()
 
 	# Get the news items
-	template_options['items'] = NewsItem.query.all()
+	template_options['items'] = NewsItem.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).all()
 
 	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 

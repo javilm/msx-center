@@ -48,10 +48,7 @@ def page_thread(thread_id, slug):
 		return render_template('lounges/lounges-thread.html', **template_options)
 
 	else:
-		# Get all the request parameters in an ImmutableMultiDict
-		dict = request.form
-
-		if len(dict):
+		if len(request.form):
 			# Parameters: post_as, message
 			# lounge_id comes from the URI
 			# Possible errors:
@@ -81,15 +78,15 @@ def page_thread(thread_id, slug):
 				user_errors['bad_reputation'] = True
 			# At this point the user is allowed to post. If the user requests to post as anonymous or using a nickname
 			# then check whether the lounge allows it.
-			elif dict['post_as'] == '3' and lounge.allows_anonymous:
+			elif request.form['post_as'] == '3' and lounge.allows_anonymous:
 				post_as = 'ANON'
-			elif dict['post_as'] == '2' and lounge.allows_nicknames:
+			elif request.form['post_as'] == '2' and lounge.allows_nicknames:
 				post_as = 'NICKNAME'
 			else:
 				post_as = 'REALNAME'
 
 			if not user_errors:
-				message = ConversationMessage(user, post_as, body_en=dict['message'])
+				message = ConversationMessage(user, post_as, body_en=request.form['message'])
 				thread.add_message(message)
 				return json.dumps({
 					'status': 200,

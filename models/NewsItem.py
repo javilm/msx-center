@@ -4,7 +4,6 @@ from flask import url_for
 
 from __main__ import db, html_cleaner
 from utils import html_image_extractor
-from . import StoredImage
 
 association_table = db.Table('association_news_item_external_link',
 	db.Column('news_item_id', db.Integer, db.ForeignKey('news_items.id'), nullable=False),
@@ -60,6 +59,7 @@ class NewsItem(db.Model):
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
 	url = db.Column(db.String())
+	comments = db.relationship("Comment", backref="news_item")
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
@@ -135,4 +135,11 @@ class NewsItem(db.Model):
 		db.session.add(self)
 		self.links.remove(link)
 		db.session.commit()
+
+	def add_comment(self, comment):
+		if comment is not None:
+			db.session.add(self)
+			self.comments.append(comment)
+			self.num_comments = len(self.comments)
+			db.session.commit()
 	

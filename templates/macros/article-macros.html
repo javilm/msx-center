@@ -43,7 +43,7 @@
 {% endmacro %}
 
 {% macro breadcrumbs(series, article) %}
-<p class="article-breadcrumbs">
+<p class="breadcrumbs">
 	<strong>Articles</strong>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
 	<a href="{{ url_for('page_series_articles', series_id=series.id, slug=series.slug) }}">{{ series.title_en }}</a>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
 	{{ article.title_en }}

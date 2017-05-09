@@ -3,7 +3,6 @@ from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
 from utils import html_image_extractor
-from . import StoredImage, ArticleComment
 
 association_table = db.Table('association_article_external_link',
 	db.Column('article_id', db.Integer, db.ForeignKey('articles.id'), nullable=False),
@@ -62,7 +61,7 @@ class Article(db.Model):
 	is_pinned = db.Column(db.Boolean)
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
-	comments = db.relationship("ArticleComment", backref="article")
+	comments = db.relationship("Comment", backref="article")
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())

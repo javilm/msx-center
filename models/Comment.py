@@ -2,15 +2,15 @@ from datetime import datetime
 from flask import request, url_for
 from __main__ import db, html_cleaner
 from utils import get_host_by_ip, html_image_extractor, format_datetime
-from . import StoredImage
 
-class ArticleComment(db.Model):
-	__tablename__ = 'article_comments'
+class Comment(db.Model):
+	__tablename__ = 'comments'
 
 	id = db.Column(db.Integer, primary_key=True)
 	article_id = db.Column(db.Integer, db.ForeignKey('articles.id'))
+	news_item_id = db.Column(db.Integer, db.ForeignKey('news_items.id'))
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	author = db.relationship('User', backref='article_comments')
+	author = db.relationship('User', backref='comments')
 	body_en = db.Column(db.String())
 	body_ja = db.Column(db.String())
 	body_nl = db.Column(db.String())
@@ -36,6 +36,7 @@ class ArticleComment(db.Model):
 			self.author_id = author.id
 		self.author = author
 		self.article_id = None
+		self.news_item_id = None
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
 		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None

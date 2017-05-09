@@ -88,3 +88,17 @@
 #news-item-full #news-item-links {
   font-size:medium;
 }
+
+img.author-avatar {
+  border-radius:5px;
+  border:0px;
+  box-shadow:none;
+  width:32px;
+  float:left;
+  margin-right:10px;
+  margin-bottom:10px;
+}
+
+#user-reply {
+	margin-left:42px;
+}

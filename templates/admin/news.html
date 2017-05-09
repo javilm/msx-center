@@ -40,6 +40,8 @@
 					<td>
 						{{ item.id }}
 						{% if item.is_feature %}<div class="news-item-labels"><span class="label label-success">Feature</span></div>{% endif %}
+						{% if item.is_hidden %}<div class="news-item-labels"><span class="label label-success">Hidden</span></div>{% endif %}
+						{% if item.is_published %}<div class="news-item-labels"><span class="label label-success">Published</span></div>{% endif %}
 					</td>
 					<td>
 						{{ popover_button(item.headline_en, 'EN') }}

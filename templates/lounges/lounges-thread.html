@@ -1,4 +1,5 @@
 {% extends "layout/template-base.html" %}
+{% import 'macros/lounges-macros.html' as lounges_macros %}
 
 {% block title %}MSX Center - Conversation: {{ thread.title_en }}{% endblock %}
 
@@ -10,18 +11,16 @@
 
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/lightbox.min.css">
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
+<link rel="stylesheet" href="/static/css/breadcrumbs.css">
 {% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-lg-offset-2 col-md-8 col-md-offset-2">
 		<div>
-			<ol class="breadcrumb site-breadcrumbs">
-				<li><a href="{{ url_for('page_lounges_list') }}"><span>Lounges </span></a></li>
-				<li><a href="{{ url_for('page_lounge', lounge_id=lounge.id, slug=lounge.slug) }}"><span>{{ lounge.name_en }}</span></a></li>
-				<li><span>{{ thread.title_en }}</span></li>
-			</ol>
+			{{ lounges_macros.breadcrumbs(lounge, thread) }}
 			<h2>{{ thread.title_en }}</h2>
 		</div>
 	</div>
@@ -33,16 +32,21 @@
 		<address>
 			{% if thread.messages[0].user %}
 				{% if thread.messages[0].post_as == thread.messages[0].PostAsType.REALNAME %}
-					<strong><a href="#">{{ thread.messages[0].user.real_name }}</a></strong><br>
+					<strong><a href="{{ url_for('page_member', member_id=thread.messages[0].user.id, slug=thread.messages[0].user.slug) }}">{{ thread.messages[0].user.real_name }}</a></strong><br>
 				{% else %}
-					<strong><a href="#">{{ thread.messages[0].user.nickname }}</a></strong><br>
+					<strong><a href="{{ url_for('page_member', member_id=thread.messages[0].user.id, slug=thread.messages[0].user.slug) }}">{{ thread.messages[0].user.nickname }}</a></strong><br>
 				{% endif %}
 				Joined {{ thread.messages[0].user.registration_date.strftime('%d/%b/%Y') }}<br>
 			{% else %}
 				<strong>Anonymous</strong>
 			{% endif %}
 		</address>
-		<div><i class="glyphicon glyphicon-user"></i><i class="glyphicon glyphicon-search"></i><i class="glyphicon glyphicon-heart"></i><i class="glyphicon glyphicon-star"></i></div>
+		<div>
+			<i class="fa fa-user"></i>
+			<i class="fa fa-search"></i>
+			<i class="fa fa-heart"></i>
+			<i class="fa fa-star"></i>
+		</div>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-9">
 		<div class="panel panel-danger">
@@ -80,9 +84,9 @@
 					<div class="panel-footer">
 						<div class="message-score"><span><strong>Standing:</strong> Good</span></div>
 						<div class="message-controls">
-							<i class="glyphicon glyphicon-thumbs-up"></i>
-							<i class="glyphicon glyphicon-thumbs-down"></i>
-							<i class="glyphicon glyphicon-flag"></i>
+							<i class="fa fa-thumbs-o-up upvote"></i>
+							<i class="fa fa-thumbs-o-down downvote"></i>
+							<i class="fa fa-exclamation"></i>
 						</div>
 					</div>
 				</div>

@@ -88,7 +88,7 @@ def page_admin_news_edit(item_id):
 		item.is_archived = request.form['is_archived']
 		item.is_feature = request.form['is_feature']
 		item.is_hidden = request.form['is_hidden']
-		item.allows_comment = request.form['allows_comments']
+		item.allows_comments = request.form['allows_comments']
 
 		# Reprocess the body's HTML code in case new images were added
 		item.html_extract_images()
