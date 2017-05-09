@@ -113,7 +113,7 @@ class StoredImage(db.Model):
 		self.height = square_image.height
 		self.update_md5()
 		
-	def	fit_within(self, width, height):
+	def	fit_within(self, width=1200, height=1200):
 		"""Make the image fit within (width, height). Replaces the original data."""
 
 		# Read image in memory

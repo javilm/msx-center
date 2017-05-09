@@ -26,6 +26,7 @@ def ajax_admin_articles_add_feature_image():
 
 			# Try to import the image. Will be None on failure.
 			feature_image = StoredImage.from_file(request.files['feature_image'])
+			feature_image.fit_within()	# Use default width/height
 
 			if feature_image:
 
