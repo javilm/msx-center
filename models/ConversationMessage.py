@@ -4,7 +4,6 @@ from flask import request, url_for
 from __main__ import db
 from __main__ import html_cleaner
 from utils import get_host_by_ip, html_image_extractor
-from . import StoredImage
 
 class ConversationMessage(db.Model):
 	__tablename__ = 'messages'
@@ -24,6 +23,8 @@ class ConversationMessage(db.Model):
 	body_pt = db.Column(db.String())
 	body_kr = db.Column(db.String())
 	score = db.Column(db.Integer)				# Message score. Calculated from the likes and dislikes
+	num_upvotes = db.Column(db.Integer)         # Total upvotes 
+	num_downvotes = db.Column(db.Integer)       # Total downvotes
 	post_as = db.Column(db.Enum(PostAsType))
 	date_posted = db.Column(db.DateTime)
 	is_reported = db.Column(db.Boolean)			# Reported for moderation
@@ -33,6 +34,8 @@ class ConversationMessage(db.Model):
 	is_staff_favorite = db.Column(db.Boolean)	# Favorited by the staff. Highlighted.
 	remote_ip = db.Column(db.String())
 	remote_host = db.Column(db.String())
+	votes = db.relationship('Vote', backref='message')
+
 	# The "user" attribute for every ConversationMessage is already defined in the User model as a
 	# backref in the relationship with the ConversationMessage model
 
@@ -74,3 +77,24 @@ class ConversationMessage(db.Model):
 		self.body_es = html_image_extractor(self.body_es, **params)
 		self.body_pt = html_image_extractor(self.body_pt, **params)
 		self.body_kr = html_image_extractor(self.body_kr, **params)
+
+	def add_vote(self, vote):
+
+		from . import Vote
+
+		if vote:
+			self.votes.append(vote)
+			db.session.add(vote)
+			self.update_score()
+
+	def update_score(self):
+
+		from . import Vote
+
+		self.num_upvotes = Vote.query.filter_by(message_id=self.id, score=2).count()
+		self.num_downvotes = Vote.query.filter_by(message_id=self.id, score=1).count()
+		self.score = self.num_upvotes - self.num_downvotes
+		db.session.add(self)
+		db.session.commit()
+
+

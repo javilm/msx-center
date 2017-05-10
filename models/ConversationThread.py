@@ -1,8 +1,6 @@
 from datetime import datetime
 from slugify import slugify
-
-from __main__ import db
-from __main__ import app
+from __main__ import app, db
 
 try:
 	from . import ConversationLounge

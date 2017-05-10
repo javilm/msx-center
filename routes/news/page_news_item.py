@@ -31,13 +31,7 @@ def page_news_item(news_item_id, slug):
 			comment_params['author'] = user
 			comment_params['body_en'] = request.form['reply']
 			comment = Comment(**comment_params)
-
-			if comment is not None:
-				news_item.comments.append(comment)
-				comment.article = None
-				db.session.add(news_item)
-				db.session.add(comment)
-				db.session.commit()
+			news_item.add_comment(comment)
 
 		return json.dumps({
 			'status': 200,

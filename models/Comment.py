@@ -11,6 +11,7 @@ class Comment(db.Model):
 	news_item_id = db.Column(db.Integer, db.ForeignKey('news_items.id'))
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	author = db.relationship('User', backref='comments')
+	votes = db.relationship('Vote', backref='comment')
 	body_en = db.Column(db.String())
 	body_ja = db.Column(db.String())
 	body_nl = db.Column(db.String())
@@ -74,3 +75,22 @@ class Comment(db.Model):
 
 	def formatted_datetime(self):
 		return format_datetime(self.date_posted)
+
+	def add_vote(self, vote):
+
+		from . import Vote
+
+		if vote:
+			self.votes.append(vote)
+			db.session.add(vote)
+			self.update_score()
+
+	def update_score(self):
+
+		from . import Vote
+
+		self.num_upvotes = Vote.query.filter_by(comment_id=self.id, score=2).count()
+		self.num_downvotes = Vote.query.filter_by(comment_id=self.id, score=1).count()
+		self.score = self.num_upvotes - self.num_downvotes
+		db.session.add(self)
+		db.session.commit()

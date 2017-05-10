@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/static/css/news.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/static/css/lightbox.min.css">
 {% endblock %}
 
 {% macro news_item_comment(comment) %}
@@ -109,54 +110,57 @@
                     {% endif %}
 
                     {# COMMENTS #}
-                    <div id="news-item-comments">
-                        <h4 class="news-section-divider">Comments</h4>
-                        {% if news_item.comments %}
-                        	{% for comment in news_item.comments %}
-                        		{{ news_item_comment(comment) }}
-                        	{% endfor %}
-                        {% else %}
-                        	<div class="alert alert-warning">
-	                        	There are no comments yet.
-                        	</div>
-                        {% endif %}
-                        <hr>
+					{% if news_item.comments|length %}
+						<div id="news-item-comments">
+							<h4 class="news-section-divider">Comments</h4>
+							{% if news_item.comments %}
+								{% for comment in news_item.comments %}
+									{{ news_item_comment(comment) }}
+								{% endfor %}
+							{% else %}
+								<div class="alert alert-warning">
+									There are no comments yet.
+								</div>
+							{% endif %}
+                        </div>
+					{% endif %}
 
-						{% if news_item.allows_comments %}
-							<div id="post-comment-form">
-								{% if user %}
-									{% if user.is_blocked %}
-										<div class="alert alert-danger">
-											You can't comment because your account is blocked.
-										</div>
-									{% else %}
-										<img src="{{ user.profile_photo_url(size='small') }}" class="author-avatar">
-										<form id="user-reply">
-											<div class="form-group">
-												<div class="form-control" id="reply_editor"></div>
-											</div>
-											<div class="form-group">
-												<button id="submit_button" class="btn btn-primary btn-xs" type="submit">Post comment</button>
-												<button id="cancel_button" class="btn btn-default btn-xs" type="reset">Cancel</button>
-											</div>
-										</form>
-									{% endif %}
-								{% else %}
-									<div class="alert alert-warning">
-										You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to comment.
+					{% if news_item.allows_comments %}
+						<div id="post-comment-form">
+							<h4 class="news-section-divider">Post a comment</h4>
+							{% if user %}
+								{% if user.is_blocked %}
+									<div class="alert alert-danger">
+										You can't comment because your account is blocked.
 									</div>
-								{% endif %}
-							</div>
-						{% else %}
-							<div class="alert alert-warning">
-								{% if news_item.comments|length %}
-									This item does not accept any more comments.
 								{% else %}
-									This item does not accept comments.
+									<img src="{{ user.profile_photo_url(size='small') }}" class="author-avatar">
+									<form id="user-reply">
+										<div class="form-group">
+											<div class="form-control" id="reply_editor"></div>
+										</div>
+										<div class="form-group">
+											<button id="submit_button" class="btn btn-primary btn-xs" type="submit">Post comment</button>
+											<button id="cancel_button" class="btn btn-default btn-xs" type="reset">Cancel</button>
+										</div>
+									</form>
 								{% endif %}
-							</div>
-						{% endif %}
-                    </div>
+							{% else %}
+								<div class="alert alert-warning">
+									You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to comment.
+								</div>
+							{% endif %}
+						</div>
+					{% else %}
+						<div class="alert alert-warning">
+							{% if news_item.comments|length %}
+								This item does not accept any more comments.
+							{% else %}
+								This item does not accept comments.
+							{% endif %}
+						</div>
+					{% endif %}
+
                 </div>
             </div>
         </div>
@@ -172,4 +176,5 @@
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="/static/js/news/news-item-comment-submit.js"></script>
+<script type="text/javascript" src="/static/js/lightbox.min.js"></script>
 {% endblock %}

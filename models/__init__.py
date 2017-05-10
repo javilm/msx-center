@@ -12,6 +12,7 @@ from ConversationThread import ConversationThread
 from ExternalLink import ExternalLink
 from VerificationKey import VerificationKey
 from User import User
+from Vote import Vote
 
 __all__ = [
 	"ActivationKey",
@@ -27,6 +28,7 @@ __all__ = [
 	"NewsItem",
 	"StoredImage",
 	"VerificationKey",
-	"User"
+	"User",
+	"Vote"
 ]
 

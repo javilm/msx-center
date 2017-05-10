@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="/static/css/breadcrumbs.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/static/css/lightbox.min.css">
 {% endblock %}
 
 {% block content %}
@@ -51,12 +52,12 @@
 
             <div id="article-comments">
 
-			{% if article.comments|length %} 
-                <h3 class="article-section-divider">Comments </h3>
-				{% for comment in article.comments %}
-					{{ comments_macros.comment(article, comment) }}
-				{% endfor %} 
-			{% endif %}
+				{% if article.comments|length %} 
+					<h3 class="article-section-divider">Comments </h3>
+					{% for comment in article.comments %}
+						{{ comments_macros.comment(article, comment) }}
+					{% endfor %} 
+				{% endif %}
 
 				{% if article.allows_comments %}
 					<h3 class="article-section-divider">Post a comment</h3>
@@ -118,4 +119,5 @@
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="/static/js/articles/articles-comment-submit.js"></script>
+<script type="text/javascript" src="/static/js/lightbox.min.js"></script>
 {% endblock %}

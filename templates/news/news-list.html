@@ -50,14 +50,10 @@
 			<p class="news-item-date">Posted on {{ item.date_published.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p>
 			<div class="news-item-body text-justify">{{ item.summary_en|supress_none }}</div>
 			<div class="news-item-comment text-right">
-			{% if item.is_full %}
-				{% if item.num_comments %}
-					<span><i class="fa fa-comment"></i> <a href="#">Read comments ({{ item.num_comments }})</a></span>
-				{% else %}
-					<span><i class="fa fa-pencil"></i> <a href="#">Write a comment</a></span>
-				{% endif %}
+			{% if item.num_comments %}
+				<span><i class="fa fa-comment"></i> <a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">{{ item.num_comments }} comment{% if item.num_comments > 1 %}s{% endif %}</a></span>
 			{% else %}
-				<span><i class="fa fa-comment"></i> <a href="#">Read full text and comment ({{ item.num_comments }})</a></span>
+				<span><i class="fa fa-pencil"></i> <a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">Write a comment</a></span>
 			{% endif %}
 			</div>
 		</div>
@@ -66,47 +62,42 @@
 {% endmacro %}
 
 {% block content %}
-	{% if items|length > 3 %}
-		<div class="row">
-			<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-				<h4 class="news-section-divider">Recent news</h4>
-				<div class="row">
-					{{ news_item_big(items[0]) }}
-					{{ news_item_big(items[1]) }}
-				</div>
-				<div class="row">
-					{{ news_item_big(items[2]) }}
-					{{ news_item_big(items[3]) }}
-				</div>
-			</div>
-		
-			{# sidebar #} 
-			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-				{{ news_sidebar_sponsor() }}
-				{{ news_sidebar_most_popular() }}
-				{{ news_sidebar_archive() }}
+	<div class="row">
+		<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+			<h4 class="news-section-divider">Recent news</h4>
+			<div class="row">
+			{% for item in pagination.items %}
+				{{ news_item_big(item) }}
+			{% endfor %}
 			</div>
 		</div>
-	{% else %}
-		<div class="panel panel-danger">
-			<div class="panel-body">
-				There aren't enough news items (there are only {{ items|length }} items in the database)
-			</div>
+	
+		{# sidebar #} 
+		<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+			{{ news_sidebar_sponsor() }}
+			{{ news_sidebar_most_popular() }}
+			{{ news_sidebar_archive() }}
 		</div>
-	{% endif %}
+	</div>
 
 	{# pagination #}
 	<div class="row">
 		<div class="col-md-12">
 			<nav>
 				<ul class="pagination">
-					<li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-					<li><a>1</a></li>
-					<li><a>2</a></li>
-					<li><a>3</a></li>
-					<li><a>4</a></li>
-					<li><a>5</a></li>
-					<li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
+					{% if pagination.has_prev %}<li><a href="{{ url_for('page_news', page=pagination.page-1 ) }}">&laquo;</a></li>{% else %}<li class="disabled"><a>&laquo;</a></li>{% endif %}
+					{% for page in pagination.iter_pages() %}
+						{% if page %}
+							{% if page != pagination.page %}
+								<li><a href="{{ url_for('page_news', page=page ) }}">{{ page }}</a></li>
+							{% else %}
+								<li><a href="{{ url_for('page_news', page=page ) }}"><strong>{{ page }}</strong></a></li>
+							{% endif %}
+						{% else %}
+							<li><a class="disabled">&hellip;</a></li>
+						{% endif %}
+					{% endfor %}
+					{% if pagination.has_next %}<li><a href="{{ url_for('page_news', page=pagination.page+1 ) }}">&raquo;</a></li>{% else %}<li class="disabled"><a>&raquo;</a></li>{% endif %}
 				</ul>
 			</nav>
 		</div>
