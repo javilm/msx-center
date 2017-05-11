@@ -1,28 +1,15 @@
 {% extends "layout/template-base.html" %}
+{% import 'macros/comments-macros.html' as comments_macros %}
 
 {% block title %}MSX Center - News{% endblock %}
 
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/news.css">
+<link rel="stylesheet" href="/static/css/comments.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 <link rel="stylesheet" href="/static/css/lightbox.min.css">
 {% endblock %}
-
-{% macro news_item_comment(comment) %}
-<div class="news-item-comment">
-    <div class="metadata">
-	    <img src="{{ comment.author.profile_photo_url(size='small') }}" alt="{{ comment.author.real_name }}'s profile photo">
-        <div>
-            <div>
-                <p class="comment-author"><a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a></p>
-                <p class="comment-date">Posted on {{ comment.date_posted.strftime('%b %-d, %Y') }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="comment-body">{{ comment.body_en|safe }}</div>
-</div>
-{% endmacro %}
 
 {% macro news_sidebar_most_popular() %}
 <h4 class="news-section-divider">Most popular</h4>
@@ -115,7 +102,7 @@
 							<h4 class="news-section-divider">Comments</h4>
 							{% if news_item.comments %}
 								{% for comment in news_item.comments %}
-									{{ news_item_comment(comment) }}
+									{{ comments_macros.comment(user, comment, my_votes) }}
 								{% endfor %}
 							{% else %}
 								<div class="alert alert-warning">

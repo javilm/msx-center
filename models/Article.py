@@ -61,7 +61,7 @@ class Article(db.Model):
 	is_pinned = db.Column(db.Boolean)
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
-	comments = db.relationship("Comment", backref="article")
+	comments = db.relationship("Comment", backref="article", order_by="Comment.date_posted")
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())

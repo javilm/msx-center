@@ -59,7 +59,7 @@ class NewsItem(db.Model):
 	is_archived = db.Column(db.Boolean)	# Archived items do not accept new comments
 	allows_comments = db.Column(db.Boolean)
 	url = db.Column(db.String())
-	comments = db.relationship("Comment", backref="news_item")
+	comments = db.relationship("Comment", backref="news_item", order_by="Comment.date_posted")
 	num_comments = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())

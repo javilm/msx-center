@@ -8,6 +8,7 @@
 {% block extracss %}
 <link rel="stylesheet" href="/static/css/articles.css">
 <link rel="stylesheet" href="/static/css/breadcrumbs.css">
+<link rel="stylesheet" href="/static/css/comments.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 <link rel="stylesheet" href="/static/css/lightbox.min.css">
@@ -55,7 +56,7 @@
 				{% if article.comments|length %} 
 					<h3 class="article-section-divider">Comments </h3>
 					{% for comment in article.comments %}
-						{{ comments_macros.comment(article, comment) }}
+						{{ comments_macros.comment(user, comment, my_votes) }}
 					{% endfor %} 
 				{% endif %}
 

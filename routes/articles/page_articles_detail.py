@@ -1,7 +1,7 @@
 import json
 from __main__ import app, db
 from flask import url_for, render_template, session, request, abort
-from models import User, ArticleSeries, Article, Comment
+from models import User, ArticleSeries, Article, Comment, Vote
 
 @app.route('/articles/<int:article_id>/<string:slug>', methods=['GET', 'POST'])
 def page_articles_detail(article_id, slug):
@@ -23,6 +23,19 @@ def page_articles_detail(article_id, slug):
 		
 		# the series this article belongs to	
 		template_options['series'] = ArticleSeries.query.filter_by(id=article.series_id).first()
+
+		# Get the votes this user cast on this article
+		if user:
+			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).all()
+			#votes = db.session.query(Vote, Comment, Article).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).all()
+			app.logger.info("votes: %s" % votes)
+			my_votes = {}
+			for vote in votes:
+				my_votes[vote.comment_id] = vote.score
+			app.logger.info("my_votes: %s" % my_votes)
+			template_options['my_votes'] = my_votes
+		else:
+			template_options['my_votes'] = None
 
 		return render_template('articles/article-detail.html', **template_options)
 

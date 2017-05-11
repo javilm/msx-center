@@ -1,27 +1,53 @@
-{% macro comment(parent, comment) %}
-<div class="article-comment">
-	<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}">
-		<img src="{{ comment.author.profile_photo_url(size='small') }}" class="author-avatar">
-	</a>
-	{% if parent.author_id == comment.author_id %}
-		<div class="panel panel-success">
-	{% elif comment.author.is_moderator %}
-		<div class="panel panel-warning">
-	{% else %}
-		<div class="panel panel-default">
-	{% endif %}
-        <div class="panel-heading">
-            <h3 class="panel-title">
-				{% if parent.author_id == comment.author_id %}<span class="label label-primary">AUTHOR</span>{% endif %}
-				<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a> commented on {{ comment.formatted_datetime() }}</h3></div>
-        <div class="panel-body">{{ comment.body_en|safe }}</div>
-        <div class="panel-footer">
-			<strong>Score:</strong> <span class="comment-score">{{comment.score }}</span>
-			<i class="fa fa-thumbs-o-up upvote"></i><span class="comment-score">{{ comment.num_upvotes }}</span>
-			<i class="fa fa-thumbs-o-down downvote"></i><span class="comment-score">{{ comment.num_downvotes }}</span>
+{% macro comment(user, comment, my_votes) %}
+<div class="comment" id="comment_{{ comment.id }}">
+	<div class="comment-votes">
+		{# Could do this on a more granular way, but this is more readable #}
+		{%- if user -%}
+			<div class="btn-group-vertical btn-group-xs" role="group">
+				{# UPVOTE #}
+				{%- if comment.id in my_votes -%}
+					{%- if my_votes[comment.id] == 2 -%}
+						<button class="btn btn-success btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-up"></i></button>
+					{%- else -%}
+						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-up"></i></button>
+					{%- endif -%}
+				{%- else -%}
+					<button class="btn btn-default btn-xs button-comment-upvote" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
+				{%- endif -%}
+
+				{# SCORE #}
+				<button class="btn btn-link" type="button" disabled="disabled" id="button_comment_{{ comment.id }}_score"><strong>{{ comment.score }}</strong></button>
+
+				{# DOWNVOTE #}
+				{%- if comment.id in my_votes -%}
+					{%- if my_votes[comment.id] == 1 -%}
+						<button class="btn btn-danger btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-down"></i></button>
+					{%- else -%}
+						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-down"></i></button>
+					{%- endif -%}
+				{%- else -%}
+					<button class="btn btn-default btn-xs button-comment-downvote" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
+				{%- endif -%}
+			</div>
+		{%- else -%}
+			<div class="btn-group-vertical btn-group-xs" role="group">
+				<button class="btn btn-default btn-xs button-comment-upvote" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
+				<button class="btn btn-link" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_score"><strong>{{ comment.score }}</strong></button>
+				<button class="btn btn-default btn-xs button-comment-downvote" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
+			</div>
+		{%- endif -%}
+	</div>
+	<div class="comment-content">
+		<div class="comment-metadata">
+			<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}">
+				<img src="{{ comment.author.profile_photo_url(size='small') }}" class="comment-author-avatar">
+			</a>
+			<div>
+				<p class="comment-author">#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a></p>
+				<p class="comment-date">Posted on {{ comment.formatted_datetime() }}</p>
+			</div>
 		</div>
-    </div>
+		<div class="comment-body">{{ comment.body_en|safe }}</div>
+	</div>
 </div>
 {% endmacro %}
-
-
