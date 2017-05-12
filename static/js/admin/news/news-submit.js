@@ -105,7 +105,8 @@ $("#saveButton").click(function (e) {
 			author_id: $('#field_author_id').val(),
 			slug: $('#field_slug').val(),
 			category_id: $('#field_category_id').val(),
-			header_image_id: $('#field_image_id').val(),
+			feature_image_id: $('#field_feature_image_id').val(),
+			feature_image_changed: $('#field_feature_image_changed').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
@@ -150,8 +151,9 @@ $("#uploadButton").click(function (e) {
 		success: function(data) {
 			if (data.success == true) {
 				$("#feature_image_img").remove();
-				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
-				$("#field_image_id").val(data.image_id);
+				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.feature_image_id + '/feature_image">');
+				$("#field_feature_image_id").val(data.feature_image_id);
+				$("#field_feature_image_changed").val(1);
 			} else {
 				$("#feature_image_img").remove();
 			}

@@ -1,7 +1,7 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, NewsItem, User, ExternalLink
+from models import Category, NewsItem, User, ExternalLink, StoredImage
 
 @app.route('/admin/news/<int:item_id>/edit', methods=['GET', 'POST'])
 def page_admin_news_edit(item_id):
@@ -82,7 +82,6 @@ def page_admin_news_edit(item_id):
 		item.author_id = request.form['author_id']
 		item.slug = request.form['slug']
 		item.category_id = request.form['category_id']
-		item.header_image_id = request.form['header_image_id']
 		item.date_published = request.form['date_published']
 		item.is_published = request.form['is_published']
 		item.is_archived = request.form['is_archived']
@@ -96,6 +95,11 @@ def page_admin_news_edit(item_id):
 		# Remove all existing related links and add the ones from the form
 		for link in item.links:
 			item.links.remove(link)
+
+		# If the feature image has changed add the new one
+		if request.form['feature_image_changed']:
+			image = StoredImage.query.get(request.form['feature_image_id'])
+			item.add_feature_image(image)
 		
 		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
 		if len(links):

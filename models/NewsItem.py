@@ -50,8 +50,10 @@ class NewsItem(db.Model):
 	is_draft_es = db.Column(db.Boolean)
 	is_draft_pt = db.Column(db.Boolean)
 	is_draft_kr = db.Column(db.Boolean)
-	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
 	date_created = db.Column(db.DateTime)
+	carousel_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
+	feature_image_full_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
+	feature_image_small_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
 	date_published = db.Column(db.DateTime)
 	is_published = db.Column(db.Boolean)
 	is_hidden = db.Column(db.Boolean)
@@ -97,7 +99,6 @@ class NewsItem(db.Model):
 		self.is_draft_es = is_draft_es
 		self.is_draft_pt = is_draft_pt
 		self.is_draft_kr = is_draft_kr
-		self.header_image_id = header_image_id or None
 		self.date_created = datetime.utcnow()
 		self.date_published = date_published or self.date_created
 		self.is_published = is_published
@@ -142,4 +143,32 @@ class NewsItem(db.Model):
 			self.comments.append(comment)
 			self.num_comments = len(self.comments)
 			db.session.commit()
-	
+
+	def add_feature_image(self, original_image):
+
+		from . import StoredImage
+
+		# Make a carousel image, exactly 1400x600
+		carousel_image = StoredImage.from_original(original_image)
+		carousel_image.fit_within(width=1400, height=1400)
+		mid_height = carousel_image.height/2
+		carousel_image.crop(0, mid_height-300, 1400, mid_height+300)
+
+		# Make a feature image, exactly 1200x675
+		feature_image_full = StoredImage.from_original(original_image)
+		feature_image_full.fit_within(width=1200, height=1200)
+		mid_height = feature_image_full.height/2
+		feature_image_full.crop(0, mid_height-337, 1200, mid_height+338)
+
+		# Make a small feature image, exactly 450x253
+		feature_image_small = StoredImage.from_original(original_image)
+		feature_image_small.fit_within(width=450, height=450)
+		mid_height = feature_image_small.height/2
+		feature_image_small.crop(0, mid_height-126, 450, mid_height+127)
+
+		# Save the new images to the database   
+		db.session.add(self)
+		self.carousel_image_id = carousel_image.save_to_db()
+		self.feature_image_full_id = feature_image_full.save_to_db()
+		self.feature_image_small_id = feature_image_small.save_to_db()
+		db.session.commit()	

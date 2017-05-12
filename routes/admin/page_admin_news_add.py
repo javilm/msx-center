@@ -1,7 +1,7 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, NewsItem, User, ExternalLink
+from models import Category, NewsItem, User, ExternalLink, StoredImage
 
 @app.route('/admin/news/add', methods=['GET', 'POST'])
 def page_admin_news_add():
@@ -76,7 +76,6 @@ def page_admin_news_add():
 		model_vars['author_id'] = request.form['author_id']
 		model_vars['slug'] = request.form['slug']
 		model_vars['category_id'] = request.form['category_id']
-		model_vars['header_image_id'] = request.form['header_image_id']
 		model_vars['date_published'] = request.form['date_published']
 		model_vars['is_published'] = request.form['is_published']
 		model_vars['is_archived'] = request.form['is_archived']
@@ -86,6 +85,8 @@ def page_admin_news_add():
 		
 		# Create the news item
 		news_item = NewsItem(**model_vars)
+		feature_image = StoredImage.query.get(request.form['feature_image_id'])
+		news_item.add_feature_image(feature_image)
 		db.session.add(news_item)
 		
 		# Add the related links, if there's any
@@ -99,3 +100,4 @@ def page_admin_news_add():
 		db.session.commit()
 
 		return jsonify(url=url_for('page_admin_news'))
+

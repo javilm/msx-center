@@ -43,7 +43,7 @@
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 news-column">
 		<div class="news-item">
 			{% if item.category %}<h5 class="text-uppercase">{{ item.category.name_en }}</h5>{% endif %}
-			{% if item.header_image_id %}<img src="{{ url_for('send_image', image_id=item.header_image_id, dummy_filename='newsite') }}" class="img-responsive">{% endif %}
+			{% if item.feature_image_small_id %}<img src="{{ url_for('send_image', image_id=item.feature_image_small_id, dummy_filename='newsite') }}" class="img-responsive">{% endif %}
 			<h3>{{ item.headline_en|safe }}</h3>
 			{% if item.subhead_en %}<h4>{{ item.subhead_en|safe }}</h4>{% endif %}
 			{# XXX <p class="news-item-date">Posted on {{ date.strftime('%b %-d, %Y') }} by <a href="#">{{ item.author.real_name }}</a></p> #}{# replace author with author.name and a link to this member's profile after passing an actual user object #}

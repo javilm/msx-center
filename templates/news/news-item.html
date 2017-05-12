@@ -73,10 +73,7 @@
 
                     {# HEADER IMAGE AND CAPTION #}
                     <div id="header-image">
-	                    <img src="{{ url_for('send_image', image_id=news_item.header_image_id, dummy_filename='header_image') }}" class="img-responsive">
-                        {% if news_item.header_image_caption %}
-                        	<p>{{ news_item.header_image_caption }}</p>
-                    	{% endif %}
+	                    <img src="{{ url_for('send_image', image_id=news_item.feature_image_full_id, dummy_filename='feature_image') }}" class="img-responsive">
                     </div>
 
                     {# NEWS ITEM BODY #}
