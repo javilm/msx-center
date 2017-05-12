@@ -28,11 +28,9 @@ def page_articles_detail(article_id, slug):
 		if user:
 			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).all()
 			#votes = db.session.query(Vote, Comment, Article).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).all()
-			app.logger.info("votes: %s" % votes)
 			my_votes = {}
 			for vote in votes:
 				my_votes[vote.comment_id] = vote.score
-			app.logger.info("my_votes: %s" % my_votes)
 			template_options['my_votes'] = my_votes
 		else:
 			template_options['my_votes'] = None

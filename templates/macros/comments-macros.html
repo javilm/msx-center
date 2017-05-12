@@ -12,7 +12,7 @@
 						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-up"></i></button>
 					{%- endif -%}
 				{%- else -%}
-					<button class="btn btn-default btn-xs button-comment-upvote" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
+					<button class="btn btn-default btn-xs button-comment-upvote" comment_id="{{ comment.id }}" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
 				{%- endif -%}
 
 				{# SCORE #}
@@ -26,7 +26,7 @@
 						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-down"></i></button>
 					{%- endif -%}
 				{%- else -%}
-					<button class="btn btn-default btn-xs button-comment-downvote" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
+					<button class="btn btn-default btn-xs button-comment-downvote" comment_id="{{ comment.id }}" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
 				{%- endif -%}
 			</div>
 		{%- else -%}
