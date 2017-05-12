@@ -109,7 +109,8 @@ $("#saveButton").click(function (e) {
 			priority: $('#field_priority').val(),
 			level: $('#field_level').val(),
 			slug: $('#field_slug').val(),
-			header_image_id: $('#field_image_id').val(),
+			feature_image_id: $('#field_feature_image_id').val(),
+			feature_image_changed: $('#field_feature_image_changed').val(),
 			date_published: $('#field_date_published').val(),
 			is_hidden: $('#field_is_hidden').is(':checked')?'on':'off',
 			is_published: $('#field_is_published').is(':checked')?'on':'off',
@@ -154,8 +155,9 @@ $("#uploadButton").click(function (e) {
 		success: function(data) {
 			if (data.success == true) {
 				$("#feature_image_img").remove();
-				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
-				$("#field_image_id").val(data.image_id);
+				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.feature_image_id + '/feature_image">');
+				$("#field_feature_image_id").val(data.feature_image_id);
+				$("#field_feature_image_changed").val(1);
 				console.log(JSON.stringify(data));
 			} else {
 				$("#feature_image_img").remove();

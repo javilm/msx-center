@@ -131,5 +131,32 @@ class StoredImage(db.Model):
 		self.height = original.height
 		self.update_md5()
 
+	def crop(self, x0=0, y0=0, x1=0, y1=0):
+		"""Crop the image. Replaces the original data."""
+		
+		# Read image in memory
+		original = Image.open(BytesIO(self.data))
+	
+		# Perform the crop	
+		cropped = original.crop((x0, y0, x1, y1))
+
+		# Store the resulting image
+		tmp_stream = BytesIO()
+		cropped.save(tmp_stream, string.upper(self.format))
+		self.data = tmp_stream.getvalue()
+		self.width = cropped.width
+		self.height = cropped.height
+		self.update_md5()
+
 	def update_md5(self):
 		self.md5_hash = hashlib.md5(self.data).hexdigest()
+
+	def save_to_db(self):
+		"""Saves an image to the database only if the same image isn't there already. Returns the ID of the newly saved image, or the ID of the existing one."""
+		tmp = StoredImage.query.filter_by(md5_hash=self.md5_hash).first()
+		if tmp is None:
+			db.session.add(self)
+			db.session.commit()
+			return self.id
+		else:
+			return tmp.id

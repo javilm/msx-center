@@ -1,7 +1,7 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, Article, User, ExternalLink, ArticleSeries
+from models import Category, Article, User, ExternalLink, ArticleSeries, StoredImage
 
 # DEBUG
 from utils import log_form_vars
@@ -21,7 +21,7 @@ def page_admin_articles_add():
 	if request.method == 'GET':
 		template_options = {}
 		template_options['user'] = user
-		template_options['active'] = 'news'
+		template_options['active'] = 'articles'
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
 		template_options['categories'] = Category.query.order_by(Category.id).all()
@@ -47,7 +47,6 @@ def page_admin_articles_add():
 		model_vars['chapter'] = request.form['chapter']
 		model_vars['priority'] = request.form['priority']
 		model_vars['level'] = request.form['level']
-		model_vars['header_image_id'] = request.form['header_image_id']
 		model_vars['slug'] = request.form['slug']
 		model_vars['date_published'] = request.form['date_published']
 		model_vars['is_published'] = request.form['is_published']
@@ -58,6 +57,8 @@ def page_admin_articles_add():
 		
 		# Create the news item
 		article = Article(**model_vars)
+		feature_image = StoredImage.query.get(request.form['feature_image_id'])
+		article.add_feature_image(feature_image)
 		db.session.add(article)
 		
 		# Add the related links, if there's any

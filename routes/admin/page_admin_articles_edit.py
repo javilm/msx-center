@@ -1,7 +1,7 @@
 import json
 from flask import abort, jsonify, render_template, request, url_for
 from __main__ import app, db
-from models import Category, Article, User, ExternalLink, ArticleSeries
+from models import Category, Article, User, ExternalLink, ArticleSeries, StoredImage
 
 @app.route('/admin/articles/<int:article_id>/edit', methods=['GET', 'POST'])
 def page_admin_articles_edit(article_id):
@@ -23,7 +23,7 @@ def page_admin_articles_edit(article_id):
 	if request.method == 'GET':
 		template_options = {}
 		template_options['user'] = user
-		template_options['active'] = 'news'
+		template_options['active'] = 'articles'
 		template_options['staff'] = User.query.filter(User.is_staff==True).filter(User.is_superuser==False).all()
 		template_options['superusers'] = User.query.filter(User.is_superuser==True).all()
 		template_options['categories'] = Category.query.order_by(Category.id).all()
@@ -80,7 +80,6 @@ def page_admin_articles_edit(article_id):
 		article.chapter = request.form['chapter']
 		article.priority = request.form['priority']
 		article.level = request.form['level']
-		article.header_image_id = request.form['header_image_id']
 		article.slug = request.form['slug']
 		article.category_id = request.form['category_id']
 		article.date_published = request.form['date_published']
@@ -92,6 +91,11 @@ def page_admin_articles_edit(article_id):
 
 		# Re-process the body's HTML code in case new images are uploaded
 		article.html_extract_images()
+
+		# If the feature image has changed add the new one
+		if request.form['feature_image_changed']:
+			image = StoredImage.query.get(request.form['feature_image_id'])
+			article.add_feature_image(image)
 
 		# Remove all existing related links and add the ones from the form
 		for link in article.links:

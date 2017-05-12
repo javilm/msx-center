@@ -30,7 +30,7 @@
             
             {# header image #}
             <div id="header-image">
-	            <img src="{{ url_for('send_image', image_id=article.header_image_id, dummy_filename='article_header_%s' % article.id) }}" class="img-responsive">
+	            <img src="{{ url_for('send_image', image_id=article.feature_image_full_id, dummy_filename='article_feature_image_%s' % article.id) }}" class="img-responsive">
             </div>
 
 			{# article body #}

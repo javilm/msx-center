@@ -19,14 +19,14 @@ def ajax_admin_articles_add_feature_image():
 
 	json_results = {}
 	json_results['success'] = False
-	json_results['image_id'] = 0
+	json_results['feature_image_id'] = 0
 
 	if 'feature_image' in request.files:
 		if request.files['feature_image'].filename:
 
 			# Try to import the image. Will be None on failure.
 			feature_image = StoredImage.from_file(request.files['feature_image'])
-			feature_image.fit_within()	# Use default width/height
+			feature_image.fit_within(width=2560, height=2560)
 
 			if feature_image:
 
@@ -39,6 +39,6 @@ def ajax_admin_articles_add_feature_image():
 					feature_image = tmp_image
 
 				json_results['success'] = True
-				json_results['image_id'] = feature_image.id
+				json_results['feature_image_id'] = feature_image.id
 
 	return jsonify(**json_results)

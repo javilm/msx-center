@@ -3,6 +3,7 @@ from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
 from utils import html_image_extractor
+from . import StoredImage
 
 association_table = db.Table('association_article_external_link',
 	db.Column('article_id', db.Integer, db.ForeignKey('articles.id'), nullable=False),
@@ -28,7 +29,9 @@ class Article(db.Model):
 	chapter = db.Column(db.Integer)		# The chapter number, if belonging to a series (could be 0 or null)
 	priority = db.Column(db.Integer)	# The order in which articles are listed, if not belonging to a series
 	level = db.Column(db.Integer)		# A difficulty level from 1 (beginner) to 5 (expert)
-	header_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
+	carousel_image_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
+	feature_image_full_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
+	feature_image_small_id = db.Column(db.Integer, db.ForeignKey('stored_images.id'), nullable=True)
 	links = db.relationship('ExternalLink', secondary=association_table)
 	title_en = db.Column(db.String())
 	title_ja = db.Column(db.String())
@@ -133,3 +136,28 @@ class Article(db.Model):
 			self.num_comments = len(self.comments)
 			db.session.commit()
 
+	def add_feature_image(self, original_image):
+		# Make a carousel image, exactly 1400x600
+		carousel_image = StoredImage.from_original(original_image)
+		carousel_image.fit_within(width=1400, height=1400)
+		mid_height = carousel_image.height/2
+		carousel_image.crop(0, mid_height-300, 1400, mid_height+300)
+
+		# Make a feature image, exactly 1200x675
+		feature_image_full = StoredImage.from_original(original_image)
+		feature_image_full.fit_within(width=1200, height=1200)
+		mid_height = feature_image_full.height/2
+		feature_image_full.crop(0, mid_height-337, 1200, mid_height+338)
+
+		# Make a small feature image, exactly 450x253
+		feature_image_small = StoredImage.from_original(original_image)
+		feature_image_small.fit_within(width=450, height=450)
+		mid_height = feature_image_small.height/2
+		feature_image_small.crop(0, mid_height-126, 450, mid_height+127)
+	
+		# Save the new images to the database	
+		db.session.add(self)
+		self.carousel_image_id = carousel_image.save_to_db()
+		self.feature_image_full_id = feature_image_full.save_to_db()
+		self.feature_image_small_id = feature_image_small.save_to_db()
+		db.session.commit()

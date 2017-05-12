@@ -35,7 +35,8 @@
 {% endif %}
 
 <form id="article_add_form" method="post">
-	<input type="hidden" id="field_image_id" value="{{ article.header_image_id }}">
+	<input type="hidden" id="field_feature_image_id" value="{{ article.feature_image_full_id }}">
+	<input type="hidden" id="field_feature_image_changed" value="0">
 	<div class="tab-content">
 
 		{# English #}
@@ -326,8 +327,8 @@
 {% macro article_feature_image() %}
 <h2 class="page-header">Feature image</h1>
 <div id="feature_image_div">
-{% if article.header_image_id %}
-<img id="feature_image_img" class="img-responsive" src="/image/{{ article.header_image_id }}/feature_image">
+{% if article.feature_image_small_id %}
+<img id="feature_image_img" class="img-responsive" src="/image/{{ article.feature_image_small_id }}/feature_image">
 {% endif %}
 </div>
 <form id="feature_image_form" enctype="multipart/form-data" action="{{ url_for('ajax_admin_articles_add_feature_image') }}">

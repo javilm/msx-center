@@ -10,7 +10,7 @@
 {% macro article_big(article) %}
 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
     <div>
-        <div class="hidden-xs articles-feature-image"><img src="{{ url_for('send_image', image_id=article.header_image_id, dummy_filename='header_image') }}" class="img-responsive"></div>
+        <div class="hidden-xs articles-feature-image"><img src="{{ url_for('send_image', image_id=article.feature_image_small_id, dummy_filename='feature_image') }}" class="img-responsive"></div>
 		{% if article.chapter %}<h1 class="articles-meta-chapter-big">Chapter {{ article.chapter }}</h1>{% endif %}
         <h1 class="articles-meta-title"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></h1>
 		<p>
@@ -26,7 +26,7 @@
 {% macro article_standard(article) %}
 <div class="row articles-series-row">
     <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs articles-meta-col-feature-image">
-        <div class="articles-feature-image"><img src="{{ url_for('send_image', image_id=article.header_image_id, dummy_filename='header_image') }}" class="img-responsive"></div>
+        <div class="articles-feature-image"><img src="{{ url_for('send_image', image_id=article.feature_image_small_id, dummy_filename='feature_image') }}" class="img-responsive"></div>
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         <div>
