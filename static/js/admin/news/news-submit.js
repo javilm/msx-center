@@ -62,7 +62,11 @@ $(function () {
 // Link event to the submit button
 $("#saveButton").click(function (e) {
 	e.preventDefault();
-	console.log("Save button pressed");
+
+	var button = $(this);
+
+	button.html('Saving, please wait...');
+	button.addClass('disabled');
 
 	$.ajax({
 		method: "POST",
@@ -99,8 +103,8 @@ $("#saveButton").click(function (e) {
 			body_kr: quill_kr.root.innerHTML,
 			is_draft_kr: $('#field_is_draft_kr').is(':checked')?'on':'off',
 			author_id: $('#field_author_id').val(),
-            slug: $('#field_slug').val(),
-            category_id: $('#field_category_id').val(),
+			slug: $('#field_slug').val(),
+			category_id: $('#field_category_id').val(),
 			header_image_id: $('#field_image_id').val(),
 			date_published: $('#field_date_published').val(),
 			is_feature: $('#field_is_feature').is(':checked')?'on':'off',
@@ -109,16 +113,20 @@ $("#saveButton").click(function (e) {
 			is_archived: $('#field_is_archived').is(':checked')?'on':'off',
 			allows_comments: $('#field_allows_comments').is(':checked')?'on':'off',
 			links: JSON.stringify($("input[name='array_related_links']")
-				.map(function() {
-					return $(this).val();
-				})
-				.get())
+					.map(function() {
+						return $(this).val();
+					})
+					.get())
 		},
 		success: function(data) {
 			window.location = data.url;
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			alert("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
+			console.log("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
+		},
+		complete: function(request, status) {
+			button.html('Save');
+			button.removeClass('disabled');
 		}
 	});
 });	
@@ -126,25 +134,31 @@ $("#saveButton").click(function (e) {
 // Link event to the upload button
 $("#uploadButton").click(function (e) {
 	e.preventDefault();
-	console.log("Upload button pressed");
 
 	var fd = new FormData(document.getElementById('feature_image_form'));
+	var button = $(this);
+
+	button.html('Uploading...');
+	button.addClass('disabled');
 
 	$.ajax({
 		data: fd,
-		url: '/admin/news/add/feature_image',
 		processData: false,
 		contentType: false,
+		url: '/admin/news/add/feature_image',
 		method: 'POST',
 		success: function(data) {
 			if (data.success == true) {
 				$("#feature_image_img").remove();
 				$("#feature_image_div").append('<img id="feature_image_img" class="img-responsive" src="/image/' + data.image_id + '/feature_image">');
 				$("#field_image_id").val(data.image_id);
-				console.log(JSON.stringify(data));
 			} else {
 				$("#feature_image_img").remove();
 			}
+		},
+		complete: function(request, status) {
+			button.html('Upload image');
+			button.removeClass('disabled');
 		}
 	});
 });

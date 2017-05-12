@@ -1,4 +1,4 @@
-from __main__ import app, db
+from __main__ import app, db, country_list, timezone_list
 from flask import abort, request, render_template, redirect, url_for
 from slugify import slugify
 from models import User, ArticleSeries

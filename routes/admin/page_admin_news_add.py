@@ -36,12 +36,42 @@ def page_admin_news_add():
 		#					authentication.
 
 		model_vars = {}
-		for lang in ['en', 'ja', 'nl', 'es', 'pt', 'kr']:
-			model_vars['headline_%s' % lang] = request.form['%s[headline]' % lang]
-			model_vars['subhead_%s' % lang] = request.form['%s[subhead]' % lang]
-			model_vars['summary_%s' % lang] = request.form['%s[summary]' % lang]
-			model_vars['body_%s' % lang] = request.form['%s[body]' % lang]
-			model_vars['is_draft_%s' % lang] = request.form['%s[is_draft]' % lang]
+
+		model_vars['headline_en'] = request.form['headline_en']
+		model_vars['subhead_en'] = request.form['subhead_en']
+		model_vars['summary_en'] = request.form['summary_en']
+		model_vars['body_en'] = request.form['body_en']
+		model_vars['is_draft_en'] = request.form['is_draft_en']
+
+		model_vars['headline_ja'] = request.form['headline_ja']
+		model_vars['subhead_ja'] = request.form['subhead_ja']
+		model_vars['summary_ja'] = request.form['summary_ja']
+		model_vars['body_ja'] = request.form['body_ja']
+		model_vars['is_draft_ja'] = request.form['is_draft_ja']
+
+		model_vars['headline_nl'] = request.form['headline_nl']
+		model_vars['subhead_nl'] = request.form['subhead_nl']
+		model_vars['summary_nl'] = request.form['summary_nl']
+		model_vars['body_nl'] = request.form['body_nl']
+		model_vars['is_draft_nl'] = request.form['is_draft_nl']
+
+		model_vars['headline_es'] = request.form['headline_es']
+		model_vars['subhead_es'] = request.form['subhead_es']
+		model_vars['summary_es'] = request.form['summary_es']
+		model_vars['body_es'] = request.form['body_es']
+		model_vars['is_draft_es'] = request.form['is_draft_es']
+
+		model_vars['headline_pt'] = request.form['headline_pt']
+		model_vars['subhead_pt'] = request.form['subhead_pt']
+		model_vars['summary_pt'] = request.form['summary_pt']
+		model_vars['body_pt'] = request.form['body_pt']
+		model_vars['is_draft_pt'] = request.form['is_draft_pt']
+
+		model_vars['headline_kr'] = request.form['headline_kr']
+		model_vars['subhead_kr'] = request.form['subhead_kr']
+		model_vars['summary_kr'] = request.form['summary_kr']
+		model_vars['body_kr'] = request.form['body_kr']
+		model_vars['is_draft_kr'] = request.form['is_draft_kr']
 
 		model_vars['author_id'] = request.form['author_id']
 		model_vars['slug'] = request.form['slug']

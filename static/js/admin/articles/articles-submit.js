@@ -63,6 +63,11 @@ $(function () {
 $("#saveButton").click(function (e) {
 	e.preventDefault();
 
+	var button = $(this);
+
+	button.html('Saving, please wait...');
+	button.addClass('disabled');
+
 	$.ajax({
 		method: "POST",
 		processData: true,
@@ -122,6 +127,10 @@ $("#saveButton").click(function (e) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
+		},
+		complete: function(request, status) {
+			button.html('Saving, please wait...');
+			button.addClass('disabled');
 		}
 	});
 });	
@@ -131,6 +140,10 @@ $("#uploadButton").click(function (e) {
 	e.preventDefault();
 
 	var fd = new FormData(document.getElementById('feature_image_form'));
+	var button = $(this);
+	
+	button.html('Uploading...');
+	button.addClass('disabled');
 
 	$.ajax({
 		data: fd,
@@ -147,6 +160,10 @@ $("#uploadButton").click(function (e) {
 			} else {
 				$("#feature_image_img").remove();
 			}
+		},
+		complete: function(request, status) {
+			button.html('Upload image');
+			button.removeClass('disabled');
 		}
 	});
 });
