@@ -2,7 +2,7 @@ from datetime import datetime
 from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
-from utils import html_image_extractor
+from utils import html_image_extractor, format_date
 from . import StoredImage
 
 association_table = db.Table('association_article_external_link',
@@ -149,11 +149,11 @@ class Article(db.Model):
 		mid_height = feature_image_full.height/2
 		feature_image_full.crop(0, mid_height-337, 1200, mid_height+338)
 
-		# Make a small feature image, exactly 450x253
+		# Make a small feature image, exactly 730x410
 		feature_image_small = StoredImage.from_original(original_image)
-		feature_image_small.fit_within(width=450, height=450)
+		feature_image_small.fit_within(width=730, height=730)
 		mid_height = feature_image_small.height/2
-		feature_image_small.crop(0, mid_height-126, 450, mid_height+127)
+		feature_image_small.crop(0, mid_height-205, 730, mid_height+205)
 	
 		# Save the new images to the database	
 		db.session.add(self)
@@ -161,3 +161,6 @@ class Article(db.Model):
 		self.feature_image_full_id = feature_image_full.save_to_db()
 		self.feature_image_small_id = feature_image_small.save_to_db()
 		db.session.commit()
+
+	def date(self):
+		return format_date(self.date_published)

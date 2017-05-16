@@ -2,7 +2,7 @@ import jinja_filters
 import pycountry
 import pytz
 from flask import Flask, g, session, url_for, redirect
-from flask_debugtoolbar import DebugToolbarExtension
+#from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from geoip import geolite2
@@ -27,13 +27,13 @@ app.config.update(dict(
 	DEFAULT_MAIL_SENDER='javi.lavandeira@msx-center.com',
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
 	SERVER_NAME='dev.msx-center.com',
-	DEBUG_TB_INTERCEPT_REDIRECTS=False,
+#	DEBUG_TB_INTERCEPT_REDIRECTS=False,
 	MAX_CONTENT_LENGTH=32*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
 
 db = SQLAlchemy(app)
-toolbar = DebugToolbarExtension(app)
+#toolbar = DebugToolbarExtension(app)
 
 # Create ordered lists of countries and timezones
 country_list = sorted(pycountry.countries, key = lambda c: c.name)

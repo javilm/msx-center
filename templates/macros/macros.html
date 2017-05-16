@@ -1,47 +1,45 @@
 {% macro navbar(navbar_series=None, active_item='home', user=None) -%}
-<div>
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1">
-                	<span class="sr-only">Toggle navigation</span>
-                	<span class="icon-bar"></span>
-                	<span class="icon-bar"></span>
-                	<span class="icon-bar"></span>
-                </button>
-				<a class="navbar-brand navbar-link" href="{{ url_for('page_main') }}"><img src="/static/img/msx_center_logo.png" id="logo"></a>
-            </div>
-            
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="nav navbar-nav">
-                    <li {% if active_item == 'home' %}class="active"{% endif %}><a href="{{ url_for('page_main') }}">Home</a></li>
-                    <li {% if active_item == 'news' %}class="active"{% endif %}><a href="{{ url_for('page_news') }}">News</a></li>
-                    <li {% if active_item == 'arti' %}class="active"{% endif %} class="dropdown">
-                    	<a href="{{ url_for('page_articles') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Articles <span class="caret"></span></a>
-						{% if navbar_series|length %}
-	                    	<ul class="dropdown-menu">
-		                    	{% for series in navbar_series %}
-			                    	<li><a href="{{ url_for('page_series_articles', series_id=series.id, slug=series.slug) }}">{{ series.title_en }}</a></li>
-		                    	{% endfor %}
-	                    	</ul>
-	                    {% endif %}
-                    </li>
-                    <li {% if active_item == 'loun' %}class="active"{% endif %}><a href="{{ url_for('page_lounges_list') }}">Lounges</a></li>
-                    <li {% if active_item == 'shop' %}class="active"{% endif %}><a href="#">Shop </a></li>
-                    <li {% if active_item == 'abou' %}class="active"{% endif %}><a href="#">About us</a></li>
-                </ul>
-                {% if user %}
-					{{ user_pulldown(user) }}
-                {% else %}
-                    <form class="navbar-form navbar-right">
-                        <a class="navbar-link btn btn-default login" href="{{ url_for('page_signin') }}">Sign in</a>
-						<a class="btn btn-default btn-success" role="button" href="{{ url_for('page_createaccount') }}">Create account</a>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-</div>
+<nav class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand navbar-link" href="{{ url_for('page_main') }}"><img src="/static/img/msx_center_logo.png" id="logo"></a>
+		</div>
+		
+		<div class="collapse navbar-collapse" id="navcol-1">
+			<ul class="nav navbar-nav">
+				<li {% if active_item == 'home' %}class="active"{% endif %}><a href="{{ url_for('page_main') }}">Home</a></li>
+				<li {% if active_item == 'news' %}class="active"{% endif %}><a href="{{ url_for('page_news') }}">News</a></li>
+				<li {% if active_item == 'arti' %}class="active"{% endif %} class="dropdown">
+					<a href="{{ url_for('page_articles') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Articles <span class="caret"></span></a>
+					{% if navbar_series|length %}
+						<ul class="dropdown-menu">
+							{% for series in navbar_series %}
+								<li><a href="{{ url_for('page_series_articles', series_id=series.id, slug=series.slug) }}">{{ series.title_en }}</a></li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+				</li>
+				<li {% if active_item == 'loun' %}class="active"{% endif %}><a href="{{ url_for('page_lounges_list') }}">Lounges</a></li>
+				<li {% if active_item == 'shop' %}class="active"{% endif %}><a href="#">Shop </a></li>
+				<li {% if active_item == 'abou' %}class="active"{% endif %}><a href="#">About us</a></li>
+			</ul>
+			{% if user %}
+				{{ user_pulldown(user) }}
+			{% else %}
+				<form class="navbar-form navbar-right">
+					<a class="navbar-link btn btn-default login" href="{{ url_for('page_signin') }}">Sign in</a>
+					<a class="btn btn-default btn-success" role="button" href="{{ url_for('page_createaccount') }}">Create account</a>
+				</form>
+			{% endif %}
+		</div>
+	</div>
+</nav>
 {%- endmacro %}
 
 {% macro user_pulldown(user=None) %}
@@ -52,9 +50,11 @@
 			<li class="dropdown-header" role="presentation"><strong>{{ user.real_name }}</strong></li>
 			<li class="divider" role="presentation"></li>
 			<li role="presentation"><a href="{{ url_for('page_member', member_id=user.id, slug=user.slug) }}">Profile</a></li>
+		{#
 			<li role="presentation"><a href="#">Messages <span class="badge" style="float: right; margin-top: 3px">34</span></a></li>
 			<li role="presentation"><a href="#">Verify identity</a></li>
 			<li role="presentation"><a href="#">Settings</a></li>
+		#}
 			{% if user.is_superuser or user.is_staff %}
 				<li role="presentation"><a href="{{ url_for('page_admin') }}">Administration</a></li>
 			{% endif %}

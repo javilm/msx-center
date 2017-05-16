@@ -1,73 +1,101 @@
 {% extends "layout/template-base.html" %}
-{% block title %}MSX Center - Cover{% endblock %}
+{% block title %}MSX Center - Home{% endblock %}
 
-{% macro news_categories_nav(active=None) %}
-<div id="categories-nav">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<ul class="nav nav-pills nav-justified" id="article-category-links">
-					<li{% if active == "all" %} class="active"{% endif %}><a class="text-uppercase" href="#">All news</a></li>
-					<li{% if active == "events" %} class="active"{% endif %}><a class="text-uppercase" href="#">Events</a></li>
-					<li{% if active == "reviews" %} class="active"{% endif %}><a class="text-uppercase" href="#">Reviews</a></li>
-					<li{% if active == "games" %} class="active"{% endif %}><a class="text-uppercase" href="#">Games</a></li>
-					<li{% if active == "development" %} class="active"{% endif %}><a class="text-uppercase" href="#">Development</a></li>
-					<li{% if active == "hardware" %} class="active"{% endif %}><a class="text-uppercase" href="#">Hardware</a></li>
-				</ul>
-			</div>
-		</div>
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/frontpage.css">
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+$('.carousel').carousel()
+</script>
+{% endblock %}
+
+{% macro carousel_slide(item, is_active) %}
+<div class="item{% if is_active %} active{% endif %}">
+	<a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">
+		<img src="{{ url_for('send_image', image_id=item.carousel_image_id, dummy_filename='feature_image') }}">
+	</a>
+	<div class="carousel-caption">
+		<h3><a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">{{ item.headline_en }}</a></h3>
+		{% if item.subhead_en %}<p>{{ item.subhead_en }}</p>{% endif %}
 	</div>
 </div>
 {% endmacro %}
 
-{% macro main_feature(url=None, title=None, caption=None, category=None) %}
-<div class="main-feature">
-	<div id="main-feature-meta">
-		<h4 class="text-uppercase">{{ category }}</h4>
-		<h1><a href="{{ url }}">{{ title }}</a></h1>
-		<p><a href="{{ url }}">{{ caption }}</a></p>
+{% macro featured_item(item) %}
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 frontpage-feature-item">
+	<h1 class="category">{{ item.category.name_en }}</h1>
+	<img src="{{ url_for('send_image', image_id=item.feature_image_small_id, dummy_filename='feature_image') }}" class="img-responsive">
+	<h3 class="title"><a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">{{ item.title_en }}</a></h3>
+	<p class="metadata">By <a href="{{ url_for('page_member', member_id=item.author.id, slug=item.author.slug) }}">{{ item.author.real_name }}</a>, {{ item.date() }}</p>
+	<p class="text-justify summary">{{ item.summary_en }} <span class="more-link"><a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">Read more </a><i class="fa fa-angle-double-right"></i></span></p>
+	<div class="icons">
+		<span><i class="fa fa-comment"></i> {{ item.comments|length }}</span>
 	</div>
 </div>
 {% endmacro %}
 
-{% macro sub_feature(url=None, title=None, order=None) %}
-<div id="sub-feature-{{ order }}" class="sub-feature">
-	<div class="sub-feature-meta">
-		<h1><a href="{{ url }}">{{ title }}</a></h1>
-	</div>
-</div>
+{% macro recent_news_item(item) %}
+<p>
+	<span class="label label-primary">{{ item.category.name_en }}</span> <a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">{{ item.headline_en }}</a> <span class="date">{{ item.date_published|pretty_date }}</span>
+</p>
+{% endmacro %}
+
+{% macro recent_post(post) %}
+<p class="post-detail">
+	{% if post.post_as == post.PostAsType.REALNAME %}
+		<a href="{{ url_for('page_member', member_id=post.user.id, slug=post.user.slug) }}"><strong>{{ post.user.real_name }}</strong></a>
+	{% elif post.post_as == post.PostAsType.NICKNAME %}
+		<a href="{{ url_for('page_member', member_id=post.user.id, slug=post.user.slug) }}"><strong>{{ post.user.nickname }}</strong></a>
+	{% else %}
+		Somebody anonymous
+	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>
 {% endmacro %}
 
 {% block content %}
-</div>{# close the main container #}
-
-	{{ news_categories_nav(active="all") }}
-
-    <div class="container" id="frontpage-content">
-        <h2>Featured news and articles</h2>
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				{{ main_feature(url="#", title="All future CES will be MSX-only", caption="Not really, but I needed some dummy content here", category="Events") }}
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						{{ sub_feature(url="#", title="All future CES1 will be MSX-only", order=1) }}
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						{{ sub_feature(url="#", title="All future CES2 will be MSX-only", order=2) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						{{ sub_feature(url="#", title="All future CES3 will be MSX-only", order=3) }}
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						{{ sub_feature(url="#", title="All future CES4 will be MSX-only", order=4) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <h3>Blah blah blah blah blah</h3>
+	{# Carousel #}
+	<div class="carousel slide" data-ride="carousel" id="carousel-1">
+		<div class="carousel-inner" role="listbox">
+			{{ carousel_slide(carousel_items[0], True) }}
+			{{ carousel_slide(carousel_items[1], False) }}
+			{{ carousel_slide(carousel_items[2], False) }}
+		</div>
+		<div>
+			<a class="left carousel-control" href="#carousel-1" role="button" data-slide="prev"><i class="glyphicon glyphicon-chevron-left"></i><span class="sr-only">Previous</span></a>
+			<a class="right carousel-control" href="#carousel-1" role="button" data-slide="next"><i class="glyphicon glyphicon-chevron-right"></i><span class="sr-only">Next</span></a>
+		</div>
+		<ol class="carousel-indicators">
+			<li data-target="#carousel-1" data-slide-to="0" class="active"></li>
+			<li data-target="#carousel-1" data-slide-to="1"></li>
+			<li data-target="#carousel-1" data-slide-to="2"></li>
+		</ol>
 	</div>
+
+	{# Features #}
+    <div class="frontpage-features">
+        <div class="row">
+			{% for item in featured_items %}
+				{{ featured_item(item) }}
+			{% endfor %}
+		</div>
+	</div>
+
+	{# Recent news and posts #}
+	<div class="row">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-news">
+			<h1>Recent news</h1>
+			{% for item in recent_news_items %}
+				{{ recent_news_item(item) }}
+			{% endfor %}
+		</div>
+	
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-posts">
+			<h1>Latest conversation posts</h1>
+			{% for post in recent_posts %}
+				{{ recent_post(post) }}
+			{% endfor %}
+		</div>
+	</div>
+
 {% endblock %}
