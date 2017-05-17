@@ -1,0 +1,64 @@
+{% extends "layout/template-base.html" %}
+{% block title %}MSX Center - About us{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/headings.css">
+<link rel="stylesheet" href="/static/css/about.css">
+{% endblock %}
+
+{% block content %}
+<h1 class="heading">About us</h1>
+<p class="lead">MSX Center's purpose is to <strong>promote the usage</strong> of MSX computers, <strong>support developers</strong> of new software and hardware, and <strong>expand the user community</strong>. This is how we're going to do it:</p>
+<h3 class="heading">Promoting the usage of MSX computers</h3>
+<ul class="about-list text-justify">
+    <li><strong>Financial support</strong> for initiatives that encourage the creation of new MSX software or hardware (<a href="http://www.msxdev.org" target="_blank">the MSXdev contest</a> is a perfect example), and for groups that organize user
+        meetings (such as <a href="http://www.aamsx.com" target="_blank">the AAMSX meetings</a> in Barcelona).</li>
+    <li><strong>Spreading the word</strong> about projects that in one way or another give old and new MSX users a reason to power on their machines again (such as <a href="https://www.cheatmsx.com" target="_blank">CheatMSX </a>or <a href="http://www.generation-msx.nl"
+        target="_blank">Generation MSX</a>).</li>
+    <li><strong>Writing courses</strong> teaching how to code utilities, how to create games, draw graphics, or compose music.</li>
+</ul>
+<h3 class="heading">Supporting developers</h3>
+<ul class="about-list text-justify">
+    <li><strong>Buy large batches</strong> of products from developers (games, hardware, etc). Sell those products to MSX Center members in our online shop.</li>
+    <li><strong>Review and advertise</strong> new games, utilities and hardware. Help the developers make their products known to users who would like to buy if they knew how to.</li>
+    <li><strong>Help bring new products to life</strong> by coordinating with suppliers of electronic components, plastic cases, packaging and labeling.</li>
+    <li><strong>Donating</strong> to developers who create something useful to the community and give it away for free (such as <a href="http://www.konamiman.com/msx/msx-e.html#nextor" target="_blank">Nextor).</a></li>
+</ul>
+<h3 class="heading">Expanding the community</h3>
+<ul class="about-list text-justify">
+    <li><strong>Help new and existing users</strong> in our conversation areas by answering usage questions, recommending software and/or hardware, resolving problems...</li>
+    <li><strong>Reach out</strong> to members of other retro platforms who are likely to enjoy using MSX machines.</li>
+</ul>
+<h1 class="heading">Financing </h1>
+<h3>Income </h3>
+<div class="alert alert-success" role="alert">
+    <p class="lead text-center">MSX Center is <strong>not</strong> for profit!</p>
+</div>
+<p>Our two sources of financing are <strong>voluntary member donations</strong> (Patreon) and <strong>revenue from our online shop</strong> (to be open in a near-future update). </p>
+<p>We will post monthly financial statements in the conversation areas explaining both the income and the expenses.</p>
+<h3>Expenses</h3>
+<p>We will pay our <strong>running expenses</strong> from this revenue:</p>
+<ul class="about-list text-justify">
+    <li>Monthly: fiber optics circuit and Internet provider (around $45)</li>
+    <li>Yearly: domain name renewal (around $12) and SSL certificate ($50)</li>
+    <li>Savings for future hardware upgrades and/or replacements ($50/month)</li>
+    <li>Monthly: Google Translate API (uses machine translation to translate posts in the conversation forums to each user's language), amount depends on the quantity of text translated, but it's expected to be $10-20/month.</li>
+</ul>
+<p>The remaining funds will be distributed as follows:</p>
+<ul class="about-list text-justified">
+    <li>Small monthly and per-release donations to creators on Patreon</li>
+    <li>Donations for contests or user events</li>
+    <li>Funds for placing large orders from developers</li>
+</ul>
+<h1 class="heading">Team </h1>
+<p>As of May 2017 <em>we</em> are just one person (hey, <em>we</em>'ve just started!):</p>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 about-team-member text-center"><img src="/static/img/javilm-avatar.jpg" class="img-responsive">
+        <address>
+<strong>Javi Lavandeira</strong><br>
+Tokyo, Japan<br>
+<a href="mailto:javi.lavandeira@msx-center.com">javi.lavandeira@msx-center.com</a><br>
+</address>
+    </div>
+</div>
+{% endblock %}

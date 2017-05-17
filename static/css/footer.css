@@ -1,0 +1,22 @@
+.footer {
+  position:relative;
+  bottom:0;
+  width:100%;
+  background-color:#222;
+  color:#eee;
+  font-size:14px;
+  text-align:center;
+    padding-top:25px;
+    border-top:1px solid #ddd;
+}
+
+.footer-address {
+  text-align:left;
+}
+
+.footer-logo {
+  background-color:#fff;
+  padding:10px;
+  border-radius:5px;
+  margin-bottom:30px;
+}

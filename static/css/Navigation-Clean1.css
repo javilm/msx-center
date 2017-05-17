@@ -221,11 +221,12 @@ div#signup-conditions {
   position:absolute;
   bottom:0;
   width:100%;
-  height:60px;
-  background-color:#ffffff;
-  color:#a0a0a0;
-  font-size:12px;
+  background-color:#222;
+  color:#eee;
+  font-size:14px;
   text-align:center;
+	padding-top:25px;
+	border-top:1px solid #ddd;
 }
 
 footer .text-muted {

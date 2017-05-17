@@ -10,7 +10,7 @@ def page_main():
 
 	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
-	template_options['active'] = None
+	template_options['active'] = 'home'
 	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 	template_options['carousel_items'] = NewsItem.query.order_by('date_published').limit(3).all()
 	template_options['featured_items'] = Article.query.order_by('date_published').limit(3).all()

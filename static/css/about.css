@@ -1,0 +1,15 @@
+.about-list li {
+  margin-top:20px;
+  font-size:medium;
+}
+
+ul.about-list {
+  margin-top:25px;
+  margin-bottom:25px;
+}
+
+.about-team-member img {
+  border-radius:5px;
+  margin-bottom:20px;
+  margin-top:20px;
+}

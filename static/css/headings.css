@@ -1,0 +1,11 @@
+h2.heading {
+  padding-bottom:5px;
+}
+
+h1.heading, h2.heading {
+  border-bottom:1px solid #ddf;
+}
+
+h1.heading {
+  padding-bottom:5px;
+}
