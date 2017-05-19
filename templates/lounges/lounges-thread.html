@@ -122,53 +122,7 @@
 <script src="/static/js/lightbox.min.js"></script>
 {% if not errors %}
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
-<script type="text/javascript">
-
-    // Initialize MediumEditor
-    var toolbarOptions = [
-        [{ 'header': [1, 2, 3, false] }],
-        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        [{ 'color': [] },],          // dropdown with defaults from theme
-        ['link', 'image', 'video', 'blockquote', 'code-block'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-    ];
-    var quill = new Quill('#quillEditor' , {
-        modules : {
-            toolbar: toolbarOptions
-        },
-        theme: 'snow'
-    });
-
-    // Attach event to button
-    $("#submitButton").click(function (e) {
-        e.preventDefault();
-        quill.enable(false);
-        $("#submitButton").prop("disabled", true);
-        $("#submitButton").text("Submitting...");
-        $("#quillEditor").prop("disabled", true);
-
-        $.ajax({
-            method: "POST",
-            url: "{{ url_for('page_thread', thread_id=thread.id, slug=thread.slug) }}",
-            processData: true,
-            dataType: 'json',
-            data: {
-                thread_id: {{ thread.id }},
-                post_as: $('#field_post_as').val(),
-                message: quill.root.innerHTML
-            }
-        })
-        .done(function(result) {
-            console.log('Redirecting to ' + result.url)
-            window.location = result.url;
-        });
-        quill.enable(false);
-        $("#submitButton").prop("disabled", true);
-        $("#quillEditor").prop("disabled", true);
-    });
-</script>
+<script type="text/javascript" src="/static/js/lounges/message-submit.js"></script>
 {% endif %}
 <script type="text/javascript">
     // Initialize popovers

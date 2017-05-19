@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.jinja_env.filters['pretty_date'] = jinja_filters.pretty_date
 app.jinja_env.filters['supress_none'] = jinja_filters.supress_none
 app.jinja_env.auto_reload = True
-app.debug = True
+app.debug = False
 app.config.from_object(__name__)
 mail = Mail(app)
 html_cleaner = Cleaner(page_structure=True, links=False)
@@ -27,7 +27,6 @@ app.config.update(dict(
 	DEFAULT_MAIL_SENDER='javi.lavandeira@msx-center.com',
 	SECRET_KEY='e620f0121309a360fc596c481efd895da1c19b1e9358e87a',
 	SERVER_NAME='dev.msx-center.com',
-#	DEBUG_TB_INTERCEPT_REDIRECTS=False,
 	MAX_CONTENT_LENGTH=32*1024*1024
 ))
 app.config.from_envvar('MSXCENTER_SETTINGS', silent=True)
@@ -57,6 +56,7 @@ from routes.news import *
 from routes.articles import *
 from routes.admin import *
 from routes.votes import *
+from routes.errors import *
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

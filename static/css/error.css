@@ -1,0 +1,23 @@
+body {
+  background-color:#000;
+}
+
+.error-page-body {
+  background-color:#000;
+  padding-top:50px;
+}
+
+.error-heading {
+  color:#f00;
+}
+
+.error-description {
+  color:#fff;
+  margin-bottom:50px;
+}
+
+.error-page-body img {
+  margin-left:auto;
+  margin-right:auto;
+}
+

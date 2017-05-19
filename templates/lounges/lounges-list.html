@@ -37,7 +37,7 @@
 									<td>{{ thread.num_messages }}</td>
 									{% if thread.messages[-1].post_as == thread.messages[-1].PostAsType.REALNAME %}
 										<td>By <a href="#">{{ thread.messages[-1].user.real_name }}</a> on {{ thread.last_post_date.strftime('%b %-d, %Y at %-I:%M%p') }}</td>
-									{% elif threads.messages[-1].post_as == thread.messages[-1].PostAsType.NICKNAME %}
+									{% elif thread.messages[-1].post_as == thread.messages[-1].PostAsType.NICKNAME %}
 										<td>By <a href="#">{{ thread.messages[-1].user.nickname }}</a> on {{ thread.last_post_date.strftime('%b %-d, %Y at %-I:%M%p') }}</td>
 									{% else %}
 										<td>By anonymous on {{ thread.last_post_date.strftime('%b %-d, %Y at %-I:%M%p') }}</td>

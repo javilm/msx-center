@@ -1,0 +1,18 @@
+{% extends "layout/template-errors.html" %}
+{% block title %}MSX Center - 401 UNAUTHORIZED{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/error.css">
+{% endblock %}
+
+{% block extrajs %}
+{% endblock %}
+
+{% block content %}
+<div class="container error-page-body text-center">
+	<img src="/static/img/errors/401.jpg" class="img-responsive">
+	<h1 class="error-heading"><strong>OOOPS</strong></h1>
+	<h1 class="error-description">You're not allowed to be here!</h1>
+	<a class="btn btn-primary btn-lg" role="button" href="/">Back to MSX Center</a>
+</div>
+{% endblock %}
