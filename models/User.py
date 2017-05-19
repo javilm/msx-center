@@ -154,7 +154,7 @@ class User(db.Model):
 	def send_activation_email(self, url, key):
 		message = Message('Your MSX Center account activation')
 		message.sender = 'MSX Center <no-reply@msx-center.com>'
-		message.recipients = [self.email, 'javi@lavandeira.net']
+		message.recipients = [self.email]
 		message.body = render_template('email/activationemail.txt', activation_url=url, activation_key=key)
 		message.html = render_template('email/activationemail.html', activation_url=url, activation_key=key)
 		mail.send(message)
@@ -162,7 +162,7 @@ class User(db.Model):
 	def send_welcome_email(self):
 		message = Message('Welcome to MSX Center!')
 		message.sender = 'MSX Center <no-reply@msx-center.com>'
-		message.recipients = [self.email, 'javi@lavandeira.net']
+		message.recipients = [self.email]
 		message.body = render_template('email/welcomeemail.txt')
 		message.html = render_template('email/welcomeemail.html')
 		mail.send(message)
@@ -170,7 +170,7 @@ class User(db.Model):
 	def send_password_reset_email(self, url, key):
 		message = Message('Your MSX Center password reset')
 		message.sender = 'MSX Center <no-reply@msx-center.com>'
-		message.recipients = [self.email, 'javi@lavandeira.net']
+		message.recipients = [self.email]
 		message.body = render_template('email/resetpasswordemail.txt', url=url, key=key)
 		message.html = render_template('email/resetpasswordemail.html', url=url, key=key)
 		mail.send(message)
@@ -178,7 +178,7 @@ class User(db.Model):
 	def send_password_reset_success_email(self):
 		message = Message('You have reset your MSX Center password')
 		message.sender = 'MSX Center <no-reply@msx-center.com>'
-		message.recipients = [self.email, 'javi@lavandeira.net']
+		message.recipients = [self.email]
 		message.body = render_template('email/resetpasswordsuccessemail.txt')
 		message.html = render_template('email/resetpasswordsuccessemail.html')
 		mail.send(message)

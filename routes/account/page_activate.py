@@ -1,6 +1,6 @@
 from __main__ import app, db
 from utils import redirect_to_next
-from flask import request, render_template, url_for, session
+from flask import request, render_template, url_for, session, redirect
 from models import User, ActivationKey
 
 @app.route('/activate', methods=['GET', 'POST'])

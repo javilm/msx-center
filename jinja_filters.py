@@ -1,7 +1,8 @@
 from datetime import datetime
 
 def pretty_date(time=False):
-	now = datetime.now()
+	# "time" should be in UTC
+	now = datetime.utcnow()
 	if type(time) is int:
 		diff = now - datetime.fromtimestamp(time)
 	elif isinstance(time,datetime):
@@ -41,4 +42,5 @@ def supress_none(value):
 	if value is not None:
 		return value
 	else:
-		return ''
+		return '0'
+

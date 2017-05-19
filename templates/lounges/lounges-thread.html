@@ -69,13 +69,16 @@
 		<div class="row">
 			<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
 				<div class="panel panel-success">
-					<div class="panel-heading"><img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
+					<div class="panel-heading">
 						{% if message.post_as == message.PostAsType.REALNAME %}
+							<img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
 							<h3 class="panel-title">{{ message.user.real_name }}</h3>
 						{% elif message.post_as == message.PostAsType.NICKNAME %}
+							<img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
 							<h3 class="panel-title">{{ message.user.nickname }}</h3>
 						{% else %}
 							{# Anonymous #}
+							<img src="/static/img//anonymous_user_64x64.png" class="poster-avatar">
 							<h3 class="panel-title">Anonymous</h3>
 						{% endif %}
 						<div class="message-date"><span>Posted on {{ message.date_posted.strftime('%d/%b/%Y %H:%M:%S') }}</span></div>

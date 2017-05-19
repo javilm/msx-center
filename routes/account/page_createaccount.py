@@ -1,7 +1,7 @@
 import string
 from __main__ import app, db
 from utils import redirect_to_next
-from flask import request, render_template, flash
+from flask import request, render_template, flash, url_for
 from models import User, ActivationKey
 from validate_email import validate_email
 

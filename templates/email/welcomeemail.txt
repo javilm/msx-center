@@ -2,11 +2,16 @@ Welcome!
 
 Thank you for joining MSX Center
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum nisi vel dignissim pellentesque. Aliquam laoreet eros quis sem rutrum sodales. Pellentesque turpis urna, porttitor placerat magna et, dapibus rutrum justo.
+Especially now that we're in beta!
 
-Vestibulum et venenatis mi. Quisque eget congue libero. Aenean at mauris tempor nisl tempus viverra. Pellentesque turpis nisi, luctus ut viverra a, pellentesque sit amet nulla. Interdum et malesuada fames ac ante ipsum primis
+We are aware that there are still things to fix, and templates to rewrite (such as the horrible design of the conversation lounges!). The beta will run until the end of May 2017. We'll be adding content and fixing the remaining problems during these days before announcing the final launch.
 
-in faucibus. Ut iaculis sit amet lectus quis scelerisque. Suspendisse potenti. Sed felis metus, consectetur eu suscipit ac, viverra ut ex. Nam placerat arcu in lacus facilisis interdum. </p>
+Feel free to poke around, and it would be great if you could report in the conversation lounges any issues you find. We have a document with known issues here: https://docs.google.com/spreadsheets/d/1fE0YQ5bMYGl-xzXKvo_3UEDbupl_AaAXkarMshmVs_c/edit?usp=sharing
+
+Feel free to take a look at it if you're bored. :-)
+
+Again, thanks for joining the beta and helping us finish the site!
+--- Javi
 
 Visit MSX Center now: http://www.msx-center.com
 

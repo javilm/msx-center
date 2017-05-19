@@ -1,5 +1,5 @@
 from __main__ import app, db
-from flask import abort, render_template, redirect, url_for
+from flask import abort, render_template, redirect, url_for, request
 from models import User, ArticleSeries
 
 @app.route('/member/edit/password', methods=['GET', 'POST'])

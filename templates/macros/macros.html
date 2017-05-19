@@ -65,14 +65,6 @@
 </ul>
 {% endmacro %}
 
-{% macro footer_old() %}
-<footer class="footer">
-	<div class="container">
-		<p class="text-muted">Copyright © 2017 MSX Center. "MSX" is a registered trademark of the MSX Licensing Corporation.</p>
-	</div>
-</footer>
-{% endmacro %}
-
 {% macro footer() %}
 <footer class="footer">
 	<div class="container">
@@ -91,7 +83,6 @@
 				</address>
 			</div>
 			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-				<img src="/static/img/msx_center_logo.png" class="img-responsive footer-logo">
 			</div>
 		</div>
 	</div>
@@ -140,7 +131,7 @@
 		{% if member.linkedin %}<li><i class="fa fa-li fa-linkedin"></i> <a href="https://www.linkedin.com/in/{{ member.linkedin }}" target="_new">{{ member.linkedin }}</a></li>{% endif %}
 		{% if member.from_country_name %}<li><i class="fa fa-li fa-compass"></i> From {{ member.from_country_name }}</li>{% endif %}
 		{% if member.in_country_name %}<li><i class="fa fa-li fa-home"></i> Living in {{ member.in_country_name }}</li>{% endif %}
-		<li><i class="fa fa-li fa-id-card"></i> Joined on {{ member.registration_date.strftime('%B %Y')}}</li>
+		<li><i class="fa fa-li fa-id-card"></i> Joined {{ member.registration_date.strftime('%B %Y')}}</li>
 		<li><i class="fa fa-li fa-calendar"></i> Last active {{ member.last_active_date|pretty_date }}</li>
 		{% if member.birth_date and member.is_public_birth_date %}<li><i class="fa fa-li fa-birthday-cake"></i> Born in {{ member.birth_date.strftime('%B %Y') }}</li>{% endif %}
 	</ul>
