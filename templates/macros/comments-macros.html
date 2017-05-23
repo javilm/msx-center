@@ -43,7 +43,16 @@
 				<img src="{{ comment.author.profile_photo_url(size='small') }}" class="comment-author-avatar">
 			</a>
 			<div>
-				<p class="comment-author">#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a></p>
+				<p class="comment-author">
+					#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a>
+					{%- if comment.author.is_moderator -%}<span class="label label-info">MODERATOR</span>{%- endif -%}
+					{%- if comment.author.is_staff -%}<span class="label label-info">STAFF</span>{%- endif -%}
+					{%- if comment.author.get_reputation() == -1 -%}
+						<span class="label label-danger">BAD REPUTATION</span>
+					{%- elif comment.author.get_reputation() == 1 -%}
+						<span class="label label-success">GOOD REPUTATION</span>
+					{%- endif -%}
+				</p>
 				<p class="comment-date">Posted on {{ comment.formatted_datetime() }}</p>
 			</div>
 		</div>
@@ -102,9 +111,18 @@
 			{% endif %}
 			<div>
 			{% if comment.post_as == comment.PostAsType.REALNAME or comment.post_as == comment.PostAsType.NICKNAME %}
-				<p class="comment-author">#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>
-				{% if comment.post_as == comment.PostAsType.REALNAME %}{{ comment.author.real_name }}{% else %}{{ comment.author.nickname }}{% endif %}
-				</strong></a></p>
+				<p class="comment-author">
+					#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>
+					{% if comment.post_as == comment.PostAsType.REALNAME %}{{ comment.author.real_name }}{% else %}{{ comment.author.nickname }}{% endif %}
+					</strong></a>
+					{%- if comment.author.is_moderator -%}<span class="label label-info">MODERATOR</span>{%- endif -%}
+					{%- if comment.author.is_staff -%}<span class="label label-info">STAFF</span>{%- endif -%}
+					{%- if comment.author.get_reputation() == -1 -%}
+						<span class="label label-danger">BAD REPUTATION</span>
+					{%- elif comment.author.get_reputation() == 1 -%}
+						<span class="label label-success">GOOD REPUTATION</span>
+					{%- endif -%}
+				</p>
 			{% else %}
 				<p class="comment-author">#{{ comment.id }} by anonymous member</p>
 			{% endif %}

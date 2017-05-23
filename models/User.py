@@ -232,8 +232,8 @@ class User(db.Model):
 		db.session.commit()
 
 	def get_reputation(self):
-		"""Return -1 if the user's reputation <-21, 1 if >21, if between -20...20"""
-		if abs(self.reputation) > 20:
+		"""Return -1 if the user's reputation <-11, 1 if >11, if between -10...10"""
+		if abs(self.reputation) > 10:
 			return (1, -1)[self.reputation < 0]
 		else:
 			return 0

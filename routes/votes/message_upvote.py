@@ -18,7 +18,8 @@ def message_upvote(message_id):
 
 	if vote:
 		message.add_vote(vote)
-		message.author.update_reputation()  # update the author's reputation
+		if message.post_as != message.PostAsType.ANON:
+			message.author.update_reputation()  # update the author's reputation
 		result = '200'
 	else:
 		result = '401'

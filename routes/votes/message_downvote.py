@@ -18,7 +18,8 @@ def message_downvote(message_id):
 
 	if vote:
 		message.add_vote(vote)				# add_vote() already updates the score
-		message.author.update_reputation()	# update the author's reputation
+		if message.post_as != message.PostAsType.ANON:
+			message.author.update_reputation()	# update the author's reputation
 		result = '200'
 	else:
 		result = '401'
