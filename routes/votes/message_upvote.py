@@ -18,8 +18,12 @@ def message_upvote(message_id):
 
 	if vote:
 		message.add_vote(vote)
+		result = '200'
+	else:
+		result = '401'
 
 	return json.dumps({
+		'result': result,
 		'message_id': message.id,
 		'score': message.score,
 		'num_upvotes': message.num_upvotes,

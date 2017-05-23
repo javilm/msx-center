@@ -18,8 +18,12 @@ def comment_downvote(comment_id):
 
 	if vote:
 		comment.add_vote(vote)
+		result = '200'
+	else:
+		result = '401'
 
 	return json.dumps({
+		'result': result,
 		'comment_id': comment.id,
 		'score': comment.score,
 		'num_upvotes': comment.num_upvotes,

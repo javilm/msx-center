@@ -45,9 +45,9 @@ $('.carousel').carousel()
 {% macro recent_post(post) %}
 <p class="post-detail">
 	{% if post.post_as == post.PostAsType.REALNAME %}
-		<a href="{{ url_for('page_member', member_id=post.user.id, slug=post.user.slug) }}"><strong>{{ post.user.real_name }}</strong></a>
+		<a href="{{ url_for('page_member', member_id=post.author.id, slug=post.author.slug) }}"><strong>{{ post.author.real_name }}</strong></a>
 	{% elif post.post_as == post.PostAsType.NICKNAME %}
-		<a href="{{ url_for('page_member', member_id=post.user.id, slug=post.user.slug) }}"><strong>{{ post.user.nickname }}</strong></a>
+		<a href="{{ url_for('page_member', member_id=post.author.id, slug=post.author.slug) }}"><strong>{{ post.author.nickname }}</strong></a>
 	{% else %}
 		Somebody anonymous
 	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>

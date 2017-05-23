@@ -1,7 +1,7 @@
 import json
 from __main__ import app, db
 from flask import url_for, render_template, request, abort, session
-from models import User, ConversationThread, ConversationMessage, ArticleSeries
+from models import User, ConversationThread, ConversationMessage, ArticleSeries, Vote
 
 @app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
 def page_thread(thread_id, slug):
@@ -36,10 +36,21 @@ def page_thread(thread_id, slug):
 		elif user.reputation < 0 and not thread.lounge.allows_bad_reputation:
 			user_errors['bad_reputation'] = True
 
+		# Get the votes this user cast on this article
+		if user:
+			votes = db.session.query(Vote).filter(Vote.message_id == ConversationMessage.id).filter(ConversationMessage.thread_id == ConversationThread.id).all()
+			my_votes = {}
+			for vote in votes:
+				my_votes[vote.message_id] = vote.score
+		else:
+			my_votes = None
+
 		# Render the template
 		template_options = {
 			'user': user,
+			'my_votes': my_votes,
 			'thread': thread,
+			'first_message': thread.messages[0],
 			'lounge': thread.lounge,
 			'errors': user_errors,
 			'navbar_series': ArticleSeries.query.order_by(ArticleSeries.priority).all()

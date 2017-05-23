@@ -1,133 +1,110 @@
 {% extends "layout/template-base.html" %}
-{% import 'macros/lounges-macros.html' as lounges_macros %}
+{% import 'macros/comments-macros.html' as comments_macros %}
 
-{% block title %}MSX Center - Conversation: {{ thread.title_en }}{% endblock %}
-
-{% if errors %}
-{% set form_status = 'disabled' %}
-{% else: %}
-{% set form_status = '' %}
-{% endif %}
+{% block title %}MSX Center - Conversation lounges - {{ thread.title_en }}{% endblock %}
 
 {% block extracss %}
-<link rel="stylesheet" href="/static/css/lightbox.min.css">
-<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/lounges.css">
+<link rel="stylesheet" href="/static/css/comments.css">
 <link rel="stylesheet" href="/static/css/quill.snow.css">
-<link rel="stylesheet" href="/static/css/breadcrumbs.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/static/css/lightbox.min.css">
 {% endblock %}
+
+{% macro threads_sidebar_most_popular() %}
+<h4 class="lounges-section-divider">Most popular</h4>
+<p class="text-muted">The most popular threads of the last 90 days:</p>
+<ol>
+	<li><a href="#">Something happened in that user meeting</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">The French fries in this Burger King are too salty</a></li>
+	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
+	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
+	<li><a href="#">The msx.org web server found dead under a bridge (again)</a></li>
+</ol>
+{% endmacro %}
 
 {% block content %}
 <div class="row">
-	<div class="col-lg-offset-2 col-md-8 col-md-offset-2">
-		<div>
-			{{ lounges_macros.breadcrumbs(lounge, thread) }}
-			<h2>{{ thread.title_en }}</h2>
-		</div>
-	</div>
-</div>
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="lounges-thread-full">
+                    {# THREAD TITLE #}
+                    <h2>{{ thread.title_en }}</h2>
 
-{# Original poster #}
-<div class="row">
-	<div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-3" id="original-poster-avatar"><img class="img-responsive" src="{{ thread.messages[0].user.profile_photo_url() }}">
-		<address>
-			{% if thread.messages[0].user %}
-				{% if thread.messages[0].post_as == thread.messages[0].PostAsType.REALNAME %}
-					<strong><a href="{{ url_for('page_member', member_id=thread.messages[0].user.id, slug=thread.messages[0].user.slug) }}">{{ thread.messages[0].user.real_name }}</a></strong><br>
-				{% else %}
-					<strong><a href="{{ url_for('page_member', member_id=thread.messages[0].user.id, slug=thread.messages[0].user.slug) }}">{{ thread.messages[0].user.nickname }}</a></strong><br>
-				{% endif %}
-				Joined {{ thread.messages[0].user.registration_date.strftime('%d/%b/%Y') }}<br>
-			{% else %}
-				<strong>Anonymous</strong>
-			{% endif %}
-		</address>
-		<div>
-			<i class="fa fa-user"></i>
-			<i class="fa fa-search"></i>
-			<i class="fa fa-heart"></i>
-			<i class="fa fa-star"></i>
-		</div>
-	</div>
-	<div class="col-lg-6 col-md-6 col-sm-9">
-		<div class="panel panel-danger">
-			<div class="panel-body">
-				{{ thread.messages[0].body_en|safe }}
-			</div>
-			<div class="panel-footer"><span>Posted on {{ thread.messages[0].date_posted.strftime('%d/%b/%Y') }}</span></div>
-		</div>
-	</div>
-</div>
+                    {# METADATA (Author and date) #}
+                    <div id="lounges-thread-metadata">
+	                    <img src="{{ first_message.author.profile_photo_url(size='small') }}">
+                        <div>
+                            <p class="thread-author-name"><a href="{{ url_for('page_member', member_id=first_message.author.id, slug=first_message.author.slug) }}"><strong>{{ first_message.author.real_name }}</strong></a> </p>
+                            <p class="lounges-thread-date">Posted on {{ first_message.date_posted.strftime('%b %-d, %Y') }}</p>
+                        </div>
+                    </div>
 
-{# REPLIES, if any #}
-{% if thread.messages|length > 1 %}
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
-			<h3>Replies</h3>
-		</div>
-	</div>
-	{% for message in thread.messages[1:] %}
-		<div class="row">
-			<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
-				<div class="panel panel-success">
-					<div class="panel-heading">
-						{% if message.post_as == message.PostAsType.REALNAME %}
-							<img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
-							<h3 class="panel-title">{{ message.user.real_name }}</h3>
-						{% elif message.post_as == message.PostAsType.NICKNAME %}
-							<img src="{{ message.user.profile_photo_url(size="small") }}" class="poster-avatar">
-							<h3 class="panel-title">{{ message.user.nickname }}</h3>
-						{% else %}
-							{# Anonymous #}
-							<img src="/static/img//anonymous_user_64x64.png" class="poster-avatar">
-							<h3 class="panel-title">Anonymous</h3>
-						{% endif %}
-						<div class="message-date"><span>Posted on {{ message.date_posted.strftime('%d/%b/%Y %H:%M:%S') }}</span></div>
-					</div>
-					<div class="panel-body">{{ message.body_en|safe }}</div>
-					<div class="panel-footer">
-						<div class="message-score"><span><strong>Standing:</strong> Good</span></div>
-						<div class="message-controls">
-							<i class="fa fa-thumbs-o-up upvote"></i>
-							<i class="fa fa-thumbs-o-down downvote"></i>
-							<i class="fa fa-exclamation"></i>
+                    {#  BODY #}
+                    <div id="lounges-thread-body" class="text-justify">
+	                    {{ first_message.body_en|safe }}
+                    </div>
+                    
+                    {# COMMENTS #}
+					{% if thread.messages|length > 1 %}
+						<div id="lounges-thread-comments">
+							<h4 class="lounges-section-divider">Replies</h4>
+							{% for message in thread.messages[1:] %}
+								{{ comments_macros.message(user, message, my_votes) }}
+							{% endfor %}
+                        </div>
+					{% endif %}
+
+					{% if thread.is_locked %}
+						<div class="alert alert-warning">
+							{% if thread.messaages|length %}
+								This item does not accept any more comments.
+							{% else %}
+								This item does not accept comments.
+							{% endif %}
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-{% endif %}
+					{% else %}
+						<div id="post-comment-form">
+							<h4 class="lounges-section-divider">Post a reply</h4>
+							{% if user %}
+								{% if user.is_blocked %}
+									<div class="alert alert-danger">
+										You can't reply because your account is blocked.
+									</div>
+								{% else %}
+									<img src="{{ user.profile_photo_url(size='small') }}" class="author-avatar">
+									<form id="user-reply">
+										{% include '/lounges/include-editor-reply.html' %}
+									</form>
+								{% endif %}
+							{% else %}
+								<div class="alert alert-warning">
+									You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to reply.
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
 
-{# SEPARATOR #}
-<div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12"><hr></div></div>
-
-<div class="row">
-	<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12">
-		<form>
-			{# Display posting permissions #}
-			{# include '/lounges/include-lounge-thread-permissions.html' #}
-
-			{# Display messages indicating why the user can't post, or the Quill editor input if he's allowed #}
-			{% include '/lounges/include-editor-reply.html' %}
-		</form>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+		{{ threads_sidebar_most_popular() }}
+    </div>
 </div>
-
-{# SEPARATOR #}
-<div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12"><hr></div></div>
-
 {% endblock %}
 
 {% block extrajs %}
-<script src="/static/js/lightbox.min.js"></script>
-{% if not errors %}
 <script type="text/javascript" src="/static/js/quill.min.js"></script>
-<script type="text/javascript" src="/static/js/lounges/message-submit.js"></script>
-{% endif %}
-<script type="text/javascript">
-    // Initialize popovers
-    $(function () {
-        $('[data-toggle="popover"]').popover({container: 'body', placement: 'top', trigger: 'hover'})
-    });
-</script>
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/lounges/thread-reply-submit.js"></script>
+<script type="text/javascript" src="/static/js/lightbox.min.js"></script>
+<script type="text/javascript" src="/static/js/votes-message.js"></script>
 {% endblock %}

@@ -14,12 +14,17 @@ def comment_upvote(comment_id):
 	if comment is None:
 		abort(401)	# Returning 401 because only forged requests will come here
 
+	# If the constructor returns an instance then the vote was valid. Else it was duplicated
 	vote = Vote.upvote_comment(member=user, comment=comment)
 
 	if vote:
 		comment.add_vote(vote)
+		result = '200'
+	else:
+		result = '401'
 
 	return json.dumps({
+		'result': result,
 		'comment_id': comment.id,
 		'score': comment.score,
 		'num_upvotes': comment.num_upvotes,

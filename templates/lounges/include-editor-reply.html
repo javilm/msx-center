@@ -40,8 +40,6 @@
 	</div>
 {%- else -%}
 
-	<h3>Post a reply</h3>
-
 	{% if user and lounge.allows_nicknames %}
 		<div class="form-group">
 			<label class="control-label">Post as</label>
@@ -57,9 +55,8 @@
 		<input id="field_post_as" type="hidden" name="post_as" value="none">
 	{% endif %}
 		<div class="form-group">
-			{#<label class="control-label">Your message</label> #}
 			<p class="help-text">Enter your message below. Use the toolbar to style the text, add code and images. The message area will expand as needed.</p> 
-			<div class="form-control" id="quillEditor" {{form_status}}></div>
+			<div class="form-control" id="reply_editor" {{form_status}}></div>
 		</div>
 		<div class="form-group">
 			<input type="hidden" name="field_thread_id" value="{{ thread.id }}">

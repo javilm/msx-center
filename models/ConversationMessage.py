@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, url_for
 from __main__ import db
 from __main__ import html_cleaner
-from utils import get_host_by_ip, html_image_extractor
+from utils import get_host_by_ip, html_image_extractor, format_datetime
 
 class ConversationMessage(db.Model):
 	__tablename__ = 'messages'
@@ -15,7 +15,7 @@ class ConversationMessage(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	thread_id = db.Column(db.Integer, db.ForeignKey('threads.id'))
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	body_en = db.Column(db.String())
 	body_ja = db.Column(db.String())
 	body_nl = db.Column(db.String())
@@ -39,11 +39,11 @@ class ConversationMessage(db.Model):
 	# The "user" attribute for every ConversationMessage is already defined in the User model as a
 	# backref in the relationship with the ConversationMessage model
 
-	def __init__(self, user, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
-		if user is None:
-			self.user_id = None
+	def __init__(self, author, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+		if author is None:
+			self.author_id = None
 		else:
-			self.user_id = user.id
+			self.author_id = author.id
 		self.thread_id = None
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
@@ -97,4 +97,5 @@ class ConversationMessage(db.Model):
 		db.session.add(self)
 		db.session.commit()
 
-
+	def formatted_datetime(self):
+		return format_datetime(self.date_posted)

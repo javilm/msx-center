@@ -2,8 +2,9 @@ from __main__ import app
 from flask import session, url_for, abort, render_template
 from models import User, ArticleSeries
 
+@app.route('/member/<int:member_id>', methods=['GET'])
 @app.route('/member/<int:member_id>/<string:slug>', methods=['GET'])
-def page_member(member_id, slug):
+def page_member(member_id, slug=None):
 	# Note: in the context of this route, the "user" is the logged in user, and the "member" is
 	# the user whose profile is being visited. They may or may not be the same.
 	session['next'] = url_for('page_member', member_id=member_id, slug=slug)

@@ -35,7 +35,7 @@ def page_member_edit_profile():
 		else:
 			user.real_name = request.form['real_name']
 			user.nickname = request.form['nickname']
-			user.birth_date = request.form['birthdate']
+			user.birth_date = request.form['birthdate_field']
 			if 'is_public_birthdate' in request.form:
 				user.is_public_birth_date = True
 			else: 

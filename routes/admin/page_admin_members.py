@@ -20,6 +20,6 @@ def page_admin_members():
 	template_options['active'] = 'members'
 
 	# Get the list of members
-	template_options['members'] = User.query.all()
+	template_options['members'] = User.query.order_by('id')
 
 	return render_template('admin/members.html', **template_options)

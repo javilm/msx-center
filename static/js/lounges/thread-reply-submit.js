@@ -8,7 +8,7 @@ var toolbarOptions = [
 	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
 	[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
 ];
-var quill = new Quill('#quillEditor' , {
+var quill = new Quill('#reply_editor' , {
 	modules : {
 		toolbar: toolbarOptions
 	},
@@ -23,7 +23,7 @@ $("#submitButton").click(function (e) {
 
 	// Disable input
 	quill.enable(false);
-	$('#quillEditor').prop('disabled', true);
+	$('#reply_editor').prop('disabled', true);
 	button.addClass('disabled');
 	button.html('Posting, please wait...');
 
@@ -38,7 +38,7 @@ $("#submitButton").click(function (e) {
 		},
 		complete: function(request, status) {
 			quill.enable(true);
-			$("#quillEditor").prop("disabled", false);
+			$("#reply_editor").prop("disabled", false);
 			button.removeClass('disabled');
 			button.html('Post reply');
 		}

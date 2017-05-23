@@ -25,12 +25,13 @@ class ConversationThread(db.Model):
 	is_popular = db.Column(db.Boolean)
 	is_trending = db.Column(db.Boolean)
 	is_sticky = db.Column(db.Boolean)
+	is_locked = db.Column(db.Boolean)
 	num_views = db.Column(db.Integer)
 	num_messages = db.Column(db.Integer)
 	first_post_date = db.Column(db.DateTime)
 	last_post_date = db.Column(db.DateTime)
 	slug = db.Column(db.String())
-	messages = db.relationship("ConversationMessage", backref="thread")
+	messages = db.relationship("ConversationMessage", backref="thread", order_by="ConversationMessage.date_posted")
 
 	@classmethod
 	def	get_permission_errors(cls, user, thread):
@@ -48,6 +49,7 @@ class ConversationThread(db.Model):
 		self.is_popular = False
 		self.is_trending = False
 		self.is_sticky = False
+		self.is_locked = False
 		self.num_views = 0
 		self.num_messages = 0
 		self.first_post_date = datetime.utcnow()

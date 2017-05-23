@@ -60,9 +60,10 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="birthdate_field" class="control-label">Birthday</label>
+							<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3" for="birthdate_display_field" class="control-label">Birthday</label>
 							<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
-								<input class="form-control" id="birthdate_field" name="birthdate" type="date">
+								<input type="hidden" id="birthdate_field" name="birthdate_field" type="date">
+								<input class="form-control" id="birthdate_display_field" name="birthdate_display_field" type="date">
 								<div class="checkbox">
 									<label class="control-label" for="birthdate">
 										<input name="is_public_birthdate" type="checkbox"{% if user.is_public_birth_date %} checked{% endif %}> Make public
@@ -194,25 +195,22 @@
 <script src="/static/js/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
-{# Make the Cancel button redirect back to the user's profile #}
-$('#cancel_button').click(function() {
-	window.location = '{{ url_for('page_member', member_id=user.id, slug=user.slug) }}';
-});
-
 // Start with the submit button disabled
 $("#submit_button").attr("disabled", "disabled");
 
 // Initalize the datepicker
 $(function () {
-	$("#birthdate_field").datepicker({
+	$("#birthdate_display_field").datepicker({
 		changeMonth: true,
 		changeYear: true,
 		yearRange: "1940:2017",
-		dateFormat: 'DD MM d, yy'
+		dateFormat: 'DD MM d, yy',
+		altField: '#birthdate_field',
+		altFormat: 'yyyy-mm-dd'
 	});
-	var date_from_db = "{{ user.birth_date }}".split("-");
+	var date_from_db = "{{ user.birth_date() }}".split("-");
 	var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
-	$("#birthdate_field").datepicker("setDate", date);
+	$("#birthdate_display_field").datepicker("setDate", date);
 });
 
 // Load the member's background image

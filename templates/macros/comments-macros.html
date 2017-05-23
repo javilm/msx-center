@@ -51,3 +51,68 @@
 	</div>
 </div>
 {% endmacro %}
+
+{% macro message(user, comment, my_votes) %}
+<div class="comment" id="comment_{{ comment.id }}">
+	<div class="comment-votes">
+		{# Could do this on a more granular way, but this is more readable #}
+		{%- if user -%}
+			<div class="btn-group-vertical btn-group-xs" role="group">
+				{# UPVOTE #}
+				{%- if comment.id in my_votes -%}
+					{%- if my_votes[comment.id] == 2 -%}
+						<button class="btn btn-success btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-up"></i></button>
+					{%- else -%}
+						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-up"></i></button>
+					{%- endif -%}
+				{%- else -%}
+					<button class="btn btn-default btn-xs button-comment-upvote" comment_id="{{ comment.id }}" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
+				{%- endif -%}
+
+				{# SCORE #}
+				<button class="btn btn-link" type="button" disabled="disabled" id="button_comment_{{ comment.id }}_score"><strong>{{ comment.score }}</strong></button>
+
+				{# DOWNVOTE #}
+				{%- if comment.id in my_votes -%}
+					{%- if my_votes[comment.id] == 1 -%}
+						<button class="btn btn-danger btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-down"></i></button>
+					{%- else -%}
+						<button class="btn btn-default btn-xs" disabled="disabled" type="button"><i class="fa fa-arrow-down"></i></button>
+					{%- endif -%}
+				{%- else -%}
+					<button class="btn btn-default btn-xs button-comment-downvote" comment_id="{{ comment.id }}" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
+				{%- endif -%}
+			</div>
+		{%- else -%}
+			<div class="btn-group-vertical btn-group-xs" role="group">
+				<button class="btn btn-default btn-xs button-comment-upvote" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_upvote"><i class="fa fa-arrow-up"></i></button>
+				<button class="btn btn-link" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_score"><strong>{{ comment.score }}</strong></button>
+				<button class="btn btn-default btn-xs button-comment-downvote" disabled="disabled" type="button" id="button_comment_{{ comment.id }}_downvote"><i class="fa fa-arrow-down"></i></button>
+			</div>
+		{%- endif -%}
+	</div>
+	<div class="comment-content">
+		<div class="comment-metadata">
+			{% if comment.post_as == comment.PostAsType.REALNAME or comment.post_as == comment.PostAsType.NICKNAME %}
+				<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}">
+					<img src="{{ comment.author.profile_photo_url(size='small') }}" class="comment-author-avatar">
+				</a>
+			{% else %}
+				<img src="/static/img/anonymous_user_64x64.png" class="comment-author-avatar">
+			{% endif %}
+			<div>
+			{% if comment.post_as == comment.PostAsType.REALNAME or comment.post_as == comment.PostAsType.NICKNAME %}
+				<p class="comment-author">#{{ comment.id }} by <a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>
+				{% if comment.post_as == comment.PostAsType.REALNAME %}{{ comment.author.real_name }}{% else %}{{ comment.author.nickname }}{% endif %}
+				</strong></a></p>
+			{% else %}
+				<p class="comment-author">#{{ comment.id }} by anonymous member</p>
+			{% endif %}
+			<p class="comment-date">Posted on {{ comment.formatted_datetime() }}</p>
+			</div>
+		</div>
+
+		<div class="comment-body">{{ comment.body_en|safe }}</div>
+	</div>
+</div>
+{% endmacro %}

@@ -71,7 +71,7 @@ class User(db.Model):
 	in_country = db.Column(db.String(2))
 	in_country_name = db.Column(db.String())
 	timezone = db.Column(db.String())
-	messages = db.relationship("ConversationMessage", backref="user")
+	messages = db.relationship("ConversationMessage", backref="author")
 
 	@classmethod
 	def generate_random_password(cls, length=8):
@@ -127,6 +127,7 @@ class User(db.Model):
 		self.slug = slugify(slugify(real_name if real_name else nickname))
 		self.use_standard_background = True
 		self.standard_background_filename = 'profile_background_1.jpg'
+		self.birth_date = '2075-04-01'	# Default value for undefined
 		ip = geolite2.lookup(request.headers['X-Real-IP'])
 		if ip is not None:
 			self.set_in_country(ip.country.upper())
@@ -206,3 +207,12 @@ class User(db.Model):
 	def set_in_country(self, in_country=None):
 		self.in_country = in_country
 		self.in_country_name = pycountry.countries.get(alpha_2=in_country).name if in_country else None
+
+	def birth_date(self):
+		if self.birth_date:
+			if self.birth_date == '2075-04-01':
+				return ''
+			else:
+				return self.birth_date
+		else:
+			return ''
