@@ -19,6 +19,7 @@ def comment_upvote(comment_id):
 
 	if vote:
 		comment.add_vote(vote)
+		comment.author.update_reputation()  # update the author's reputation
 		result = '200'
 	else:
 		result = '401'

@@ -1,19 +1,10 @@
 from datetime import datetime
-import enum
-from flask import render_template
-from flask import url_for
+import enum, hashlib, pycountry, random, re, string
+from flask import render_template, url_for, session
 from flask_mail import Message
 from geoip import geolite2
-import hashlib
-import pycountry
-import random
-import re
 from slugify import slugify
-import string
-
-from __main__ import db
-from __main__ import mail
-from __main__ import session
+from __main__ import db, mail
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -216,3 +207,33 @@ class User(db.Model):
 				return self.birth_date
 		else:
 			return ''
+
+	def update_reputation(self):
+
+		reputation = 0
+
+		# Comments posted on articles and news items
+		for comment in self.comments:
+			if comment.score > 0:
+				reputation += 1
+			elif comment.score < 0:
+				reputation -= 1
+
+		# Messages posted in the conversation lounges
+		for message in self.messages:
+			if message.score > 0:
+				reputation += 1
+			elif message.score < 0:
+				reputation -= 1
+
+		# Update the reputation
+		self.reputation = reputation
+		db.session.add(self)
+		db.session.commit()
+
+	def get_reputation(self):
+		"""Return -1 if the user's reputation <-21, 1 if >21, if between -20...20"""
+		if abs(self.reputation) > 20:
+			return (1, -1)[self.reputation < 0]
+		else:
+			return 0

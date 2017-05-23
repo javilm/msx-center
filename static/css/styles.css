@@ -6,3 +6,7 @@ li#user-options a.dropdown-toggle {
 	padding-top: 15px;
 	padding-bottom: 5px;
 }
+
+#reply_editor {
+	height: 400px;
+}

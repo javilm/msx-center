@@ -17,7 +17,8 @@ def message_downvote(message_id):
 	vote = Vote.downvote_message(member=user, message=message)
 
 	if vote:
-		message.add_vote(vote)	# add_vote() already updates the score
+		message.add_vote(vote)				# add_vote() already updates the score
+		message.author.update_reputation()	# update the author's reputation
 		result = '200'
 	else:
 		result = '401'
