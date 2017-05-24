@@ -2,6 +2,7 @@ import json
 from __main__ import app, db
 from flask import url_for, render_template, session, request, abort
 from models import User, ArticleSeries, Article, Comment, Vote
+from sqlalchemy import desc
 
 @app.route('/articles/<int:article_id>/<string:slug>', methods=['GET', 'POST'])
 def page_articles_detail(article_id, slug):
@@ -28,6 +29,9 @@ def page_articles_detail(article_id, slug):
 		
 		# the series this article belongs to	
 		template_options['series'] = ArticleSeries.query.filter_by(id=article.series_id).first()
+
+		# Sidebar's most popular articles
+		template_options['popular_articles'] = Article.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).order_by(desc(Article.num_views)).limit(10)
 
 		# Get the votes this user cast on this article
 		if user:

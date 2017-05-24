@@ -7,23 +7,6 @@
     <link rel="stylesheet" href="/static/css/news.css">
 {% endblock %}
 
-{% macro news_sidebar_most_popular() %}
-<h4 class="news-section-divider">Most popular</h4>
-<p class="text-muted">The most visited news items of the last 90 days;</p>
-<ol>
-	<li><a href="#">Something happened in that user meeting</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
-</ol>
-{% endmacro %}
-
 {% macro news_sidebar_archive() %}
 <h4 class="news-section-divider">News archive </h4>
 <ul>
@@ -72,7 +55,7 @@
 		{# sidebar #} 
 		<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
 			{{ sidebar_macros.sidebar_sponsor() }}
-			{{ news_sidebar_most_popular() }}
+			{{ sidebar_macros.sidebar_news_items_most_popular(popular_news_items) }}
 			{{ news_sidebar_archive() }}
 		</div>
 	</div>

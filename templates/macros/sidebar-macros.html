@@ -1,17 +1,20 @@
-{% macro sidebar_most_popular() %}
+{% macro sidebar_articles_most_popular(articles) %}
 <h4 class="news-section-divider">Most popular</h4>
-<p class="text-muted">The most visited articles of the last 90 days:</p>
+<p class="text-muted">Most popular articles:</p>
 <ol>
-	<li><a href="#">Something happened in that user meeting</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
+	{% for article in articles %}
+		<li><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></li>
+	{% endfor %}
+</ol>
+{% endmacro %}
+
+{% macro sidebar_news_items_most_popular(news_items) %}
+<h4 class="news-section-divider">Most popular</h4>
+<p class="text-muted">Most popular news items:</p>
+<ol>
+	{% for item in news_items %}
+		<li><a href="{{ url_for('page_news_item', news_item_id=item.id, slug=item.slug) }}">{{ item.headline_en }}</a></li>
+	{% endfor %}
 </ol>
 {% endmacro %}
 
