@@ -13,7 +13,7 @@ def page_series_articles(series_id, slug):
 	template_options['active'] = 'articles'
 	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
 
-	template_options['series'] = ArticleSeries.query.filter_by(id=series_id).first()
+	template_options['series'] = ArticleSeries.list_for_navbar()
 
 	# Get all the articles in this series
 	template_options['articles'] = Article.query.filter_by(series_id=series_id, is_draft_en=False, is_published=True, is_hidden=False).order_by(Article.date_published).all()

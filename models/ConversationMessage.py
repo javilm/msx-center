@@ -46,11 +46,16 @@ class ConversationMessage(db.Model):
 			self.author_id = author.id
 		self.thread_id = None
 		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
-		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
-		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
-		self.body_es = html_cleaner.clean_html(body_es) if body_es else None
-		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
-		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
+		self.body_ja = None
+		self.body_nl = None
+		self.body_es = None
+		self.body_pt = None
+		self.body_kr = None
+		#self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
+		#self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
+		#self.body_es = html_cleaner.clean_html(body_es) if body_es else None
+		#self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
+		#self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
 		self.score = 0
 		self.post_as = post_as	# ANON, REALNAME or NICKNAME
 		self.date_posted = datetime.utcnow()
@@ -69,14 +74,14 @@ class ConversationMessage(db.Model):
 		params = {
 			'add_classes': ['img-responsive'],
 			'image_max_dimension': 1200,
-			'lightbox_format_string': 'Images for message %s&'
+			'lightbox_format_string': 'Images for message %s'
 		}
 		self.body_en = html_image_extractor(self.body_en, **params)
-		self.body_ja = html_image_extractor(self.body_ja, **params)
-		self.body_nl = html_image_extractor(self.body_nl, **params)
-		self.body_es = html_image_extractor(self.body_es, **params)
-		self.body_pt = html_image_extractor(self.body_pt, **params)
-		self.body_kr = html_image_extractor(self.body_kr, **params)
+		#self.body_ja = html_image_extractor(self.body_ja, **params)
+		#self.body_nl = html_image_extractor(self.body_nl, **params)
+		#self.body_es = html_image_extractor(self.body_es, **params)
+		#self.body_pt = html_image_extractor(self.body_pt, **params)
+		#self.body_kr = html_image_extractor(self.body_kr, **params)
 
 	def add_vote(self, vote):
 

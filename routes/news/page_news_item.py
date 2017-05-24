@@ -19,7 +19,7 @@ def page_news_item(news_item_id, slug):
 		template_options = {}
 		template_options['user'] = user
 		template_options['news_item'] = news_item
-		template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+		template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 		# Get the votes this user cast on this article
 		if user:

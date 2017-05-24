@@ -11,7 +11,7 @@ def page_articles():
 	template_options['active'] = 'articles'
 
 	# List of article series for the navbar
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	# Get all the article series
 	tmeplate_options['series'] = template_options['navbar_series']

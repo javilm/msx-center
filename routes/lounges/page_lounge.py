@@ -20,8 +20,8 @@ def page_lounge(lounge_id, slug):
 	template_options = {
 		'user': user,
 		'lounge': lounge,
-		'series': ArticleSeries.query.order_by(ArticleSeries.priority).all()
-
+		'series': ArticleSeries.query.order_by(ArticleSeries.priority).all(),
+		'navbar_series': ArticleSeries.list_for_navbar()
 	}
 
 	return render_template('lounges/lounge-thread-list.html', **template_options)

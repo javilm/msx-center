@@ -25,3 +25,6 @@ class ArticleSeries(db.Model):
 	num_articles = db.Column(db.Integer)
 	date_newest_article = db.Column(db.DateTime)
 
+	@classmethod
+	def list_for_navbar(cls):
+		return cls.query.filter(ArticleSeries.is_hidden=='f').order_by(ArticleSeries.priority).all()

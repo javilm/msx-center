@@ -14,6 +14,6 @@ def page_member_edit_profile_success():
 		abort(401)
 
 	template_options['user'] = user
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	return render_template('member/member_edit_profile_success.html', **template_options)

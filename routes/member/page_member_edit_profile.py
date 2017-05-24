@@ -16,7 +16,7 @@ def page_member_edit_profile():
 	template_options['user'] = user
 	template_options['country_list'] = country_list
 	template_options['timezone_list'] = timezone_list
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	if request.method == 'GET':
 		return render_template('member/member_edit_profile.html', **template_options)

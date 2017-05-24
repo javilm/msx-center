@@ -11,6 +11,6 @@ def page_about():
 	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
 	template_options['active'] = 'abou'
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	return render_template('about.html', **template_options)

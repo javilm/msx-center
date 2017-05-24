@@ -59,7 +59,7 @@
 			<div class="form-control" id="reply_editor" {{form_status}}></div>
 		</div>
 		<div class="form-group">
-			<input type="hidden" name="field_thread_id" value="{{ thread.id }}">
+			<input type="hidden" id="field_thread_id" name="field_thread_id" value="{{ thread.id }}">
 			<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post reply</button>
 		</div>
 {%- endif %}

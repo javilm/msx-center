@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.jinja_env.filters['pretty_date'] = jinja_filters.pretty_date
 app.jinja_env.filters['supress_none'] = jinja_filters.supress_none
 app.jinja_env.auto_reload = True
-app.debug = False
+app.debug = True
 app.config.from_object(__name__)
 mail = Mail(app)
 html_cleaner = Cleaner(page_structure=True, links=False)

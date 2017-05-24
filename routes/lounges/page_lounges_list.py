@@ -8,7 +8,7 @@ def page_lounges_list():
 
 	template_options = {}
 	template_options['user'] = User.get_signed_in_user()
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 	template_options['lounges'] = ConversationLounge.query.order_by(ConversationLounge.priority)
 
 #	# Get the latest 5 threads for each lounge

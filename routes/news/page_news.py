@@ -16,6 +16,6 @@ def page_news(page):
 
 	# Get the news items
 	template_options['pagination'] = NewsItem.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).paginate(page=page, per_page=ITEMS_PER_PAGE, error_out=True)
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	return render_template('news/news-list.html', **template_options)

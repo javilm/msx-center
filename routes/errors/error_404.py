@@ -9,6 +9,6 @@ def error_404(e):
 
 	# Get the signed in User (if there's one), or None
 	template_options['user'] = User.get_signed_in_user()
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	return render_template('errors/404.html', **template_options), 404

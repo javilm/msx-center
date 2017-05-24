@@ -19,7 +19,7 @@ def page_member(member_id, slug=None):
 	if template_options['member'] is None:
 		abort(404)
 
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	# Create the timeline
 	timeline = {}

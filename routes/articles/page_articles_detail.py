@@ -19,7 +19,7 @@ def page_articles_detail(article_id, slug):
 		template_options = {}
 		template_options['user'] = user
 		template_options['article'] = article
-		template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()	# all the series, for the navbar
+		template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 		
 		# the series this article belongs to	
 		template_options['series'] = ArticleSeries.query.filter_by(id=article.series_id).first()

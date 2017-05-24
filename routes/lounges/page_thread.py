@@ -53,7 +53,7 @@ def page_thread(thread_id, slug):
 			'first_message': thread.messages[0],
 			'lounge': thread.lounge,
 			'errors': user_errors,
-			'navbar_series': ArticleSeries.query.order_by(ArticleSeries.priority).all()
+			'navbar_series': ArticleSeries.list_for_navbar()
 		}
 
 		return render_template('lounges/lounges-thread.html', **template_options)
@@ -97,6 +97,7 @@ def page_thread(thread_id, slug):
 				post_as = 'REALNAME'
 
 			if not user_errors:
+				app.logger.info("User: %s, post_as: %s, body_en: %s" % (user, post_as, request.form['message']))
 				message = ConversationMessage(user, post_as, body_en=request.form['message'])
 				thread.add_message(message)
 				return json.dumps({

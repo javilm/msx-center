@@ -15,7 +15,7 @@ def page_member_edit_password():
 		abort(401)
 
 	template_options['user'] = user
-	template_options['navbar_series'] = ArticleSeries.query.order_by(ArticleSeries.priority).all()
+	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	if request.method == 'GET':
 
