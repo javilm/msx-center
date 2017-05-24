@@ -63,6 +63,7 @@ class NewsItem(db.Model):
 	url = db.Column(db.String())
 	comments = db.relationship("Comment", backref="news_item", order_by="Comment.date_posted")
 	num_comments = db.Column(db.Integer)
+	num_views = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
 	
@@ -108,6 +109,7 @@ class NewsItem(db.Model):
 		self.allows_comments = allows_comments
 		self.url = url
 		self.num_comments = 0
+		self.num_views = 0
 		self.score = 0
 		self.slug = slug
 

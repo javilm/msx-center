@@ -16,6 +16,11 @@ def page_news_item(news_item_id, slug):
 
 	if request.method == 'GET':
 
+		# Update the number of views for this news item
+		db.session.add(news_item)
+		news_item.num_views += 1
+		db.session.commit()
+
 		template_options = {}
 		template_options['user'] = user
 		template_options['news_item'] = news_item

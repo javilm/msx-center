@@ -66,6 +66,7 @@ class Article(db.Model):
 	allows_comments = db.Column(db.Boolean)
 	comments = db.relationship("Comment", backref="article", order_by="Comment.date_posted")
 	num_comments = db.Column(db.Integer)
+	num_views = db.Column(db.Integer)
 	score = db.Column(db.Integer)
 	slug = db.Column(db.String())
 	
@@ -109,6 +110,7 @@ class Article(db.Model):
 		self.is_archived = is_archived
 		self.allows_comments = allows_comments
 		self.num_comments = 0
+		self.num_views = 0
 		self.score = 0
 		self.slug = slug
 
