@@ -85,6 +85,10 @@
   margin-bottom:20px;
 }
 
+.news-item-num-comments {
+	margin-top:10px;
+}
+
 #news-item-full #news-item-links {
   font-size:medium;
 }

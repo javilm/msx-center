@@ -43,6 +43,8 @@ def page_articles_detail(article_id, slug):
 		# The form doesn't have to be updated to support AJAX result feedback because the only way to post here is via a direct
 		# forged request.
 
+		status = '401'
+
 		if article.allows_comments:
 			if user is not None:			# Check that the user is logged in...
 				if not user.is_blocked:		# ...and that the user is not blocked.
@@ -50,10 +52,12 @@ def page_articles_detail(article_id, slug):
 					comment_params = {}
 					comment_params['author'] = user
 					comment_params['body_en'] = request.form['reply']
-					comment = Comment(**comment_params)
-					article.add_comment(comment)
+					comment = Comment.new_comment(**comment_params)
+					if comment:
+						article.add_comment(comment)
+						status = '200'
 
 		return json.dumps({
-			'status': 200,
+			'status': status,
 			'url': url_for('page_articles_detail', article_id=article_id, slug=slug)
 		})

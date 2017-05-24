@@ -10,3 +10,13 @@ li#user-options a.dropdown-toggle {
 #reply_editor {
 	height: 400px;
 }
+
+span.more-link i {
+  color:#f00;
+}
+
+span.more-link {
+	margin-left:5px;
+  font-size:small;
+  font-weight:bold;
+}

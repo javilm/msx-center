@@ -27,7 +27,9 @@ $("#submit_button").click(function (e) {
 			reply: reply_editor.root.innerHTML
 		},
 		success: function(data) {
-			window.location = data.url;
+			if (data.status == '200') {
+				window.location = data.url;
+			}
 		}
 	});
 });	

@@ -2,6 +2,8 @@ from datetime import datetime
 from flask import request, url_for
 from __main__ import db, html_cleaner
 from utils import get_host_by_ip, html_image_extractor, format_datetime
+from lxml import html
+from string import strip
 
 class Comment(db.Model):
 	__tablename__ = 'comments'
@@ -30,6 +32,14 @@ class Comment(db.Model):
 	remote_ip = db.Column(db.String())
 	remote_host = db.Column(db.String())
 
+	@classmethod
+	def	new_comment(cls, author=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+		result = Comment(author, body_en, body_ja, body_nl, body_es, body_pt, body_kr, remote_ip)
+		if result.is_empty():
+			return None
+		else:
+			return result
+
 	def __init__(self, author=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
 		if author is None:
 			self.author_id = None
@@ -38,12 +48,12 @@ class Comment(db.Model):
 		self.author = author
 		self.article_id = None
 		self.news_item_id = None
-		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
-		self.body_ja = html_cleaner.clean_html(body_ja) if body_ja else None
-		self.body_nl = html_cleaner.clean_html(body_nl) if body_nl else None
-		self.body_es = html_cleaner.clean_html(body_es) if body_es else None
-		self.body_pt = html_cleaner.clean_html(body_pt) if body_pt else None
-		self.body_kr = html_cleaner.clean_html(body_kr) if body_kr else None
+		self.body_en = self.clean_and_remove_empty_html(body_en)
+		self.body_ja = self.clean_and_remove_empty_html(body_ja)
+		self.body_nl = self.clean_and_remove_empty_html(body_nl)
+		self.body_es = self.clean_and_remove_empty_html(body_es)
+		self.body_pt = self.clean_and_remove_empty_html(body_pt)
+		self.body_kr = self.clean_and_remove_empty_html(body_kr)
 		self.score = 0
 		self.num_upvotes = 0
 		self.num_downvotes = 0
@@ -57,6 +67,24 @@ class Comment(db.Model):
 		self.remote_host = get_host_by_ip(self.remote_ip)
 
 		self.html_extract_images()
+
+	def clean_and_remove_empty_html(self, code):
+		if code:
+			clean_code = html_cleaner.clean_html(code)
+			root = html.fromstring(clean_code)
+			stripped = strip(root.text_content())
+			if stripped:
+				return clean_code		# The original content after cleanup
+			else:
+				return ''
+		else:
+			return ''
+
+	def is_empty(self):
+		if self.body_en or self.body_ja or self.body_nl or self.body_es or self.body_pt or self.body_kr:
+			return False
+		else:
+			return True
 
 	def html_extract_images(self):
 

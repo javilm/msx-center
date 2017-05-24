@@ -18,7 +18,10 @@
 		</p>
         <p>{{ article.summary_en }}</p>
 		{% if article.level %}<p>{{ article_macros.difficulty_label(article.level) }}</p>{% endif %}
-        <a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
+		{% if article.num_comments %}
+			<span><i class="fa fa-comment"></i> {{ article.num_comments }}</span>
+		{% endif %}
+		<span class="more-link"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read&nbsp;more&nbsp;<i class="fa fa-angle-double-right"></i></a></span>
     </div>
 </div>
 {% endmacro %}
@@ -37,7 +40,10 @@
             </p>
 			<p>{{ article.summary_en }}</p>
 			{% if article.level %}<p>{{ article_macros.difficulty_label(article.level) }}</p>{% endif %}
-			<a class="btn btn-success" href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read article</a>
+			{% if article.num_comments %}
+				<span><i class="fa fa-comment"></i> {{ article.num_comments }}</span>
+			{% endif %}
+			<span class="more-link"><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">Read&nbsp;more&nbsp;<i class="fa fa-angle-double-right"></i></a></span>
         </div>
     </div>
 </div>

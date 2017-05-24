@@ -33,7 +33,7 @@ def page_thread(thread_id, slug):
 			user_errors['unverified'] = True
 		elif not user.is_staff and thread.lounge.staff_only:
 			user_errors['not_staff'] = True
-		elif user.reputation < 0 and not thread.lounge.allows_bad_reputation:
+		elif user.get_reputation() < 0 and not thread.lounge.allows_bad_reputation:
 			user_errors['bad_reputation'] = True
 
 		# Get the votes this user cast on this article
@@ -85,7 +85,7 @@ def page_thread(thread_id, slug):
 				user_errors['unverified'] = True
 			elif not user.is_staff and lounge.staff_only:
 				user_errors['not_staff'] = True
-			elif user.reputation < 0 and not lounge.allows_bad_reputation:
+			elif user.get_reputation() < 0 and not lounge.allows_bad_reputation:
 				user_errors['bad_reputation'] = True
 			# At this point the user is allowed to post. If the user requests to post as anonymous or using a nickname
 			# then check whether the lounge allows it.
@@ -104,6 +104,7 @@ def page_thread(thread_id, slug):
 					'url': url_for('page_thread', thread_id=thread.id, slug=thread.slug)
 				})
 			else:
+				app.logger.info("There were errors posting")
 				return json.dumps(user_errors, sort_keys=True, indent=4)
 		else:
 			# This is an error, nothing was submitted. Often the case when bots attack the site.

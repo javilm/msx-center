@@ -37,14 +37,18 @@ def page_news_item(news_item_id, slug):
 
 		app.logger.info("News Item: comment submitted")
 
+		status = '401'
+
 		if news_item.allows_comments:
 			comment_params = {}
 			comment_params['author'] = user
 			comment_params['body_en'] = request.form['reply']
-			comment = Comment(**comment_params)
-			news_item.add_comment(comment)
+			comment = Comment.new_comment(**comment_params)
+			if comment:
+				news_item.add_comment(comment)
+				status = '200'
 
 		return json.dumps({
-			'status': 200,
+			'status': status,
 			'url': url_for('page_news_item', news_item_id=news_item_id, slug=slug)
 		})
