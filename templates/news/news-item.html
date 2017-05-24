@@ -1,5 +1,6 @@
 {% extends "layout/template-base.html" %}
 {% import 'macros/comments-macros.html' as comments_macros %}
+{% import 'macros/sidebar-macros.html' as sidebar_macros %}
 
 {% block title %}MSX Center - News{% endblock %}
 
@@ -31,11 +32,6 @@
 {% macro news_item_related_link(link) %}
 <dt><a href="{{ url_for('visit_link', link_id=link.id) }}"><span class="fa fa-external-link"></span> {{ link.title }}</a></dt>
 <dd>{{ link.desc_en }}</dd>
-{% endmacro %}
-
-{% macro news_sidebar_sponsor() %}
-<h4 class="news-section-divider">Sponsor</h4>
-<div class="text-center"><img src="/static/img/Ads/googleads-200x200.png"></div>
 {% endmacro %}
 
 {% macro news_sidebar_archive() %}
@@ -150,6 +146,7 @@
         </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+		{{ sidebar_macros.sidebar_sponsor() }}
 		{{ news_sidebar_most_popular() }}
 		{{ news_sidebar_archive() }}
     </div>

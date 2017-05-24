@@ -1,4 +1,5 @@
 {% extends "layout/template-base.html" %}
+{% import 'macros/sidebar-macros.html' as sidebar_macros %}
 
 {% block title %}MSX Center - News{% endblock %}
 
@@ -21,11 +22,6 @@
 	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
 	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
 </ol>
-{% endmacro %}
-
-{% macro news_sidebar_sponsor() %}
-<h4 class="news-section-divider">Sponsor</h4>
-<div class="text-center"><img src="/static/img/Ads/googleads-200x200.png"></div>
 {% endmacro %}
 
 {% macro news_sidebar_archive() %}
@@ -75,7 +71,7 @@
 	
 		{# sidebar #} 
 		<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-			{{ news_sidebar_sponsor() }}
+			{{ sidebar_macros.sidebar_sponsor() }}
 			{{ news_sidebar_most_popular() }}
 			{{ news_sidebar_archive() }}
 		</div>
