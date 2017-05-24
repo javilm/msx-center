@@ -5,6 +5,57 @@
 {% block extracss %}
 {% endblock %}
 
+{% macro show_timeline_vote(v) %}
+{% if v.score == 1 %}Downvoted {% else %}Upvoted {% endif %}
+{% if v.message_id %}
+	{% if v.member_id == v.message.author.id %}<span class="text-danger">his own message</span> {% else %}
+		a message by
+		<strong>
+			<a href="{{ url_for('page_member', member_id=v.message.author.id, slug=v.message.author.slug) }}">
+				{{ v.message.author.real_name }}
+			</a>
+		</strong>
+	{% endif %} on <strong>
+		<a href="{{ url_for('page_thread', thread_id=v.message.thread.id, slug=v.message.thread.slug) }}">
+			{{ v.message.thread.title_en }}
+		</a>
+	</strong>.
+{% else %}
+	{% if v.member_id == v.comment.author.id %}his own comment {% else %}
+		a comment by
+		<strong>
+			<a href="{{ url_for('page_member', member_id=v.comment.author.id, slug=v.comment.author.slug) }}">
+				{{ v.comment.author.real_name }}
+			</a>
+		</strong>
+	{% endif %} on
+	{% if v.comment.article_id %}{# article #}
+		the article <strong><a href="{{ url_for('page_articles_detail', article_id=v.comment.article.id, slug=v.comment.article.slug) }}">{{ v.comment.article.title_en }}</a></strong>.
+	{% else %}{# news_item #}
+		the news item <strong><a href="{{ url_for('page_news_item', news_item_id=v.comment.news_item.id, slug=v.comment.news_item.slug) }}">{{ v.comment.news_item.headline_en }}</a></strong>.
+	{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% macro show_timeline_message(m) %}
+{% if m.id == m.thread.messages[0].id %}
+	Started the conversation <strong><a href="{{ url_for('page_thread', thread_id=m.thread.id, slug=m.thread.slug) }}">{{ m.thread.title_en }}</a></strong>.
+{% else %}
+	Posted a reply on the conversation <strong><a href="{{ url_for('page_thread', thread_id=m.thread.id, slug=m.thread.slug) }}">{{ m.thread.title_en }}</a></strong>.
+{% endif %}
+{% endmacro %}
+
+{% macro show_timeline_comment(c) %}
+Commented on 
+{% if c.article_id %}
+the article <strong><a href="{{ url_for('page_articles_detail', article_id=c.article.id, slug=c.article.slug) }}">{{ c.article.title_en }}</a></strong>.
+{% elif c.news_item_id %}
+the news item <strong><a href="{{ url_for('page_news_item', news_item_id=c.news_item.id, slug=c.news_item.slug) }}">{{ c.news_item.headline_en }}</a></strong>.
+{% else %}
+a bug on this template, apparently.
+{% endif %}
+{% endmacro %}
+
 {% block content %}
 </div>{# we don't want to use the grid container opened by the template #}
 <div id="profile-background"></div>
@@ -19,16 +70,21 @@
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-9">
 			<h1>Activity </h1>
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">On <a href="#">That discussion where we throw shit at each other</a></h3></div>
-				<div class="panel-body">
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie nibh ante, sit amet venenatis dolor facilisis et. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed felis
-						eros, posuere a turpis eu, volutpat dapibus dolor. Donec et libero neque. Nulla non ligula ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras sed ullamcorper ante, eu
-						mattis felis. Aliquam commodo fermentum dignissim. Morbi molestie aliquam massa, nec euismod ante volutpat quis. Nulla facilisis eros ut ligula volutpat hendrerit. Curabitur mattis lacus luctus urna egestas maximus. </p>
+			{% if timeline|length %}
+				{% for timestamp in timeline|reverse %}
+					{% if timeline[timestamp].type == 'vote' %}
+						<p><b>{{ timestamp|pretty_date }}</b>: {{ show_timeline_vote(timeline[timestamp]) }}</p>
+					{% elif timeline[timestamp].type == 'comment' %}
+						<p><b>{{ timestamp|pretty_date }}</b>: {{ show_timeline_comment(timeline[timestamp]) }}</p>
+					{% elif timeline[timestamp].type == 'message' %}
+						<p><b>{{ timestamp|pretty_date }}</b>: {{ show_timeline_message(timeline[timestamp]) }}</p>
+					{% endif %}
+				{% endfor %}
+			{% else %}
+				<div class="alert alert-warning">
+					<p>This member hasn't done anything interesting yet (no comments, no messages in the conversation lounges, and no votes).</p>
 				</div>
-				<div class="panel-footer"><span>Posted on January 1st, 1970 at 9:41am</span></div>
-			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>
