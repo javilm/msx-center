@@ -1,6 +1,7 @@
 {% extends "layout/template-base.html" %}
 {% import 'macros/lounges-macros.html' as lounges_macros %}
 {% import 'macros/comments-macros.html' as comments_macros %}
+{% import 'macros/sidebar-macros.html' as sidebar_macros %}
 
 {% block title %}MSX Center - Conversation lounges - {{ thread.title_en }}{% endblock %}
 
@@ -12,23 +13,6 @@
 <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
 <link rel="stylesheet" href="/static/css/lightbox.min.css">
 {% endblock %}
-
-{% macro threads_sidebar_most_popular() %}
-<h4 class="lounges-section-divider">Most popular</h4>
-<p class="text-muted">The most popular threads of the last 90 days:</p>
-<ol>
-	<li><a href="#">Something happened in that user meeting</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">The French fries in this Burger King are too salty</a></li>
-	<li><a href="#">Nintendo won't release more games for MSX computers</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Tecnobytes releases new FC SAN interface cartridge</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
-	<li><a href="#">Some random guy found dead under a bridge (again)</a></li>
-</ol>
-{% endmacro %}
 
 {% block content %}
 <div class="row">
@@ -89,7 +73,7 @@
 								{% endif %}
 							{% else %}
 								<div class="alert alert-warning">
-									You need to be <a class="alert-link" href="{{ url_for('page_signin') }}"><b>signed in</a> to reply.
+									You need to be <a class="alert-link" href="{{ url_for('page_signin') }}">signed in</a> to reply.
 								</div>
 							{% endif %}
 						</div>
@@ -100,7 +84,7 @@
         </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		{{ threads_sidebar_most_popular() }}
+		{{ sidebar_macros.sidebar_threads_most_popular(popular_threads) }}
     </div>
 </div>
 {% endblock %}

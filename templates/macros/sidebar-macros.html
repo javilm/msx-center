@@ -18,6 +18,19 @@
 </ol>
 {% endmacro %}
 
+{% macro sidebar_threads_most_popular(threads) %}
+<h4 class="news-section-divider">Most popular</h4>
+<p class="text-muted">Most popular threads:</p>
+<ol>
+	{% for thread in threads %}
+		<li><a href="{{ url_for('page_thread', thread_id=thread.id, slug=thread.slug) }}">{{ thread.title_en }}</a></li>
+	{% endfor %}
+</ol>
+{% endmacro %}
+
+
+
+
 {% macro sidebar_sponsor() %}
 <h4 class="news-section-divider">Sponsor</h4>
 <div class="text-center">

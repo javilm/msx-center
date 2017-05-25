@@ -13,6 +13,7 @@ from server import run_server
 app = Flask(__name__)
 app.jinja_env.filters['pretty_date'] = jinja_filters.pretty_date
 app.jinja_env.filters['supress_none'] = jinja_filters.supress_none
+app.jinja_env.filters['none_to_zero'] = jinja_filters.none_to_zero
 app.jinja_env.auto_reload = True
 app.debug = True
 app.config.from_object(__name__)

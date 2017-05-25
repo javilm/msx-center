@@ -22,8 +22,8 @@
 			<h3>Standard portraits</h3>
 			<p>The eight portraits below were created by <a target="_new" href="https://twitter.com/JUSTIN_CYR">Justin Cyr</a>. Go check his fantastic pixel art on <a target="_new" href="http://justinpaulcyr.tumblr.com">his Tumblr</a>!
 			<form action="{{ url_for('page_member_edit_photo') }}" method="POST" enctype="multipart/form-data">
-				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id|supress_none }}">
-				<input type="hidden" id="member_portrait_number_field" name="member_portrait_number" value="{{ user.member_portrait_id|supress_none }}">
+				<input type="hidden" id="standard_portrait_number_field" name="standard_portrait_number" value="{{ user.standard_portrait_id|none_to_zero }}">
+				<input type="hidden" id="member_portrait_number_field" name="member_portrait_number" value="{{ user.member_portrait_id|none_to_zero }}">
 
 				<div class="row">
 					{% for num in range(1, 9) %}

@@ -42,5 +42,10 @@ def supress_none(value):
 	if value is not None:
 		return value
 	else:
-		return '0'
+		return ''
 
+def none_to_zero(value):
+	if value is not None:
+		return value
+	else:
+		return 0

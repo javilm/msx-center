@@ -2,6 +2,7 @@ import json
 from __main__ import app, db
 from flask import url_for, render_template, request, abort, session
 from models import User, ConversationThread, ConversationMessage, ArticleSeries, Vote
+from sqlalchemy import desc
 
 @app.route('/lounges/thread/<int:thread_id>/<string:slug>', methods=['GET', 'POST'])
 def page_thread(thread_id, slug):
@@ -53,7 +54,8 @@ def page_thread(thread_id, slug):
 			'first_message': thread.messages[0],
 			'lounge': thread.lounge,
 			'errors': user_errors,
-			'navbar_series': ArticleSeries.list_for_navbar()
+			'navbar_series': ArticleSeries.list_for_navbar(),
+			'popular_threads': ConversationThread.query.order_by(desc(ConversationThread.num_views)).limit(10)
 		}
 
 		return render_template('lounges/lounges-thread.html', **template_options)

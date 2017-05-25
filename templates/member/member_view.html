@@ -10,11 +10,15 @@
 {% if v.message_id %}
 	{% if v.member_id == v.message.author.id %}<span class="text-danger">his own message</span> {% else %}
 		a message by
-		<strong>
-			<a href="{{ url_for('page_member', member_id=v.message.author.id, slug=v.message.author.slug) }}">
-				{{ v.message.author.real_name }}
-			</a>
-		</strong>
+		{% if v.message.author_id %}
+			<strong>
+				<a href="{{ url_for('page_member', member_id=v.message.author.id, slug=v.message.author.slug) }}">
+					{{ v.message.author.real_name }}
+				</a>
+			</strong>
+		{% else %}
+			an anonymous member
+		{% endif %}
 	{% endif %} on <strong>
 		<a href="{{ url_for('page_thread', thread_id=v.message.thread.id, slug=v.message.thread.slug) }}">
 			{{ v.message.thread.title_en }}

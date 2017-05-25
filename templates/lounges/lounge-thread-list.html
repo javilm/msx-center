@@ -33,7 +33,22 @@
 								</td>
 								<td>{{ thread.num_views }}</td>
 								<td>{{ thread.num_messages }}</td>
-								<td>By <a href="#">{{ thread.last_post_username }}</a> {{ thread.last_post_date.strftime('%b %-d, %Y at %-I:%M%p') }}</td>
+								<td>
+									By
+									{% if thread.messages[0].post_as == thread.messages[0].PostAsType.REALNAME %}
+										<a href="{{ url_for('page_member', member_id=thread.messages[0].author.id, slug=thread.messages[0].author.slug) }}">
+											{{ thread.messages[0].author.real_name }}
+										</a>
+									{% elif thread.messages[0].post_as == thread.messages[0].PostAsType.NICKNAME %}
+										<a href="{{ url_for('page_member', member_id=thread.messages[0].author.id, slug=thread.messages[0].author.slug) }}">
+											{{ thread.messages[0].author.nickname }}
+										</a>
+									{% else %}
+										an anonymous member
+									{% endif %}
+									{{ thread.last_post_date|pretty_date }}
+									</a>
+								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
