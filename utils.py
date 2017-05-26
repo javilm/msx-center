@@ -87,3 +87,6 @@ def format_datetime(datetime):
 
 def format_date(datetime):
 	return datetime.strftime('%d/%b/%Y')
+
+def remove_unicode_whitespace(string):
+	return re.sub(r"\s+", "", string, flags=re.UNICODE)

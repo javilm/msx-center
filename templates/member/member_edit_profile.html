@@ -206,11 +206,23 @@ $(function () {
 		yearRange: "1940:2017",
 		dateFormat: 'DD MM d, yy',
 		altField: '#birthdate_field',
-		altFormat: 'yyyy-mm-dd'
+		altFormat: 'yy-mm-dd'
 	});
-	var date_from_db = "{{ user.birth_date() }}".split("-");
-	var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
-	$("#birthdate_display_field").datepicker("setDate", date);
+	var date_from_db = "{{ user.get_birth_date() }}".split("-");
+	console.log("date_from_db = " + date_from_db);
+	if (date_from_db != '') {
+		var date = new Date(date_from_db[0], date_from_db[1]-1, date_from_db[2])
+		$("#birthdate_display_field").datepicker("setDate", date);
+	}
+});
+
+// Clear the birthdate_field if the birthdate_display_field changes to be empty
+$('#birthdate_display_field').change( function() {
+	var val = $('#birthdate_display_field').val();
+	if (val == '') {
+		$('#birthdate_field').val('');
+	}
+	
 });
 
 // Load the member's background image

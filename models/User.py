@@ -4,7 +4,7 @@ from flask import render_template, url_for, session
 from flask_mail import Message
 from geoip import geolite2
 from slugify import slugify
-from __main__ import db, mail
+from __main__ import db, mail, app
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -199,14 +199,16 @@ class User(db.Model):
 		self.in_country = in_country
 		self.in_country_name = pycountry.countries.get(alpha_2=in_country).name if in_country else None
 
-	def birth_date(self):
+	def get_birth_date(self):
+		app.logger.info("User ID %s birth date is %s" % (self.id, self.birth_date))
+
+		result = ''
+
 		if self.birth_date:
-			if self.birth_date == '2075-04-01':
-				return ''
-			else:
-				return self.birth_date
-		else:
-			return ''
+			result = self.birth_date
+
+		app.logger.info("Returning %s" % result)
+		return result
 
 	def update_reputation(self):
 
