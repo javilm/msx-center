@@ -56,7 +56,7 @@
 				<p class="comment-date">Posted on {{ comment.formatted_datetime() }}</p>
 			</div>
 		</div>
-		<div class="comment-body">{{ comment.body_en|safe }}</div>
+		<div class="comment-body quill-content">{{ comment.body_en|safe }}</div>
 	</div>
 </div>
 {% endmacro %}
@@ -130,7 +130,7 @@
 			</div>
 		</div>
 
-		<div class="comment-body">{{ comment.body_en|safe }}</div>
+		<div class="comment-body quill-content">{{ comment.body_en|safe }}</div>
 	</div>
 </div>
 {% endmacro %}

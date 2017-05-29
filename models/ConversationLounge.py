@@ -1,6 +1,5 @@
 from datetime import datetime
 import lxml.html as LH
-from slugify import slugify
 
 from __main__ import app, db
 
@@ -91,7 +90,7 @@ class ConversationLounge(db.Model):
 		self.num_threads = 0
 		self.priority = priority
 		self.color_class = color_class
-		self.slug = slugify(unicode(name_en)) if name_en else ''
+		self.slug = name_en
 
 	def add_thread(self, thread):
 		thread.lounge_id = self.id

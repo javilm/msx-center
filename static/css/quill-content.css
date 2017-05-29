@@ -1,0 +1,10 @@
+.ql-editor, .quill-content {
+	text-align: justify;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 1.42857143;
+	color: #333;
+}
+
+.ql-editor p, .quill-content p {
+	margin: 0 0 10px;
+}

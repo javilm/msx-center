@@ -1,5 +1,4 @@
 from datetime import datetime
-from slugify import slugify
 from send_notifications import send_notifications
 
 from __main__ import app, db
@@ -9,7 +8,6 @@ try:
 except ImportError:
 	import sys
 	ConversationLounge = sys.modules[__package__ + '.ConversationLounge']
-	app.logger.info("XXX lounge = %s" % ConversationLounge)
 
 from . import ConversationMessage
 
@@ -56,7 +54,7 @@ class ConversationThread(db.Model):
 		self.num_messages = 0
 		self.first_post_date = datetime.utcnow()
 		self.last_post_date = self.first_post_date
-		self.slug = slugify(unicode(title_en))
+		self.slug = title_en
 
 	def add_message(self, message):
 

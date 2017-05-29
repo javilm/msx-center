@@ -1,5 +1,4 @@
 from datetime import datetime
-from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
 from utils import html_image_extractor, format_date

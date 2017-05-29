@@ -53,6 +53,10 @@ $('.carousel').carousel()
 	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>
 {% endmacro %}
 
+{% macro recent_member(member) %}
+<a href="{{ url_for('page_member', member_id=member.id, slug=member.slug) }}"><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a>
+{% endmacro %}
+
 {% block content %}
 	{# Carousel #}
 	<div class="carousel slide" data-ride="carousel" id="carousel-1">
@@ -94,6 +98,16 @@ $('.carousel').carousel()
 			<h1>Latest conversation posts</h1>
 			{% for post in recent_posts %}
 				{{ recent_post(post) }}
+			{% endfor %}
+		</div>
+	</div>
+
+	{# Recent members #}
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frontpage-recent-members">
+			<h1>Latest active members</h1>
+			{% for member in recent_members %}
+				{{ recent_member(member) }}
 			{% endfor %}
 		</div>
 	</div>

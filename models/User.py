@@ -3,7 +3,6 @@ import enum, hashlib, pycountry, random, re, string
 from flask import render_template, url_for, session
 from flask_mail import Message
 from geoip import geolite2
-from slugify import slugify
 from __main__ import db, mail, app
 
 class User(db.Model):
@@ -115,7 +114,7 @@ class User(db.Model):
 		self.is_staff = False
 		self.reputation = 0
 		self.set_password(password)
-		self.slug = slugify(slugify(real_name if real_name else nickname))
+		self.slug = real_name
 		self.use_standard_background = True
 		self.standard_background_filename = 'profile_background_1.jpg'
 		self.birth_date = '2075-04-01'	# Default value for undefined

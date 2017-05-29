@@ -1,5 +1,4 @@
 from datetime import datetime
-from slugify import slugify
 from flask import url_for
 from send_notifications import send_notifications
 

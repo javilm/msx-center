@@ -1,6 +1,5 @@
 from __main__ import app, db, country_list, timezone_list
 from flask import abort, request, render_template, redirect, url_for
-from slugify import slugify
 from models import User, ArticleSeries
 from utils import remove_unicode_whitespace
 
@@ -52,8 +51,7 @@ def page_member_edit_profile():
 			user.facebook = request.form['facebook']
 			user.linkedin = request.form['linkedin']
 			user.twitter = request.form['twitter']
-			#user.slug = slugify(slugify(request.form['real_name'] if request.form['real_name'] else request.form['nickname']))
-			user.slug = remove_unicode_whitespace(request.form['real_name'] if request.form['real_name'] else request.form['nickname'])
+			user.slug = user.real_name
 			db.session.add(user)
 			db.session.commit()
 			# Redirect instead of rendering template to avoid double-posting on page reload
