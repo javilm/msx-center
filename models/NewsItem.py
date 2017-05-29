@@ -1,6 +1,7 @@
 from datetime import datetime
 from slugify import slugify
 from flask import url_for
+from send_notifications import send_notifications
 
 from __main__ import db, html_cleaner
 from utils import html_image_extractor, format_date
@@ -140,11 +141,16 @@ class NewsItem(db.Model):
 		db.session.commit()
 
 	def add_comment(self, comment):
+
+		from . import EmailSubscription
+
 		if comment is not None:
 			db.session.add(self)
 			self.comments.append(comment)
 			self.num_comments = len(self.comments)
 			db.session.commit()
+			EmailSubscription.subscribe(member=comment.author, news_item=self)
+			send_notifications(member=comment.author, news_item=self)
 
 	def add_feature_image(self, original_image):
 

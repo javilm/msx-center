@@ -29,7 +29,7 @@
 		<tbody>
 			{% for member in members %}
 				<tr>
-					<td><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a></td>
+					<td><a href="{{ url_for('page_member', member_id=member.id, slug=member.slug) }}"><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a></td>
 					<td>{{ member.id }}</td>
 					<td>{{ member.real_name }}</td>
 					<td>{{ member.nickname }}</td>
@@ -37,7 +37,7 @@
 					<td>{{ member.registration_date.strftime('%d/%b/%Y') }}</td>
 					<td>{{ member.last_active_date|pretty_date }}</td>
 					<td>{{ member.reputation }}</td>
-					<td>{{ member.num_messages }}</td>
+					<td>{{ member.messages|length + member.comments|length }}</td>
 					<td>
 						{% if member.is_active %}<span class="label label-success">ACTIVE</span>{% endif %}
 						{% if member.is_new %}<span class="label label-warning">NEW</span>{% endif %}

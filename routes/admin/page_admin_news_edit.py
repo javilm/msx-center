@@ -97,7 +97,7 @@ def page_admin_news_edit(item_id):
 			item.links.remove(link)
 
 		# If the feature image has changed add the new one
-		if request.form['feature_image_changed']:
+		if request.form['feature_image_changed'] == '1':
 			image = StoredImage.query.get(request.form['feature_image_id'])
 			item.add_feature_image(image)
 		

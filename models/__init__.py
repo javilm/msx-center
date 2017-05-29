@@ -13,6 +13,7 @@ from ExternalLink import ExternalLink
 from VerificationKey import VerificationKey
 from User import User
 from Vote import Vote
+from EmailSubscription import EmailSubscription
 
 __all__ = [
 	"ActivationKey",
@@ -29,6 +30,7 @@ __all__ = [
 	"StoredImage",
 	"VerificationKey",
 	"User",
-	"Vote"
+	"Vote",
+	"EmailSubscription"
 ]
 

@@ -3,6 +3,7 @@ from slugify import slugify
 from flask import url_for
 from __main__ import html_cleaner, db
 from utils import html_image_extractor, format_date
+from send_notifications import send_notifications
 from . import StoredImage
 
 association_table = db.Table('association_article_external_link',
@@ -132,11 +133,16 @@ class Article(db.Model):
 		self.body_kr = html_image_extractor(self.body_kr, **params)
 
 	def add_comment(self, comment):
+
+		from . import EmailSubscription
+
 		if comment is not None:
 			db.session.add(self)
 			self.comments.append(comment)
 			self.num_comments = len(self.comments)
 			db.session.commit()
+			EmailSubscription.subscribe(member=comment.author, article=self)
+			send_notifications(member=comment.author, article=self)
 
 	def add_feature_image(self, original_image):
 		# Make a carousel image, exactly 1400x600

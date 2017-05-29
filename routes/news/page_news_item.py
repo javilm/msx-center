@@ -44,8 +44,6 @@ def page_news_item(news_item_id, slug):
 
 	else:
 
-		app.logger.info("News Item: comment submitted")
-
 		status = '401'
 
 		if news_item.allows_comments:

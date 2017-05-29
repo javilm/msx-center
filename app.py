@@ -58,6 +58,7 @@ from routes.articles import *
 from routes.admin import *
 from routes.votes import *
 from routes.errors import *
+from routes.subscriptions import *
 
 #################################
 ## NON-SERVICEABLE PARTS BELOW ##

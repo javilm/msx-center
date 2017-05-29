@@ -94,12 +94,18 @@ class Comment(db.Model):
 			'image_max_dimension': 1200,
 			'lightbox_format_string': 'Images for comment'
 		}
-		self.body_en = html_image_extractor(self.body_en, **params)
-		self.body_ja = html_image_extractor(self.body_ja, **params)
-		self.body_nl = html_image_extractor(self.body_nl, **params)
-		self.body_es = html_image_extractor(self.body_es, **params)
-		self.body_pt = html_image_extractor(self.body_pt, **params)
-		self.body_kr = html_image_extractor(self.body_kr, **params)
+		if self.body_en:
+			self.body_en = html_image_extractor(self.body_en, **params)
+		if self.body_ja:
+			self.body_ja = html_image_extractor(self.body_ja, **params)
+		if self.body_nl:
+			self.body_nl = html_image_extractor(self.body_nl, **params)
+		if self.body_es:
+			self.body_es = html_image_extractor(self.body_es, **params)
+		if self.body_pt:
+			self.body_pt = html_image_extractor(self.body_pt, **params)
+		if self.body_kr:
+			self.body_kr = html_image_extractor(self.body_kr, **params)
 
 	def formatted_datetime(self):
 		return format_datetime(self.date_posted)

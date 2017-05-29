@@ -61,11 +61,11 @@
                     </div>
                     
                     {# RELATED LINKS #}
-                    {% if news_item.related_links %}
+                    {% if news_item.links|length %}
 	                    <div id="news-item-links">
 	                        <h4 class="news-section-divider">Related links</h4>
 	                        <dl class="related-links">
-		                        {% for link in news_item.related_links %}
+		                        {% for link in news_item.links %}
 		                        	{{ news_item_related_link(link) }}
 		                        {% endfor %}
 							</dl>

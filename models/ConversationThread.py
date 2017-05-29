@@ -1,5 +1,7 @@
 from datetime import datetime
 from slugify import slugify
+from send_notifications import send_notifications
+
 from __main__ import app, db
 
 try:
@@ -57,9 +59,15 @@ class ConversationThread(db.Model):
 		self.slug = slugify(unicode(title_en))
 
 	def add_message(self, message):
+
+		from . import EmailSubscription
+
 		message.thread_id = self.id
 		db.session.add(self)
 		db.session.add(message)
 		self.num_messages = ConversationMessage.query.filter_by(thread_id=self.id).count()	# Recount to make it accurate instead of just num_messages += 1
 		self.last_post_date = datetime.utcnow()
 		db.session.commit()
+		subscription = EmailSubscription.subscribe(member=message.author, thread=self)
+		send_notifications(member=message.author, thread=self)
+

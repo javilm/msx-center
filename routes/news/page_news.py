@@ -16,7 +16,7 @@ def page_news(page):
 	template_options['user'] = User.get_signed_in_user()
 
 	# Get the news items
-	template_options['pagination'] = NewsItem.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).paginate(page=page, per_page=ITEMS_PER_PAGE, error_out=True)
+	template_options['pagination'] = NewsItem.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).order_by(desc(NewsItem.date_published)).paginate(page=page, per_page=ITEMS_PER_PAGE, error_out=True)
 	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	# Sidebar's most popular news items

@@ -1,5 +1,5 @@
 from __main__ import app, db
-from flask import send_file, abort
+from flask import send_file, abort, redirect
 from models import ExternalLink
 
 @app.route('/visit_link/<int:link_id>', methods=['GET'])

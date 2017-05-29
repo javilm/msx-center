@@ -1,0 +1,5 @@
+There's a new reply by {{ reply_author_name }} in the article "{{ reply_article_title }}" that you're following.
+
+Click this link to view the replies: https://www.msx-center.com/{{ reply_article_url }}
+
+Copyright © 2017 MSX Center. "MSX" is a registered trademark of the MSX Li

@@ -25,11 +25,10 @@ $("#submit_button").click(function (e) {
 		processData: true,
 		data: {
 			reply: reply_editor.root.innerHTML
-		},
-		success: function(data) {
-			if (data.status == '200') {
-				window.location = data.url;
-			}
 		}
+	})
+	.done(function(result) {
+		window.location = result.url;
 	});
+	return false;
 });	
