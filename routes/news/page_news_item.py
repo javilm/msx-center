@@ -45,17 +45,26 @@ def page_news_item(news_item_id, slug):
 	else:
 
 		status = '401'
+		status_message = 'You are not allowed to post'
 
 		if news_item.allows_comments:
-			comment_params = {}
-			comment_params['author'] = user
-			comment_params['body_en'] = request.form['reply']
-			comment = Comment.new_comment(**comment_params)
-			if comment:
-				news_item.add_comment(comment)
-				status = '200'
+			if user is not None:
+				if not user.is_blocked:
+					comment_params = {}
+					comment_params['author'] = user
+					comment_params['body_en'] = request.form['reply']
+					comment = Comment.new_comment(**comment_params)
+					if comment:
+						news_item.add_comment(comment)
+						status = '200'
+						status_message ='OK'
+					else:
+						status_message = 'Your comment cannot be empty'
+				else:
+					status_message = 'You cannot post because your account has been blocked'
 
 		return json.dumps({
 			'status': status,
+			'status_message': status_message,
 			'url': url_for('page_news_item', news_item_id=news_item_id, slug=slug)
 		})

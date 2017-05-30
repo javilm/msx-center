@@ -62,4 +62,7 @@
 			<input type="hidden" id="field_thread_id" name="field_thread_id" value="{{ thread.id }}">
 			<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post reply</button>
 		</div>
+		<div class="form-group">
+			<p id="comment_post_error" class="text-warning">&nbsp;</p>
+		</div>
 {%- endif %}

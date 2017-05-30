@@ -14,6 +14,6 @@ def page_articles():
 	template_options['navbar_series'] = ArticleSeries.list_for_navbar()
 
 	# Get all the article series
-	tmeplate_options['series'] = template_options['navbar_series']
+	template_options['series'] = template_options['navbar_series']
 
 	return render_template('articles/articles.html', **template_options)

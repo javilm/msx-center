@@ -52,6 +52,7 @@ def page_articles_detail(article_id, slug):
 		# forged request.
 
 		status = '401'
+		status_message = 'You are not allowed to post'
 
 		if article.allows_comments:
 			if user is not None:			# Check that the user is logged in...
@@ -64,8 +65,15 @@ def page_articles_detail(article_id, slug):
 					if comment:
 						article.add_comment(comment)
 						status = '200'
+						status_message = 'OK'
+					else:
+						status_message = 'Your comment cannot be empty'
+				else:
+					status_message = 'You cannot post because your account has been blocked'
 
 		return json.dumps({
 			'status': status,
+			'status_message': status_message,
 			'url': url_for('page_articles_detail', article_id=article_id, slug=slug)
 		})
+

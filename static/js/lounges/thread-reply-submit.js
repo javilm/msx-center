@@ -1,3 +1,6 @@
+// If the comments have iframes in them, wrap then in a div that will scale them to the width of the container
+$('iframe').wrap('<div class="iframe-wrapper" />');
+
 // Initialize MediumEditor
 var toolbarOptions = [
 	[{ 'header': [1, 2, 3, false] }],
@@ -27,6 +30,9 @@ $("#submitButton").click(function (e) {
 	button.addClass('disabled');
 	button.html('Posting, please wait...');
 
+	// Clear the error message
+	$('#comment_post_error').html('&nbsp;');
+
 	$.ajax({
 		method: "POST",
 		processData: true,
@@ -44,6 +50,11 @@ $("#submitButton").click(function (e) {
 		}
 	})
 	.done(function(result) {
-		window.location = result.url;
+		if (result.status == '200') {
+			window.location = result.url;
+		} else {
+			$('#comment_post_error').html(result.status_message);
+		}
 	});
+	return false;
 });

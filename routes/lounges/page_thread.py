@@ -98,17 +98,24 @@ def page_thread(thread_id, slug):
 			else:
 				post_as = 'REALNAME'
 
+			status = '401'
+			status_message = ''
+
 			if not user_errors:
-				app.logger.info("User: %s, post_as: %s, body_en: %s" % (user, post_as, request.form['message']))
-				message = ConversationMessage(user, post_as, body_en=request.form['message'])
-				thread.add_message(message)
-				return json.dumps({
-					'status': 200,
-					'url': url_for('page_thread', thread_id=thread.id, slug=thread.slug)
-				})
-			else:
-				app.logger.info("There were errors posting")
-				return json.dumps(user_errors, sort_keys=True, indent=4)
+				message = ConversationMessage.new_message(post_as, author=user, body_en=request.form['message'])
+				if message is not None:
+					thread.add_message(message)
+					status = '200'
+					status_message = 'OK'
+				else:
+					status_message = 'Your message cannot be empty'
+
+			return json.dumps({
+				'status': status,
+				'status_message': status_message,
+				'user_errors': user_errors,
+				'url': url_for('page_thread', thread_id=thread.id, slug=thread.slug)
+			})
 		else:
 			# This is an error, nothing was submitted. Often the case when bots attack the site.
 			return "The input dictionary was empty"

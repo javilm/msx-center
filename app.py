@@ -18,7 +18,7 @@ app.jinja_env.auto_reload = True
 app.debug = True
 app.config.from_object(__name__)
 mail = Mail(app)
-html_cleaner = Cleaner(page_structure=True, links=False)
+html_cleaner = Cleaner(page_structure=True, links=False, embedded=False)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(

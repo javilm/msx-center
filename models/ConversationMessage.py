@@ -1,9 +1,10 @@
 import enum
 from datetime import datetime
 from flask import request, url_for
-from __main__ import db
-from __main__ import html_cleaner
+from lxml import html
 from utils import get_host_by_ip, html_image_extractor, format_datetime
+from string import strip
+from __main__ import db, html_cleaner
 
 class ConversationMessage(db.Model):
 	__tablename__ = 'messages'
@@ -39,13 +40,22 @@ class ConversationMessage(db.Model):
 	# The "user" attribute for every ConversationMessage is already defined in the User model as a
 	# backref in the relationship with the ConversationMessage model
 
-	def __init__(self, author, post_as, body_en, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
+	@classmethod
+	def new_message(cls, post_as, author=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None):
+		result = ConversationMessage(post_as, author=author, body_en=body_en, body_ja=body_ja, body_nl=body_nl, body_es=body_es, body_pt=body_pt, body_kr=body_kr)
+		if result.is_empty():
+			return None
+		else:
+			return result
+
+	def __init__(self, post_as, author=None, body_en=None, body_ja=None, body_nl=None, body_es=None, body_pt=None, body_kr=None, remote_ip=None):
 		if author is None:
 			self.author_id = None
 		else:
 			self.author_id = author.id
 		self.thread_id = None
-		self.body_en = html_cleaner.clean_html(body_en) if body_en else None
+		self.body_en = self.clean_and_remove_empty_html(body_en)
+		#self.body_en = html_cleaner.clean_html(body_en) if body_en else None
 		self.body_ja = None
 		self.body_nl = None
 		self.body_es = None
@@ -69,6 +79,18 @@ class ConversationMessage(db.Model):
 
 		self.html_extract_images()
 
+	def clean_and_remove_empty_html(self, code):
+		if code:
+			clean_code = html_cleaner.clean_html(code)
+			root = html.fromstring(clean_code)
+			stripped = strip(root.text_content())
+			if stripped:
+				return clean_code
+			else:
+				return ''
+		else:
+			return ''
+
 	def html_extract_images(self):
 		# Extract images embedded in the HTML
 		params = {
@@ -76,7 +98,8 @@ class ConversationMessage(db.Model):
 			'image_max_dimension': 1200,
 			'lightbox_format_string': 'Images for message %s'
 		}
-		self.body_en = html_image_extractor(self.body_en, **params)
+		if self.body_en:
+			self.body_en = html_image_extractor(self.body_en, **params)
 		#self.body_ja = html_image_extractor(self.body_ja, **params)
 		#self.body_nl = html_image_extractor(self.body_nl, **params)
 		#self.body_es = html_image_extractor(self.body_es, **params)
@@ -104,3 +127,9 @@ class ConversationMessage(db.Model):
 
 	def formatted_datetime(self):
 		return format_datetime(self.date_posted)
+
+	def is_empty(self):
+		if self.body_en or self.body_ja or self.body_nl or self.body_es or self.body_pt or self.body_kr:
+			return False
+		else:
+			return True
