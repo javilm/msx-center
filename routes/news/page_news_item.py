@@ -32,7 +32,7 @@ def page_news_item(news_item_id, slug):
 
 		# Get the votes this user cast on this article
 		if user:
-			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.news_item_id == NewsItem.id).all()
+			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.news_item_id == NewsItem.id).filter(Vote.member_id == user.id).all()
 			my_votes = {}
 			for vote in votes:
 				my_votes[vote.comment_id] = vote.score

@@ -35,7 +35,7 @@ def page_articles_detail(article_id, slug):
 
 		# Get the votes this user cast on this article
 		if user:
-			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).all()
+			votes = db.session.query(Vote).filter(Vote.comment_id == Comment.id).filter(Comment.article_id == Article.id).filter(Vote.member_id == user.id).all()
 			my_votes = {}
 			for vote in votes:
 				my_votes[vote.comment_id] = vote.score
