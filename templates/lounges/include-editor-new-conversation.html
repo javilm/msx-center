@@ -1,7 +1,7 @@
 {% if errors.blocked -%}
 	<div class="alert alert-danger">
 		<p><strong>ACCOUNT BLOCKED</strong></p>
-		<p>Sorry, you are not allowed to post because your account is blocked. If you feel this is a mistake, please visit the <a class="alert-link" href="http://XXX">support page</a> for instructions.</p>
+		<p>Sorry, you are not allowed to post because your account is blocked. If you feel this is a mistake, please visit the <a class="alert-link" href="http://www.msx-center.com/support">support page</a> for instructions.</p>
 	</div>
 {%- elif errors.anonymous -%}
 	<div class="alert alert-warning">
@@ -42,7 +42,7 @@
 	{% if user and lounge.allows_nicknames %}
 	<div class="form-group">
 		<label class="control-label">Post as</label>
-		<select id="field_post_as" name="post_as" class="form-control" {{form_status}}>
+		<select id="field_post_as" name="post_as" class="form-control">
 			<option value="1">My real name: {{ user.real_name }}</option>
 			<option value="2">My nickname: {{ user.nickname }}</option>
 			{% if lounge.allows_anonymous %}
@@ -55,14 +55,17 @@
 	{% endif %}
 	<div class="form-group">
 		<label class="control-label">Conversation title</label>
-		<input id="field_conversation_title" name="message_title" class="form-control" type="text" {{form_status}}>
+		<input id="field_conversation_title" name="message_title" class="form-control" type="text">
 	</div>
 	<div class="form-group">
 		<label class="control-label">Your message</label>
 		<p class="help-text">Enter your message below. Use the toolbar to style the text, add code and images. The message area will expand as needed.</p>
-		<div class="form-control" id="quillEditor" {{form_status}}></div>
+		<div class="form-control" id="reply_editor"></div>
 	</div>
 	<div class="form-group">
-		<button class="btn btn-primary" type="submit" id="submitButton" {{form_status}}>Post message</button>
+		<button class="btn btn-primary" type="submit" id="submitButton">Post message</button>
+	</div>
+	<div class="form-group">
+		<p id="comment_post_error" class="text-warning"></p>
 	</div>
 {%- endif %}

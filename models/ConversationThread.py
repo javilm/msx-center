@@ -1,6 +1,5 @@
 from datetime import datetime
 from send_notifications import send_notifications
-
 from __main__ import app, db
 
 try:
@@ -38,6 +37,15 @@ class ConversationThread(db.Model):
 		# Threads inherit the posting permissions from the lounge they're in. Get the lounge object and call the class method.
 		return ConversationLounge.get_permission_errors(user, thread.lounge)
 
+	@classmethod
+	def new_thread(cls, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
+		app.logger.info("new_thread: title_en=%s, title_ja=%s, title_nl=%s, title_es=%s, title_pt=%s, title_kr=%s" % (title_en,title_ja,title_nl,title_es,title_pt,title_kr))
+		thread = ConversationThread(title_en=title_en, title_ja=title_ja, title_nl=title_nl, title_es=title_es, title_pt=title_pt, title_kr=title_kr)
+		if thread.is_empty():
+			return None
+		else:
+			return thread
+
 	def __init__(self, title_en=None, title_ja=None, title_nl=None, title_es=None, title_pt=None, title_kr=None):
 		self.lounge_id = None
 		self.title_en = title_en
@@ -55,6 +63,12 @@ class ConversationThread(db.Model):
 		self.first_post_date = datetime.utcnow()
 		self.last_post_date = self.first_post_date
 		self.slug = title_en
+
+	def is_empty(self):
+		if self.title_en or self.title_ja or self.title_nl or self.title_es or self.title_pt or self.title_kr:
+			return False
+		else:
+			return True
 
 	def add_message(self, message):
 

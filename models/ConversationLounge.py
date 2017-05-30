@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import desc
 import lxml.html as LH
 
 from __main__ import app, db
@@ -39,7 +40,7 @@ class ConversationLounge(db.Model):
 	priority = db.Column(db.Integer)
 	color_class = db.Column(db.String())
 	slug = db.Column(db.String())
-	threads = db.relationship("ConversationThread", backref="lounge")
+	threads = db.relationship("ConversationThread", backref="lounge", order_by=desc("threads_first_post_date"))
 
 	@classmethod
 	def	get_permission_errors(cls, user, lounge):

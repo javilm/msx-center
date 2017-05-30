@@ -53,6 +53,17 @@ $('.carousel').carousel()
 	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>
 {% endmacro %}
 
+{% macro recent_comment(comment) %}
+<p class="post-detail">
+	<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a>
+	 wrote on 
+	{% if comment.article %}
+		<a href="{{ url_for('page_articles_detail', article_id=comment.article.id, slug=comment.article.slug) }}"><strong>{{ comment.article.title_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
+	{% elif comment.news_item %}
+		<a href="{{ url_for('page_news_item', news_item_id=comment.news_item.id, slug=comment.news_item.slug) }}"><strong>{{ comment.news_item.headline_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
+	{% endif %}
+{% endmacro %}
+
 {% macro recent_member(member) %}
 <a href="{{ url_for('page_member', member_id=member.id, slug=member.slug) }}"><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a>
 {% endmacro %}
@@ -85,12 +96,12 @@ $('.carousel').carousel()
 		</div>
 	</div>
 
-	{# Recent news and posts #}
+	{# Recent comments and message #}
 	<div class="row">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-news">
-			<h1>Recent news</h1>
-			{% for item in recent_news_items %}
-				{{ recent_news_item(item) }}
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-posts">
+			<h1>Latest comments</h1>
+			{% for comment in recent_comments %}
+				{{ recent_comment(comment) }}
 			{% endfor %}
 		</div>
 	
@@ -102,9 +113,15 @@ $('.carousel').carousel()
 		</div>
 	</div>
 
-	{# Recent members #}
+	{# Recent news and recent active members #}
 	<div class="row">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frontpage-recent-members">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-news">
+			<h1>Recent news</h1>
+			{% for item in recent_news_items %}
+				{{ recent_news_item(item) }}
+			{% endfor %}
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frontpage-recent-members">
 			<h1>Latest active members</h1>
 			{% for member in recent_members %}
 				{{ recent_member(member) }}

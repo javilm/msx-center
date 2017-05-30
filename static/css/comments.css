@@ -36,12 +36,12 @@ p.comment-author .label {
 	margin-left: 5px;
 }
 
-.comment .iframe-wrapper {
+.iframe-wrapper {
 	position:relative;
 	padding-top: 56.25%;
 }
 
-.comment .iframe-wrapper iframe {
+.iframe-wrapper iframe {
 	position:absolute;
 	top:0;
 	left:0;

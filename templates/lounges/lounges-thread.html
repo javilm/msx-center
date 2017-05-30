@@ -31,7 +31,7 @@
 	                    <img src="{{ first_message.author.profile_photo_url(size='small') }}">
                         <div>
                             <p class="thread-author-name"><a href="{{ url_for('page_member', member_id=first_message.author.id, slug=first_message.author.slug) }}"><strong>{{ first_message.author.real_name }}</strong></a> </p>
-                            <p class="lounges-thread-date">Posted on {{ first_message.date_posted.strftime('%b %-d, %Y') }}</p>
+                            <p class="lounges-thread-date">Posted {{ first_message.date_posted|pretty_date }}</p>
                         </div>
                     </div>
 
