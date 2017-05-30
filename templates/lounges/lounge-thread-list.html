@@ -1,8 +1,16 @@
 {% extends "layout/template-base.html" %}
+{% import 'macros/lounges-macros.html' as lounges_macros %}
+
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/breadcrumbs.css">
+{% endblock %}
+
+
 {% block title %}MSX Center - Conversation lounge: {{ lounge.name_en }}{% endblock %}
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
+		{{ lounges_macros.breadcrumbs(lounge, None) }}
 		<h1>{{ lounge.name_en }}</h1>
 		<div class="lead">{{ lounge.desc_en }}</div>
 	</div>

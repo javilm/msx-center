@@ -28,8 +28,15 @@
 </ol>
 {% endmacro %}
 
-
-
+{% macro sidebar_articles_most_popular(articles) %}
+<h4 class="news-section-divider">Most popular</h4>
+<p class="text-muted">Most popular articles:</p>
+<ol>
+	{% for article in articles %}
+		<li><a href="{{ url_for('page_articles_detail', article_id=article.id, slug=article.slug) }}">{{ article.title_en }}</a></li>
+	{% endfor %}
+</ol>
+{% endmacro %}
 
 {% macro sidebar_sponsor() %}
 <h4 class="news-section-divider">Sponsor</h4>

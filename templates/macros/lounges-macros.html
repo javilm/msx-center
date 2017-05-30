@@ -1,8 +1,15 @@
 {% macro breadcrumbs(lounge, thread) %}
+{% if thread %}
 <p class="breadcrumbs">
 	<strong><a href="{{ url_for('page_lounges_list') }}">Lounges</a></strong>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
 	<a href="{{ url_for('page_lounge', lounge_id=lounge.id, slug=lounge.slug) }}">{{ lounge.name_en }}</a>&nbsp;
 	<i class="fa fa-caret-right"></i>&nbsp;
 	{{ thread.title_en }}
 </p>
+{% else %}
+<p class="breadcrumbs">
+	<strong><a href="{{ url_for('page_lounges_list') }}">Lounges</a></strong>&nbsp;<i class="fa fa-caret-right"></i>&nbsp;
+	{{ lounge.name_en }}
+</p>
+{% endif %}
 {% endmacro %}

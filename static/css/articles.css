@@ -211,3 +211,8 @@ h1.articles-meta-chapter-big {
   color:yellow;
 }
 
+.articles-section-divider {
+  border-bottom:1px solid #ddd;
+  padding-bottom:5px;
+  margin-top:15px;
+}
