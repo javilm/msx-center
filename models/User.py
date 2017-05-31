@@ -36,6 +36,8 @@ class User(db.Model):
 	is_superuser = db.Column(db.Boolean)
 	is_staff = db.Column(db.Boolean)
 	is_moderator = db.Column(db.Boolean)
+	is_betatester = db.Column(db.Boolean)
+	is_supporter = db.Column(db.Boolean)
 	# Social data
 	website = db.Column(db.String())
 	twitter = db.Column(db.String())

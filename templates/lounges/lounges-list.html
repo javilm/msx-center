@@ -28,7 +28,9 @@
 						<tbody>
 							{% for thread in lounge.threads %}
 								<tr>
-									<td><i class="glyphicon glyphicon-alert boardalert"></i></td>
+									<td>
+										{% if thread.is_pinned %}<i class="fa fa-thumb-tack"></i>{% endif %}
+									</td>
 									<td>
 										<a href="{{ url_for('page_thread', thread_id=thread.id, slug=thread.slug) }}">{{ thread.title_en }}</a>
 										{% if thread.has_new_messages %}<span class="label label-danger">New</span>{% endif %}

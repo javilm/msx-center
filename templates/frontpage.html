@@ -65,7 +65,7 @@ $('.carousel').carousel()
 {% endmacro %}
 
 {% macro recent_member(member) %}
-<a href="{{ url_for('page_member', member_id=member.id, slug=member.slug) }}"><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30"></a>
+<a href="{{ url_for('page_member', member_id=member.id, slug=member.slug) }}"><img src="{{ member.profile_photo_url(size='small') }}" width="30" height="30" title="{{ member.real_name }}"></a>
 {% endmacro %}
 
 {% block content %}
