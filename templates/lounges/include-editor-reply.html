@@ -1,7 +1,7 @@
 {% if errors.blocked -%}
 	<div class="alert alert-danger">
 		<p><strong>ACCOUNT BLOCKED</strong></p>
-		<p>Sorry, you are not allowed to post because your account is blocked. If you feel this is a mistake, please visit the <a class="alert-link" href="http://XXX">support page</a> for instructions.</p>
+		<p>Sorry, you are not allowed to post because your account is blocked. If you feel this is a mistake, please visit the <a class="alert-link" href="{{ url_for('page_support') }}">support page</a> for instructions.</p>
 	</div>
 {%- elif errors.anonymous -%}
 	<div class="alert alert-warning">

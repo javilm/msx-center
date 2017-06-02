@@ -32,15 +32,14 @@ def html_image_extractor(code, image_max_dimension=1200, add_classes=None, light
 
 	root = LH.fromstring(code)
 
+	exp = re.compile('^data:')
+
 	for element in root.iter('img'):
 
 		# Examine the current IMG element to see whether its SRC attribute is an URL (in which case we skip it and 
 		# leave it as it is) or a BASE64-encoded inline image (in which case we extract the image, import it into the 
 		# database, and replace the SRC attribute with the URL to the route that serves the imported version of the
 		# image.
-
-		exp = re.compile('^data:')
-
 		if exp.match(element.attrib['src']):
 			# The element contains an image embedded as a data URI. Import it.
 
@@ -79,6 +78,16 @@ def html_image_extractor(code, image_max_dimension=1200, add_classes=None, light
 			element.getparent().replace(element, new)
 
 			del img, tmp_img
+
+		else:
+			# The image wasn't inline. Re-add the class and lightbox attribute
+			if add_classes:
+				element.attrib['class'] = ' '.join(add_classes)
+
+			if lightbox_format_string:
+				element.attrib['data-lightbox'] = lightbox_format_string
+
+	
 
 	return LH.tostring(root)
 

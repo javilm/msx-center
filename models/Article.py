@@ -25,7 +25,7 @@ class Article(db.Model):
 	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 	category = db.relationship('Category', backref='articles')
 	series_id = db.Column(db.Integer, db.ForeignKey('article_series.id'))
-	series = db.relationship('ArticleSeries', backref='articles')
+	series = db.relationship('ArticleSeries', backref='articles', order_by="Article.date_published")
 	chapter = db.Column(db.Integer)		# The chapter number, if belonging to a series (could be 0 or null)
 	priority = db.Column(db.Integer)	# The order in which articles are listed, if not belonging to a series
 	level = db.Column(db.Integer)		# A difficulty level from 1 (beginner) to 5 (expert)

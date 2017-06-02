@@ -4,11 +4,11 @@ Thank you for registering with MSX Center. This is your activation email.
 
 To activate your account please click the link below:
 
-http://dev.msx-center.com/activate?key={{ activation_key }}
+https://dev.msx-center.com/activate?key={{ activation_key }}
 
 If you can't click on the link, then manually enter the address below in your web browser:
 
-http://dev.msx-center.com/activate
+https://dev.msx-center.com/activate
 
 And enter your activation key (case insensitive): {{ activation_key }}
 

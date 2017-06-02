@@ -3,8 +3,17 @@
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	line-height: 1.42857143;
 	color: #333;
+	font-size: medium;
 }
 
 .ql-editor p, .quill-content p {
+	margin: 0 0 10px;
+}
+
+.ql-editor blockquote, .quill-content blockquote {
+	color: #666;
+	font-size: medium;
+	font-style: italic;
+	padding: 5px 10px;
 	margin: 0 0 10px;
 }
