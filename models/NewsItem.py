@@ -155,7 +155,7 @@ class NewsItem(db.Model):
 			self.num_comments = len(self.comments)
 			db.session.commit()
 			EmailSubscription.subscribe(member=comment.author, news_item=self)
-			send_notifications(member=comment.author, news_item=self)
+			send_notifications(member=comment.author, news_item=self, comment=comment)
 
 	def add_feature_image(self, original_image):
 

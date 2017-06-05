@@ -81,5 +81,5 @@ class ConversationThread(db.Model):
 		self.last_post_date = datetime.utcnow()
 		db.session.commit()
 		subscription = EmailSubscription.subscribe(member=message.author, thread=self)
-		send_notifications(member=message.author, thread=self)
+		send_notifications(member=message.author, thread=self, comment=message)
 

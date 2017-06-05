@@ -7,7 +7,7 @@ $(".button-comment-upvote").click(function (e) {
 		method: 'GET',
 		dataType: 'json',
 		processData: true,
-		url: 'http://dev.msx-center.com/comment/' + comment_id  + '/upvote',
+		url: 'https://dev.msx-center.com/comment/' + comment_id  + '/upvote',
 		success: function(data) {
 			if (data.result == '200') {
 				$('#button_comment_' + comment_id + '_upvote').addClass('btn-success disabled').removeClass('btn-default');
@@ -30,7 +30,7 @@ $(".button-comment-downvote").click(function (e) {
 		method: 'GET',
 		dataType: 'json',
 		processData: true,
-		url: 'http://dev.msx-center.com/comment/' + comment_id + '/downvote',
+		url: 'https://dev.msx-center.com/comment/' + comment_id + '/downvote',
 		success: function(data) {
 			if (data.result == '200') {
 				$('#button_comment_' + comment_id + '_upvote').addClass('disabled');

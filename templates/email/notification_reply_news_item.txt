@@ -1,5 +1,6 @@
 There's a new reply by {{ reply_author_name }} in the news article "{{ reply_news_item_title }}" that you're following.
 
-Click this link to view the replies: https://www.msx-center.com{{ reply_news_item_url }}
+Click this link to view the reply: https://www.msx-center.com{{ reply_news_item_url }}#comment-{{ comment.id }}
 
-Copyright © 2017 MSX Center. "MSX" is a registered trademark of the MSX Li
+
+Copyright © 2017 MSX Center. "MSX" is a registered trademark of the MSX Lcensing Corporation.

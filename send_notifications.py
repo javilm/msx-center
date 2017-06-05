@@ -3,12 +3,14 @@ from flask_mail import Message
 from __main__ import db, mail, app
 from models.EmailSubscription import EmailSubscription
 
-def send_notifications(member=None, thread=None, article=None, news_item=None):
+def send_notifications(member=None, thread=None, article=None, news_item=None, comment=None):
 
 	message = Message('[MSX Center] Notification of new reply')
 	message.sender = 'MSX Center <no-reply@msx-center.com>'
 
 	template_options = {}
+	template_options['comment'] = comment		# sometimes will be a Comment instance, sometimes a ConversationMessage
+
 	if member:
 		template_options['reply_author_name'] = member.real_name
 	else:

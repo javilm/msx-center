@@ -18,6 +18,6 @@ def page_main():
 	template_options['recent_news_items'] = NewsItem.query.filter_by(is_draft_en=False, is_published=True, is_hidden=False).order_by(desc('date_published')).limit(10).all()
 	template_options['recent_posts'] = ConversationMessage.query.order_by(desc('date_posted')).limit(10).all()
 	template_options['recent_comments'] = Comment.query.order_by(desc('date_posted')).limit(10).all()
-	template_options['recent_members'] = User.query.filter_by(is_active=True).order_by(desc('last_active_date')).limit(20).all()
+	template_options['recent_members'] = User.query.filter_by(is_active=True).order_by(desc('last_active_date')).limit(28).all()
 
 	return render_template('frontpage.html', **template_options)

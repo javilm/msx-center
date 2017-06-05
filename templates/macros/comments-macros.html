@@ -1,5 +1,6 @@
 {% macro comment(user, comment, my_votes) %}
 <div class="comment" id="comment_{{ comment.id }}">
+	<a name="comment-{{ comment.id }}">
 	<div class="comment-votes">
 		{# Could do this on a more granular way, but this is more readable #}
 		{%- if user -%}
@@ -63,6 +64,7 @@
 
 {% macro message(user, comment, my_votes) %}
 <div class="comment" id="comment_{{ comment.id }}">
+	<a name="comment-{{ comment.id }}">
 	<div class="comment-votes">
 		{# Could do this on a more granular way, but this is more readable #}
 		{%- if user -%}

@@ -141,7 +141,7 @@ class Article(db.Model):
 			self.num_comments = len(self.comments)
 			db.session.commit()
 			EmailSubscription.subscribe(member=comment.author, article=self)
-			send_notifications(member=comment.author, article=self)
+			send_notifications(member=comment.author, article=self, comment=comment)
 
 	def add_feature_image(self, original_image):
 		# Make a carousel image, exactly 1400x600
