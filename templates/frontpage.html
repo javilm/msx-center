@@ -50,7 +50,7 @@ $('.carousel').carousel()
 		<a href="{{ url_for('page_member', member_id=post.author.id, slug=post.author.slug) }}"><strong>{{ post.author.nickname }}</strong></a>
 	{% else %}
 		Somebody anonymous
-	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>
+	{% endif %} wrote on <a href="{{ url_for('page_thread', thread_id=post.thread.id, slug=post.thread.slug) }}#comment-{{ post.id }}"><strong>{{ post.thread.title_en }}</strong></a> {{ post.date_posted|pretty_date}}</p>
 {% endmacro %}
 
 {% macro recent_comment(comment) %}
@@ -58,9 +58,9 @@ $('.carousel').carousel()
 	<a href="{{ url_for('page_member', member_id=comment.author.id, slug=comment.author.slug) }}"><strong>{{ comment.author.real_name }}</strong></a>
 	 wrote on 
 	{% if comment.article %}
-		<a href="{{ url_for('page_articles_detail', article_id=comment.article.id, slug=comment.article.slug) }}"><strong>{{ comment.article.title_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
+		<a href="{{ url_for('page_articles_detail', article_id=comment.article.id, slug=comment.article.slug) }}#comment-{{ comment.id }}"><strong>{{ comment.article.title_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
 	{% elif comment.news_item %}
-		<a href="{{ url_for('page_news_item', news_item_id=comment.news_item.id, slug=comment.news_item.slug) }}"><strong>{{ comment.news_item.headline_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
+		<a href="{{ url_for('page_news_item', news_item_id=comment.news_item.id, slug=comment.news_item.slug) }}#comment-{{ comment.id }}"><strong>{{ comment.news_item.headline_en }}</strong></a> {{ comment.date_posted|pretty_date}}</p>
 	{% endif %}
 {% endmacro %}
 
