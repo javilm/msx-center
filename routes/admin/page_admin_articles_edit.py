@@ -77,7 +77,7 @@ def page_admin_articles_edit(article_id):
 		article.author_id = request.form['author_id']
 		article.category_id = request.form['category_id']
 		article.series_id = request.form['series_id']
-		article.chapter = request.form['chapter']
+		article.chapter = request.form['chapter'] or None
 		article.priority = request.form['priority']
 		article.level = request.form['level']
 		article.slug = request.form['slug']
@@ -95,21 +95,27 @@ def page_admin_articles_edit(article_id):
 		# If the feature image has changed add the new one
 		if request.form['feature_image_changed']:
 			image = StoredImage.query.get(request.form['feature_image_id'])
-			article.add_feature_image(image)
+			series = ArticleSeries.query.get(request.form['series_id'])
 
-		# Remove all existing related links and add the ones from the form
-		for link in article.links:
-			article.links.remove(link)
+			if series:
+				article.add_feature_image(image)
+
+				# Remove all existing related links and add the ones from the form
+				for link in article.links:
+					article.links.remove(link)
 		
-		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
-		if len(links):
-			for link_id in links:
-				link = ExternalLink.query.get(link_id)
-				if link is not None:
-					article.links.append(link)
+				links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
+				if len(links):
+					for link_id in links:
+						link = ExternalLink.query.get(link_id)
+						if link is not None:
+							article.links.append(link)
 
-		# Update the news item
-		db.session.add(article)
-		db.session.commit()
+				series.articles.append(article)
+				db.session.add(series)
+
+				# Update the article
+				db.session.add(article)
+				db.session.commit()
 
 		return jsonify(url=url_for('page_admin_articles'))

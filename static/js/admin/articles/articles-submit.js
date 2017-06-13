@@ -130,8 +130,8 @@ $("#saveButton").click(function (e) {
 			console.log("textStatus: " + textStatus + ", errorThrown: " + errorThrown);
 		},
 		complete: function(request, status) {
-			button.html('Saving, please wait...');
-			button.addClass('disabled');
+			button.html('Save');
+			button.removeClass('disabled');
 		}
 	});
 });	

@@ -44,7 +44,7 @@ def page_admin_articles_add():
 		model_vars['author_id'] = request.form['author_id']
 		model_vars['category_id'] = request.form['category_id']
 		model_vars['series_id'] = request.form['series_id']
-		model_vars['chapter'] = request.form['chapter']
+		model_vars['chapter'] = request.form['chapter'] or None
 		model_vars['priority'] = request.form['priority']
 		model_vars['level'] = request.form['level']
 		model_vars['slug'] = request.form['slug']
@@ -58,17 +58,23 @@ def page_admin_articles_add():
 		# Create the news item
 		article = Article(**model_vars)
 		feature_image = StoredImage.query.get(request.form['feature_image_id'])
-		article.add_feature_image(feature_image)
-		db.session.add(article)
+		series = ArticleSeries.query.get(request.form['series_id'])
+		if article and series:
+			article.add_feature_image(feature_image)
 		
-		# Add the related links, if there's any
-		links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
-		if len(links):
-			for link_id in links:
-				link = ExternalLink.query.get(link_id)
-				if link is not None:
-					article.links.append(link)
+			db.session.add(article)
 		
-		db.session.commit()
+			# Add the related links, if there's any
+			links = list(set(json.loads(request.form['links']))) # list(set()) removes the duplicates
+			if len(links):
+				for link_id in links:
+					link = ExternalLink.query.get(link_id)
+					if link is not None:
+						article.links.append(link)
+
+			series.articles.append(article)
+			db.session.add(series)
+		
+			db.session.commit()
 
 		return jsonify(url=url_for('page_admin_articles'))

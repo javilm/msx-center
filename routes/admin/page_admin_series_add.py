@@ -31,6 +31,7 @@ def page_admin_series_add():
 		model_vars['is_numbered'] = request.form['is_numbered']
 		model_vars['slug'] = request.form['slug']
 		model_vars['category_id'] = request.form['category_id']
+		model_vars['num_articles'] = 0
 
 		# Create the series
 		series = ArticleSeries(**model_vars)
