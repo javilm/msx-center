@@ -281,6 +281,7 @@
 	<div class="form-group">
 		<label class="control-label">Difficulty level</label>
         <select id="field_level" class="form-control">
+            <option value="0"{% if article.level == 0 %} selected{% endif %}>Not applicable</option>
             <option value="1"{% if article.level == 1 %} selected{% endif %}>Beginner</option>
             <option value="2"{% if article.level == 2 %} selected{% endif %}>Easy</option>
             <option value="3"{% if article.level == 3 %} selected{% endif %}>Intermediate</option>
