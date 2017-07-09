@@ -17,6 +17,6 @@ def page_admin_links():
 	template_options = {}
 	template_options['user'] = user
 	template_options['active'] = 'links'
-	template_options['links'] = ExternalLink.query.all()
+	template_options['links'] = ExternalLink.query.order_by('id').all()
 
 	return render_template('admin/links.html', **template_options)

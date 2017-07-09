@@ -31,6 +31,7 @@
 				<th>Author</th>
 				<th>Category</th>
 				<th><i class="fa fa-comment"></i></th>
+				<th>Views</th>
 				<th>Date</th>
 				<th></th>
 			</tr>
@@ -72,6 +73,7 @@
 					<td><a href="{{ url_for('page_member', member_id=article.author.id, slug=article.author.slug) }}">{{ article.author.real_name }}</a></td>
 					<td>{{ article.category.name_en }}</td>
 					<td>{{ article.num_comments }}</td>
+					<td>{{ article.num_views }}</td>
 					<td>{{ article.date_published.strftime('%d/%b/%Y') }}</td>
 					<td><a href="{{ url_for('page_admin_articles_edit', article_id=article.id) }}"><button class="btn btn-primary btn-xs">Edit</button></a></td>
 				</tr>

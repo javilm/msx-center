@@ -72,9 +72,6 @@ def page_admin_articles_add():
 					if link is not None:
 						article.links.append(link)
 
-			series.articles.append(article)
-			db.session.add(series)
-		
-			db.session.commit()
+			series.add_article(article)
 
 		return jsonify(url=url_for('page_admin_articles'))

@@ -1,4 +1,5 @@
 from __main__ import db							# All models
+from . import Article
 
 class ArticleSeries(db.Model):
 	__tablename__ = 'article_series'
@@ -28,3 +29,11 @@ class ArticleSeries(db.Model):
 	@classmethod
 	def list_for_navbar(cls):
 		return cls.query.filter(ArticleSeries.is_hidden=='f').order_by(ArticleSeries.priority).all()
+
+	def add_article(self, article):
+		self.articles.append(article)
+		# Update the number of articles in this series
+		self.num_articles = Article.query.filter(Article.is_published==True).filter(Article.is_draft_en==False).filter(Article.is_hidden==False).filter(Article.series_id == self.id).count()
+		db.session.add(self)
+		db.session.commit()
+		

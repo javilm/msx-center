@@ -55,8 +55,8 @@ def page_lounge_post(lounge_id):
 			user_errors['blocked'] = True
 		elif user.is_new and not lounge.allows_new:
 			user_errors['new'] = True
-		elif not user.is_verified and not lounge.allows_unverified:
-			user_errors['unverified'] = True
+#		elif not user.is_verified and not lounge.allows_unverified:
+#			user_errors['unverified'] = True
 		elif not user.is_staff and lounge.staff_only:
 			user_errors['not_staff'] = True
 		elif user.reputation < 0 and not lounge.allows_bad_reputation:
